@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>Lumo Userscripts</title>
+  <defs>
+    <linearGradient id="front" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#67e8f9"/>
+      <stop offset=".28" stop-color="#38bdf8"/>
+      <stop offset=".64" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#4338ca"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".34"/>
+      <stop offset=".45" stop-color="#fff" stop-opacity=".05"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="dot-glow" x="-200%" y="-200%" width="500%" height="500%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+  </defs>
+
+  <!--
+    One card, no stack. The fanned back cards used to carry the "layer"
+    metaphor, but they only showed up as dark overlaps peeking out at the
+    bottom and stole width from the real subject. The card (and the braces it
+    holds) is now the whole icon: scaled until its height fills ~90% of the
+    canvas, which keeps the portrait proportion while reading larger in the
+    toolbar. `scripts/build-icons.mjs` renders every size from this file, so
+    keep the outer scale in sync with that ink box.
+  -->
+  <g transform="translate(256 256) scale(1.30) translate(-256 -274)">
+    <rect x="106" y="96" width="300" height="356" rx="54" fill="url(#front)"/>
+    <rect x="106" y="96" width="300" height="356" rx="54" fill="url(#sheen)"/>
+    <rect x="108" y="98" width="296" height="352" rx="52" fill="none" stroke="#fff" stroke-opacity=".32" stroke-width="4"/>
+
+    <g fill="none" stroke="#f8fafc" stroke-width="28" stroke-linecap="round">
+      <path d="M232 188 C 196 188 198 224 198 244 C 198 266 182 272 164 272 C 182 272 198 278 198 300 C 198 320 196 356 232 356"/>
+      <path d="M280 188 C 316 188 314 224 314 244 C 314 266 330 272 348 272 C 330 272 314 278 314 300 C 314 320 316 356 280 356"/>
+    </g>
+
+    <circle cx="368" cy="148" r="20" fill="#22d3ee" opacity=".55" filter="url(#dot-glow)"/>
+    <circle cx="368" cy="148" r="10" fill="#cffafe"/>
+  </g>
+</svg>

@@ -1,0 +1,389 @@
+import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
+import {
+  ArrowRight,
+  Bug,
+  Check,
+  Download,
+  ExternalLink as ExternalLinkIcon,
+  Globe,
+  ShieldCheck,
+  Terminal,
+} from "lucide-react";
+import { AnchorNav } from "@/components/site/anchor-nav";
+import { BrandMark } from "@/components/brand/brand-mark";
+import { CrossSell } from "@/components/site/cross-sell";
+import { JsonLd } from "@/components/site/json-ld";
+import { SectionHeading } from "@/components/site/section-heading";
+import { AgentLoopDiagram } from "@/components/mockups/agent-loop-diagram";
+import { FeatureStage } from "@/components/mockups/feature-stage";
+import { LumoProviderMock } from "@/components/mockups/lumo-settings-mock";
+import { McpServerGrid } from "@/components/mockups/mcp-server-grid";
+import { PrivacyDiagram } from "@/components/mockups/privacy-diagram";
+import { ProviderProtocolGrid, DevToolsToolGrid } from "@/components/mockups/provider-protocol-grid";
+import { SidebarChatMock } from "@/components/mockups/sidebar-chat-mock";
+import { SplitViewShowcase } from "@/components/mockups/split-view-showcase";
+import { Aurora } from "@/components/motion/aurora";
+import { Reveal } from "@/components/motion/reveal";
+import { TiltCard } from "@/components/motion/tilt-card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { GithubIcon } from "@/components/brand/icons";
+import { useLocale } from "@/lib/i18n";
+import { useLocalePath } from "@/lib/i18n/use-path";
+import { translate } from "@/lib/i18n/translate";
+import { absoluteUrl, pageMeta } from "@/lib/seo";
+import { LINKS, SITE_URL } from "@/lib/site";
+import { getLocale, localePath, type Locale } from "@/lib/site-manifest";
+
+export function meta({ location }: { location: { pathname: string } }) {
+  const locale = getLocale(location.pathname);
+  return pageMeta({
+    locale,
+    path: localePath(locale, "/lumo"),
+    title: translate(locale, "seo.lumo.title"),
+    description: translate(locale, "seo.lumo.description"),
+  });
+}
+
+function InstallCard({
+  index,
+  title,
+  detail,
+  action,
+  href,
+  icon,
+}: {
+  index: number;
+  title: string;
+  detail: string;
+  action: string;
+  href: string;
+  icon: ReactNode;
+}) {
+  return (
+    <div className="flex h-full flex-col gap-4 rounded-card border border-border bg-card p-5 shadow-surface">
+      <div className="flex items-center justify-between">
+        <span className="flex h-9 w-9 items-center justify-center rounded-control border border-border bg-muted/50 text-primary">
+          {icon}
+        </span>
+        <span className="font-mono text-[10px] text-muted-foreground">
+          0{index + 1}
+        </span>
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+        <p className="text-sm leading-6 text-muted-foreground">{detail}</p>
+      </div>
+      <a
+        href={href}
+        target="_blank"
+        rel="noreferrer noopener"
+        className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-primary"
+      >
+        {action}
+        <ExternalLinkIcon className="h-3.5 w-3.5" />
+      </a>
+    </div>
+  );
+}
+
+export default function LumoPage() {
+  const { t } = useTranslation();
+  const locale = useLocale() as Locale;
+  const localize = useLocalePath();
+
+  const anchors = [
+    { id: "overview", label: t("lumo.anchors.overview") },
+    { id: "agent", label: t("lumo.anchors.agent") },
+    { id: "tools", label: t("lumo.anchors.tools") },
+    { id: "workspace", label: t("lumo.anchors.workspace") },
+    { id: "providers", label: t("lumo.anchors.providers") },
+    { id: "privacy", label: t("lumo.anchors.privacy") },
+    { id: "install", label: t("lumo.anchors.install") },
+  ];
+
+  const grid = t("lumo.grid.items", {
+    returnObjects: true,
+  }) as { title: string; detail: string }[];
+  const installSteps = t("lumo.install.steps", {
+    returnObjects: true,
+  }) as { title: string; detail: string; action: string }[];
+  const installHrefs = [LINKS.lumoStore, LINKS.lumoActions, LINKS.lumoRepo];
+  const installIcons = [
+    <Globe key="chrome" className="h-4 w-4" />,
+    <GithubIcon key="github" className="h-4 w-4" />,
+    <Terminal key="terminal" className="h-4 w-4" />,
+  ];
+
+  return (
+    <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "Lumo",
+          applicationCategory: "BrowserApplication",
+          operatingSystem: "Chrome",
+          url: absoluteUrl(localePath(locale, "/lumo")),
+          description: t("seo.lumo.description"),
+          inLanguage: locale === "zh" ? "zh-CN" : "en",
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+          publisher: { "@type": "Organization", name: "Lumo", url: SITE_URL },
+        }}
+      />
+
+      <section
+        id="overview"
+        className="relative scroll-mt-24 overflow-hidden pb-16 pt-14 sm:pb-20 sm:pt-20"
+      >
+        <Aurora tone="lumo" />
+        <div className="container-page relative grid grid-cols-1 items-center gap-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+          <Reveal className="flex flex-col items-start gap-5">
+            <div className="flex items-center gap-3">
+              <span className="flex h-12 w-12 items-center justify-center rounded-card border border-border bg-card/80 shadow-card">
+                <BrandMark variant="lumo" className="h-8 w-8" />
+              </span>
+              <div className="flex flex-col">
+                <p className="text-eyebrow font-semibold uppercase text-muted-foreground">
+                  {t("lumo.hero.eyebrow")}
+                </p>
+                <p className="text-sm font-semibold text-foreground">Lumo</p>
+              </div>
+            </div>
+            <h1 className="max-w-[16ch] text-balance text-display-lg font-semibold text-foreground">
+              {t("lumo.hero.title")}
+            </h1>
+            <p className="max-w-[56ch] text-pretty text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
+              {t("lumo.hero.description")}
+            </p>
+            <div className="flex flex-col items-start gap-2.5 sm:flex-row sm:items-center">
+              <Button asChild size="lg">
+                <a href={LINKS.lumoStore} target="_blank" rel="noreferrer noopener">
+                  <Download className="h-4 w-4" />
+                  {t("lumo.hero.primary")}
+                </a>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link to={localize("/docs/agent-loop")}>
+                  {t("lumo.hero.secondary")}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+            <div className="mt-1 flex flex-wrap gap-2">
+              {(t("lumo.hero.chips", { returnObjects: true }) as string[]).map(
+                (chip) => (
+                  <Badge key={chip} variant="outline">
+                    {chip}
+                  </Badge>
+                ),
+              )}
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.1} className="relative">
+            <TiltCard>
+              <SidebarChatMock
+                mode="loop"
+                className="mx-auto h-[32rem] max-w-md"
+              />
+            </TiltCard>
+            <div className="absolute -top-12 right-6 hidden rounded-panel border border-border bg-card/90 p-3 shadow-float backdrop-blur lg:block">
+              <div className="flex items-center gap-2">
+                <span className="flex h-7 w-7 items-center justify-center rounded-control bg-brand-violet/15 text-brand-violet">
+                  <Bug className="h-3.5 w-3.5" />
+                </span>
+                <div>
+                  <p className="text-[10px] font-semibold text-foreground">
+                    DevTools Advanced
+                  </p>
+                  <p className="font-mono text-[8px] text-muted-foreground">
+                    chrome.debugger · CDP
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <AnchorNav items={anchors} ariaLabel={t("lumo.anchors.overview")} />
+
+      <div className="flex flex-col gap-16 py-16 sm:gap-24 sm:py-24">
+        <FeatureStage
+          id="agent"
+          tone="lumo"
+          eyebrow={t("lumo.agent.eyebrow")}
+          title={t("lumo.agent.title")}
+          description={t("lumo.agent.description")}
+          bullets={t("lumo.agent.bullets", { returnObjects: true }) as string[]}
+          ctaLabel={t("lumo.agent.cta")}
+          ctaHref={localize("/docs/agent-loop")}
+          visual={<AgentLoopDiagram />}
+        />
+
+        <section id="tools" className="container-page scroll-mt-24">
+          <SectionHeading
+            eyebrow={t("lumo.tools.eyebrow")}
+            title={t("lumo.tools.title")}
+            description={t("lumo.tools.description")}
+            action={
+              <Button asChild variant="outline" size="sm">
+                <Link to={localize("/docs/mcp")}>
+                  {t("common.readDocs")}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </Button>
+            }
+          />
+          <div className="mt-10">
+            <McpServerGrid />
+          </div>
+
+          <Reveal>
+            <div className="stage stage-lumo relative mt-4 grid grid-cols-1 gap-8 p-6 sm:p-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-center lg:p-10">
+              <div className="stage-grid" aria-hidden="true" />
+              <div className="relative z-10 flex flex-col items-start gap-4">
+                <div className="flex items-center gap-2 text-eyebrow font-semibold uppercase text-muted-foreground">
+                  <Bug className="h-3.5 w-3.5 text-brand-violet" />
+                  {t("lumo.tools.devtoolsEyebrow")}
+                </div>
+                <h3 className="text-balance text-display-sm font-semibold text-foreground">
+                  {t("lumo.tools.devtoolsTitle")}
+                </h3>
+                <p className="max-w-[52ch] text-pretty text-sm leading-7 text-muted-foreground">
+                  {t("lumo.tools.devtoolsDescription")}
+                </p>
+                <code className="rounded-control border border-border bg-card/80 px-2.5 py-1.5 font-mono text-[11px] text-muted-foreground">
+                  chrome.debugger · CDP 1.3
+                </code>
+              </div>
+              <div className="relative z-10 min-w-0">
+                <DevToolsToolGrid />
+              </div>
+            </div>
+          </Reveal>
+        </section>
+
+        <section id="workspace" className="container-page scroll-mt-24">
+          <SectionHeading
+            eyebrow={t("lumo.split.eyebrow")}
+            title={t("lumo.split.title")}
+            description={t("lumo.split.description")}
+          />
+          <div className="mt-8">
+            <SplitViewShowcase />
+          </div>
+        </section>
+
+        <div id="providers" className="flex scroll-mt-24 flex-col gap-5">
+          <FeatureStage
+            tone="lumo"
+            reverse
+            eyebrow={t("lumo.providers.eyebrow")}
+            title={t("lumo.providers.title")}
+            description={t("lumo.providers.description")}
+            bullets={
+              t("lumo.providers.bullets", { returnObjects: true }) as string[]
+            }
+            ctaLabel={t("lumo.providers.cta")}
+            ctaHref={localize("/docs/agent-loop")}
+            visual={<LumoProviderMock />}
+          />
+          <section className="container-page">
+            <SectionHeading
+              eyebrow={t("lumo.providers.eyebrow")}
+              title={t("lumo.providers.matrixTitle")}
+              description={t("lumo.providers.matrixDescription")}
+            />
+            <ProviderProtocolGrid className="mt-6" />
+          </section>
+        </div>
+
+        <FeatureStage
+          id="privacy"
+          tone="lumo"
+          eyebrow={t("lumo.privacy.eyebrow")}
+          title={t("lumo.privacy.title")}
+          description={t("lumo.privacy.description")}
+          bullets={t("lumo.privacy.bullets", { returnObjects: true }) as string[]}
+          ctaLabel={t("common.privacy")}
+          ctaHref={localize("/privacy")}
+          visual={<PrivacyDiagram />}
+        />
+
+        <section className="container-page">
+          <SectionHeading
+            eyebrow={t("lumo.grid.eyebrow")}
+            title={t("lumo.grid.title")}
+          />
+          <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {grid.map((item) => (
+              <Reveal key={item.title}>
+                <div className="flex h-full flex-col gap-2 rounded-card border border-border bg-card p-5 shadow-surface">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-primary" />
+                    <h3 className="text-sm font-semibold text-foreground">
+                      {item.title}
+                    </h3>
+                  </div>
+                  <p className="text-sm leading-6 text-muted-foreground">
+                    {item.detail}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <section id="install" className="container-page scroll-mt-24 py-16 sm:py-24">
+        <SectionHeading
+          eyebrow={t("lumo.install.eyebrow")}
+          title={t("lumo.install.title")}
+          description={t("lumo.install.description")}
+        />
+        <div className="mt-10 grid grid-cols-1 gap-3 md:grid-cols-3">
+          {installSteps.map((step, index) => (
+            <Reveal key={step.title} delay={index * 0.06}>
+              <InstallCard
+                index={index}
+                title={step.title}
+                detail={step.detail}
+                action={step.action}
+                href={installHrefs[index] ?? LINKS.lumoRepo}
+                icon={installIcons[index]}
+              />
+            </Reveal>
+          ))}
+        </div>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-success" />
+            {t("lumo.install.requirement")}
+          </span>
+          <Link
+            to={localize("/privacy")}
+            className="inline-flex items-center gap-1 font-medium text-foreground hover:text-primary"
+          >
+            {t("common.privacy")}
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      </section>
+
+      <div className="pb-16 sm:pb-24">
+        <CrossSell
+          tone="userscripts"
+          eyebrow={t("lumo.cross.eyebrow")}
+          title={t("lumo.cross.title")}
+          description={t("lumo.cross.description")}
+          cta={t("lumo.cross.cta")}
+          href={localize("/userscripts")}
+        />
+      </div>
+    </>
+  );
+}

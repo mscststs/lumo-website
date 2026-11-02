@@ -1,0 +1,17 @@
+{
+  "name": "Lumo — A calmer, more capable web",
+  "short_name": "Lumo",
+  "description": "AI browser sidebar and userscript manager. Local-first, craft-driven.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0d10",
+  "theme_color": "#0b0d10",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
