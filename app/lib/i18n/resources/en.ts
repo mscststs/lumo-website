@@ -76,7 +76,7 @@ export const en = {
     privacy: "Privacy",
     changelog: "Changelog",
     license: "License",
-    builtWith: "Built with Vite, React and Tailwind. Deployed on Cloudflare Pages.",
+    builtWith: "Built with Vite, React and Tailwind. Served from Cloudflare Workers.",
     siteVersion: "Site {{version}}",
   },
   theme: {
@@ -265,7 +265,7 @@ export const en = {
         { name: "MCP", detail: "Browser + agent tools" },
         { name: "IndexedDB", detail: "Local storage" },
         { name: "i18next", detail: "Bilingual UI" },
-        { name: "Cloudflare Pages", detail: "Static delivery" },
+        { name: "Cloudflare Workers", detail: "Static delivery" },
       ],
     },
     metrics: {

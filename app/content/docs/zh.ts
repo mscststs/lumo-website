@@ -130,10 +130,10 @@ export const zh: DocCollection = {
         rows: [
           ["`npm run dev`", "带 HMR 的 React Router 开发服务器。"],
           ["`npm run build`", "预渲染所有路由并写出静态 HTML。"],
-          ["`npm run preview`", "通过 Wrangler Pages 预览 `build/client`。"],
+          ["`npm run preview`", "通过 Wrangler 预览 `build/client`。"],
           ["`npm run typecheck`", "生成路由类型，再运行 `tsc --noEmit`。"],
           ["`npm run test`", "Vitest：i18n 对齐、文档完整性、主题对比度。"],
-          ["`npm run deploy`", "把 `build/client` 部署到 Cloudflare Pages。"],
+          ["`npm run deploy`", "把 `build/client` 作为 Worker 静态资产部署。"],
         ],
       },
     ],
@@ -180,7 +180,7 @@ export const zh: DocCollection = {
       },
       {
         type: "p",
-        text: "静态产物在 `build/client`。Cloudflare Pages 直接托管；每个已知路由都有对应文件，未知 URL 会落到生成的 `404.html`。",
+        text: "静态产物在 `build/client`。Cloudflare Workers 以静态资产方式直接托管；每个已知路由都有对应文件，未知 URL 会落到生成的 `404.html`。",
       },
       { type: "h2", text: "共享设计语言" },
       {
@@ -529,12 +529,12 @@ export const zh: DocCollection = {
     slug: "deployment",
     category: "engineering",
     title: "部署",
-    description: "静态预渲染、Cloudflare Pages、响应头、重定向与自定义域名。",
+    description: "静态预渲染、Cloudflare Workers 静态资产、响应头、重定向与自定义域名。",
     updated: "2025-11-01",
     blocks: [
       {
         type: "p",
-        text: "本站没有运行时服务器。`react-router build` 把每个路由预渲染到 `build/client`；Cloudflare Pages 托管这些文件，只对未知 URL 回退到 SPA 外壳。",
+        text: "本站没有运行时服务器。`react-router build` 把每个路由预渲染到 `build/client`；Cloudflare Workers 把这些文件当作静态资产托管，只对未知 URL 回退到生成的 `404.html`。",
       },
       { type: "h2", text: "构建" },
       {
@@ -547,17 +547,17 @@ export const zh: DocCollection = {
         type: "p",
         text: "构建产物包含每个路由的 HTML，以及 React Router 用于客户端导航的 `.data` 文件。不要压平或重命名这些文件。",
       },
-      { type: "h2", text: "Cloudflare Pages" },
+      { type: "h2", text: "Cloudflare Workers" },
       {
         type: "steps",
         items: [
           {
-            title: "创建项目",
-            text: "在 Cloudflare 控制台创建一个 Pages 项目，连接到仓库。",
+            title: "创建 Worker 项目",
+            text: "在 Cloudflare 控制台的 Workers & Pages 中创建 Worker，导入本仓库。",
           },
           {
-            title: "设置构建",
-            text: "构建命令 `npm run build`，输出目录 `build/client`，Node 22。",
+            title: "设置构建与部署",
+            text: "构建命令 `npm run typecheck && npm test && npm run build`，部署命令 `npx wrangler deploy`，Node 22。",
           },
           {
             title: "设置站点 URL",
@@ -573,7 +573,7 @@ export const zh: DocCollection = {
         type: "code",
         lang: "toml",
         title: "wrangler.toml",
-        code: "name = \"lumo-website\"\ncompatibility_date = \"2025-01-01\"\npages_build_output_dir = \"./build/client\"",
+        code: "name = \"lumo-website\"\ncompatibility_date = \"2025-01-01\"\n\n[assets]\ndirectory = \"./build/client\"\nhtml_handling = \"auto-trailing-slash\"\nnot_found_handling = \"404-page\"",
       },
       { type: "h2", text: "响应头与重定向" },
       {
@@ -590,13 +590,13 @@ export const zh: DocCollection = {
         type: "callout",
         tone: "warning",
         title: "顺序很重要",
-        text: "Cloudflare Pages 会先提供已存在的文件。如果某个路由 404，先确认它的预渲染 HTML 是否存在，再改 404 回退页。",
+        text: "Workers 静态资产会先提供已存在的文件。如果某个路由 404，先确认它的预渲染 HTML 是否存在，再改 404 回退页。",
       },
       { type: "h2", text: "自定义域名" },
       {
         type: "ol",
         items: [
-          "在 Pages → Custom domains 添加域名，按提示配置 DNS。",
+          "在 Worker → Settings → Domains & Routes 添加自定义域名，按提示配置 DNS。",
           "把 `VITE_SITE_URL` 设为最终 HTTPS 源，然后重新部署。",
           "在 Search Console 提交生成的 `sitemap.xml`。",
         ],

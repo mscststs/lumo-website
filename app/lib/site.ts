@@ -8,7 +8,7 @@ const configuredSiteUrl = import.meta.env.VITE_SITE_URL as string | undefined;
 export const SITE_URL = (
   configuredSiteUrl && configuredSiteUrl.length > 0
     ? configuredSiteUrl
-    : "https://lumo-website.pages.dev"
+    : "https://lumo-website.example.com"
 ).replace(/\/$/, "");
 
 export const SITE_VERSION = "0.2.0";

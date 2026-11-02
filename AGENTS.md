@@ -2,7 +2,7 @@
 
 这是 **Lumo 品牌官网**：一个面向最终用户与开发者的产品门面，包含品牌首页、两页产品主页（Lumo / Lumo Userscripts）、技术文档、版本动态与隐私说明。
 
-技术栈与两个产品仓库保持一致：**Vite + React 19 + TypeScript + Tailwind CSS 4 + shadcn/ui（Radix）+ Motion + i18next**。构建采用 **React Router 8 framework mode**，`ssr: false` + 全量预渲染，产物是纯静态 HTML，部署到 **Cloudflare Pages**。
+技术栈与两个产品仓库保持一致：**Vite + React 19 + TypeScript + Tailwind CSS 4 + shadcn/ui（Radix）+ Motion + i18next**。构建采用 **React Router 8 framework mode**，`ssr: false` + 全量预渲染，产物是纯静态 HTML，以 **Cloudflare Workers 静态资产**（无 Worker 脚本）托管。
 
 参考项目：
 
@@ -20,7 +20,7 @@
 - **shadcn/ui + Radix UI**：所有基础控件使用源码级组件，不引入黑盒 UI 库。
 - **Motion**：滚动 reveal、视差、共享布局、指针跟随；尊重 `prefers-reduced-motion`。
 - **i18next + react-i18next**：至少简体中文与英文；**路径级 locale**（英文无前缀，中文 `/zh`）。
-- **Cloudflare Pages**：`build/client` 静态产物 + `_headers` + 生成的 `404.html`；不使用运行时服务端。
+- **Cloudflare Workers（纯静态资产）**：`wrangler.toml` 的 `[assets]` 指向 `build/client`，不声明 `main`、不运行 Worker 脚本；`_headers` + 构建生成的 `404.html` 由 `not_found_handling = "404-page"` 生效；不使用运行时服务端。
 - **SEO**：每个路由静态输出 title/description/OG/canonical/hreflang；正文必须在 HTML 中。
 
 ---

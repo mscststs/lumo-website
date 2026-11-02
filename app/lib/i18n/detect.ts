@@ -67,8 +67,8 @@ export function readLocalePreference(): Locale | null {
 }
 
 /**
- * Persist the choice. Also mirrored into a cookie so a future Cloudflare Pages
- * function (or an analytics boundary) can read it without executing JS.
+ * Persist the choice. Also mirrored into a cookie so a future Cloudflare Worker
+ * (or an analytics boundary) can read it without executing JS.
  */
 export function writeLocalePreference(locale: Locale): void {
   try {

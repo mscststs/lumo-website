@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lumo-website.pages.dev/sitemap.xml
+# Rewritten by scripts/build-sitemap.mjs with the deployed origin.
+Sitemap: https://lumo-website.example.com/sitemap.xml

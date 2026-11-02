@@ -81,7 +81,7 @@ export const zh: Translation = {
     privacy: "隐私",
     changelog: "更新日志",
     license: "许可",
-    builtWith: "使用 Vite、React 与 Tailwind 构建，部署于 Cloudflare Pages。",
+    builtWith: "使用 Vite、React 与 Tailwind 构建，由 Cloudflare Workers 提供静态资产。",
     siteVersion: "站点 {{version}}",
   },
   theme: {
@@ -265,7 +265,7 @@ export const zh: Translation = {
         { name: "MCP", detail: "浏览器与智能体工具" },
         { name: "IndexedDB", detail: "本地存储" },
         { name: "i18next", detail: "双语界面" },
-        { name: "Cloudflare Pages", detail: "静态交付" },
+        { name: "Cloudflare Workers", detail: "静态交付" },
       ],
     },
     metrics: {

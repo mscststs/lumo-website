@@ -2,10 +2,23 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 
 const OUT_DIR = path.resolve("build/client");
-const SITE_URL = (
+
+const configuredSiteUrl = (
   process.env.VITE_SITE_URL ||
   process.env.SITE_URL ||
-  "https://lumo-website.pages.dev"
+  ""
+).trim();
+
+if (!configuredSiteUrl) {
+  console.warn(
+    "sitemap: VITE_SITE_URL is not set, so canonical, Open Graph and sitemap URLs " +
+      "fall back to https://lumo-website.example.com. Set it in the Worker build " +
+      "variables to the deployed origin.",
+  );
+}
+
+const SITE_URL = (
+  configuredSiteUrl || "https://lumo-website.example.com"
 ).replace(/\/$/, "");
 
 async function walk(dir) {
@@ -91,9 +104,10 @@ await fs.writeFile(
   "utf8",
 );
 
-// Cloudflare Pages serves `404.html` for unknown URLs with a real 404 status.
-// Prefer the pre-rendered /404 page so the response has branded content and
-// hydrates against the requested path; fall back to the SPA shell if absent.
+// Workers static assets serve `404.html` for unknown URLs with a real 404
+// status (not_found_handling = "404-page"). Prefer the pre-rendered /404 page so
+// the response has branded content and hydrates against the requested path;
+// fall back to the SPA shell if absent.
 try {
   await fs.copyFile(
     path.join(OUT_DIR, "404", "index.html"),

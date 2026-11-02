@@ -8,12 +8,13 @@ const docPaths = LOCALES.flatMap((locale) =>
 );
 
 /**
- * Static-first delivery for Cloudflare Pages.
+ * Static-first delivery for Cloudflare Workers.
  *
  * Runtime SSR is disabled; every route is pre-rendered at build time into
- * `build/client`. Client-side navigation still uses React Router's data
- * fetching, so the site behaves like an SPA after the first paint while
- * crawlers get complete HTML per URL.
+ * `build/client`, which `wrangler.toml` uploads as Worker static assets.
+ * Client-side navigation still uses React Router's data fetching, so the site
+ * behaves like an SPA after the first paint while crawlers get complete HTML
+ * per URL.
  */
 export default {
   ssr: false,

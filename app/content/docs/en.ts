@@ -132,10 +132,10 @@ export const en: DocCollection = {
         rows: [
           ["`npm run dev`", "React Router dev server with HMR."],
           ["`npm run build`", "Pre-renders all routes and writes static HTML."],
-          ["`npm run preview`", "Serves `build/client` through Wrangler Pages."],
+          ["`npm run preview`", "Serves `build/client` through Wrangler."],
           ["`npm run typecheck`", "Generates route types, then runs `tsc --noEmit`."],
           ["`npm run test`", "Vitest: i18n parity, docs integrity, theme contrast."],
-          ["`npm run deploy`", "Deploys `build/client` to Cloudflare Pages."],
+          ["`npm run deploy`", "Deploys `build/client` as Worker static assets."],
         ],
       },
     ],
@@ -183,7 +183,7 @@ export const en: DocCollection = {
       },
       {
         type: "p",
-        text: "The static output is `build/client`. Cloudflare Pages serves it directly; every known route already has a file, and unknown URLs fall through to the generated `404.html`.",
+        text: "The static output is `build/client`. Cloudflare Workers serves it as static assets; every known route already has a file, and unknown URLs fall through to the generated `404.html`.",
       },
       { type: "h2", text: "Shared design language" },
       {
@@ -537,12 +537,12 @@ export const en: DocCollection = {
     category: "engineering",
     title: "Deployment",
     description:
-      "Static pre-rendering, Cloudflare Pages, headers, redirects and custom domains.",
+      "Static pre-rendering, Cloudflare Workers static assets, headers, redirects and custom domains.",
     updated: "2025-11-01",
     blocks: [
       {
         type: "p",
-        text: "The site has no runtime server. `react-router build` pre-renders every route into `build/client`; Cloudflare Pages serves those files and falls back to the SPA shell only for unknown URLs.",
+        text: "The site has no runtime server. `react-router build` pre-renders every route into `build/client`; Cloudflare Workers serves those files as static assets and only unknown URLs fall back to the generated `404.html`.",
       },
       { type: "h2", text: "Build" },
       {
@@ -555,17 +555,17 @@ export const en: DocCollection = {
         type: "p",
         text: "The build output contains one HTML file per route plus React Router's `.data` files for client navigation. Do not flatten or rename these files.",
       },
-      { type: "h2", text: "Cloudflare Pages" },
+      { type: "h2", text: "Cloudflare Workers" },
       {
         type: "steps",
         items: [
           {
-            title: "Create the project",
-            text: "In the Cloudflare dashboard, create a Pages project connected to the repository.",
+            title: "Create the Worker",
+            text: "In the Cloudflare dashboard, create a Worker under Workers & Pages and connect it to this repository.",
           },
           {
-            title: "Set the build",
-            text: "Build command `npm run build`, output directory `build/client`, Node 22.",
+            title: "Set build and deploy",
+            text: "Build command `npm run typecheck && npm test && npm run build`, deploy command `npx wrangler deploy`, Node 22.",
           },
           {
             title: "Set the site URL",
@@ -581,7 +581,7 @@ export const en: DocCollection = {
         type: "code",
         lang: "toml",
         title: "wrangler.toml",
-        code: "name = \"lumo-website\"\ncompatibility_date = \"2025-01-01\"\npages_build_output_dir = \"./build/client\"",
+        code: "name = \"lumo-website\"\ncompatibility_date = \"2025-01-01\"\n\n[assets]\ndirectory = \"./build/client\"\nhtml_handling = \"auto-trailing-slash\"\nnot_found_handling = \"404-page\"",
       },
       { type: "h2", text: "Headers and redirects" },
       {
@@ -598,13 +598,13 @@ export const en: DocCollection = {
         type: "callout",
         tone: "warning",
         title: "Order matters",
-        text: "Cloudflare Pages serves an existing file first. If a route 404s, check that its pre-rendered HTML exists before changing the 404 fallback.",
+        text: "Cloudflare Workers static assets serve an existing file first. If a route 404s, check that its pre-rendered HTML exists before changing the 404 fallback.",
       },
       { type: "h2", text: "Custom domain" },
       {
         type: "ol",
         items: [
-          "Add the domain in Pages → Custom domains and follow the DNS instructions.",
+          "Add the domain under Worker → Settings → Domains & Routes and follow the DNS instructions.",
           "Set `VITE_SITE_URL` to the final HTTPS origin and redeploy.",
           "Submit the generated `sitemap.xml` in Search Console.",
         ],

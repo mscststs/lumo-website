@@ -1,3 +1,11 @@
 name = "lumo-website"
 compatibility_date = "2025-01-01"
-pages_build_output_dir = "./build/client"
+
+# Static-only Worker: `wrangler deploy` uploads the pre-rendered site as assets
+# and runs no Worker script. `_headers` and `_redirects` keep working from the
+# asset directory, and `404-page` serves the generated 404.html with a real 404
+# status for unknown URLs.
+[assets]
+directory = "./build/client"
+html_handling = "auto-trailing-slash"
+not_found_handling = "404-page"

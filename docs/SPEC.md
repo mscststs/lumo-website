@@ -19,7 +19,7 @@
 
 - 不实现账号、支付、博客 CMS、用户社区或真实下载托管。
 - 不在站内伪造产品截图；所有产品视觉由代码复刻，数据为演示数据。
-- 不引入服务端运行时。站点为**纯静态预渲染**，部署在 Cloudflare Pages。
+- 不引入服务端运行时。站点为**纯静态预渲染**，以 Cloudflare Workers 静态资产托管。
 
 ### 1.3 成功标准
 
@@ -31,7 +31,7 @@
 | 国际化 | 中文/英文全站覆盖，路径级 locale，首次访问按浏览器语言路由，`hreflang` 完整 |
 | 可访问性 | 键盘全可达、可见焦点、对比度 AA、`prefers-reduced-motion` 降级 |
 | SEO | 每路由独立 title/description/OG/canonical，静态 HTML 可被爬虫直接读取 |
-| 工程质量 | `typecheck`、`test`、`build` 全绿；构建产物可直接部署 Pages |
+| 工程质量 | `typecheck`、`test`、`build` 全绿；构建产物可直接作为 Worker 资产上线 |
 
 ---
 
@@ -218,18 +218,18 @@ DocsSidebar、DocsToc、DocBlocks、CodeBlock、Callout、StepList、DataTable�
 | 层 | 选择 | 理由 |
 | --- | --- | --- |
 | 构建 | **Vite 8 + React Router 8 framework mode** | 官方 Vite 集成；路由、meta、预渲染一体 |
-| 渲染 | `ssr: false` + `prerender` 全量静态化 | 纯静态 HTML，Cloudflare Pages 直接托管；SEO 完整 |
+| 渲染 | `ssr: false` + `prerender` 全量静态化 | 纯静态 HTML，Worker 静态资产直接托管；SEO 完整 |
 | UI | React 19 + Tailwind CSS 4 + shadcn 风格源码组件 + Radix | 与两个产品同栈；可控、可移植 |
 | 动效 | `motion` | 与产品一致；布局动画、滚动驱动、手势 |
 | i18n | `i18next` + `react-i18next` | 与产品一致；路径级 locale |
 | 图标 | `lucide-react` | 与产品一致；矢量、可 tree-shake |
 | 代码高亮 | `shiki`（按需动态加载） | 与产品一致；双主题 token |
 | 测试 | `vitest` + `@testing-library/react` + `jsdom` | 与产品一致 |
-| 部署 | **Cloudflare Pages** | 静态产物 + `_headers` / `_redirects`；流水线在 Cloudflare 侧（Git 导入） |
+| 部署 | **Cloudflare Workers 静态资产** | 纯资产 Worker，无需运行时托管代码；`_headers` / `_redirects` 兼容；流水线在 Cloudflare 侧（Git 导入） |
 
 ### 7.2 为什么不是普通 SPA
 
-普通 Vite SPA 首屏只有空 `<div>`，营销站/文档站的 SEO 与首屏体验都吃亏。React Router 8 的 `ssr:false + prerender` 在构建期把每个路由渲染成静态 HTML，运行时仍是 SPA 导航，不需要任何服务端。这是「Vite + React + Cloudflare Pages」的现代最优解。
+普通 Vite SPA 首屏只有空 `<div>`，营销站/文档站的 SEO 与首屏体验都吃亏。React Router 8 的 `ssr:false + prerender` 在构建期把每个路由渲染成静态 HTML，运行时仍是 SPA 导航，不需要任何服务端。这是「Vite + React + Cloudflare Workers 静态资产」的现代最优解。
 
 ### 7.3 目录结构
 
@@ -315,14 +315,14 @@ wrangler.toml
 - `public/robots.txt` + 构建后生成 `sitemap.xml`。
 - 静态 HTML 已含正文，不依赖 JS 执行。
 
-### 7.8 Cloudflare Pages
+### 7.8 Cloudflare Workers（静态资产）
 
-- `wrangler.toml`：`pages_build_output_dir = "./build/client"`。
-- 每个已知路由都有预渲染 HTML；非根路径由 Pages 规范化为尾斜杠。
+- `wrangler.toml`：`[assets] directory = "./build/client"`、`html_handling = "auto-trailing-slash"`、`not_found_handling = "404-page"`；不声明 `main`，不运行任何 Worker 脚本。
+- 每个已知路由都有预渲染 HTML；请求非根路径时由边缘层 307 到尾斜杠形式。
 - 未知 URL 由构建生成的 `404.html` 返回真实 404 状态；React Router 在客户端渲染对应语言的 404。
-- `public/_redirects` 不再做 SPA 重写；`public/_headers` 负责安全头与资产缓存。
-- 流水线：在 Cloudflare Pages 侧从 Git 仓库导入，构建命令 `npm run typecheck && npm test && npm run build`，输出目录 `build/client`；仓库内不放置 CI 工作流。
-- 本地：`npm run preview` 验证 `build/client`。
+- `public/_redirects` 不再做 SPA 重写；`public/_headers` 负责安全头与资产缓存，Workers 静态资产同样读取这两个文件。
+- 流水线：Cloudflare Workers Builds 从 Git 仓库导入，构建命令 `npm run typecheck && npm test && npm run build`，部署命令 `npx wrangler deploy`；仓库内不放置 CI 工作流。
+- 本地：`npm run preview`（`wrangler dev`）验证 `build/client`，转发与 404 行为与生产一致。
 
 ---
 

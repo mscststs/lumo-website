@@ -2,7 +2,7 @@
 
 The brand site for **Lumo** — a product home for the AI browser sidebar and the userscript manager, plus bilingual technical documentation.
 
-Built with **Vite 8 + React Router 8 (framework mode) + React 19 + Tailwind CSS 4 + shadcn-style Radix primitives + Motion + i18next**, pre-rendered to static HTML and deployed on **Cloudflare Pages**.
+Built with **Vite 8 + React Router 8 (framework mode) + React 19 + Tailwind CSS 4 + shadcn-style Radix primitives + Motion + i18next**, pre-rendered to static HTML and served as **Cloudflare Workers static assets**.
 
 ---
 
@@ -32,7 +32,7 @@ npm run dev        # http://localhost:5173
 npm run typecheck  # react-router typegen + tsc --noEmit
 npm test           # Vitest: i18n, docs, theme contrast, render smoke
 npm run build      # pre-renders every route into build/client
-npm run preview    # serves build/client through Wrangler Pages
+npm run preview    # serves build/client through Wrangler
 ```
 
 ### Useful scripts
@@ -41,8 +41,8 @@ npm run preview    # serves build/client through Wrangler Pages
 | --- | --- |
 | `npm run dev` | React Router dev server with HMR. |
 | `npm run build` | Client + server build, pre-render all routes, then generate `sitemap.xml`. |
-| `npm run preview` | Cloudflare Pages-compatible local preview. |
-| `npm run deploy` | `wrangler pages deploy build/client --project-name=lumo-website`. |
+| `npm run preview` | Local preview of the exact Worker output (`wrangler dev`). |
+| `npm run deploy` | `wrangler deploy` — uploads `build/client` as Worker assets. |
 | `npm run typecheck` | Route type generation and strict TypeScript. |
 | `npm test` | Hermetic test suite. |
 
@@ -78,7 +78,7 @@ public/
   robots.txt, site.webmanifest, favicon.svg
 react-router.config.ts     # ssr: false + full prerender
 scripts/build-sitemap.mjs  # sitemap from pre-rendered HTML
-wrangler.toml              # Pages output directory
+wrangler.toml              # Worker + static asset directory
 docs/SPEC.md               # product/technical spec
 docs/DESIGN.md             # design system
 AGENTS.md                  # agent development guide
@@ -90,7 +90,7 @@ AGENTS.md                  # agent development guide
 `react-router.config.ts` sets `ssr: false` and pre-renders every static route plus every documentation slug. The build writes complete HTML per URL into `build/client`; hydration turns it into a normal SPA. There is **no runtime server**.
 
 - Every route exports `meta()` for title, description, Open Graph, Twitter, canonical and hreflang.
-- Cloudflare Pages serves the generated `404.html` (with a 404 status) for unknown URLs; known routes are pre-rendered. Non-root routes are normalized to a trailing slash by Pages, and canonical/sitemap URLs use the same form.
+- Cloudflare Workers serves the generated `404.html` (with a 404 status) for unknown URLs; known routes are pre-rendered. Non-root routes are normalized to a trailing slash at the edge, and canonical/sitemap URLs use the same form.
 - `scripts/build-sitemap.mjs` walks the generated HTML after the build.
 
 ### Internationalization
@@ -124,17 +124,38 @@ See [`docs/DESIGN.md`](docs/DESIGN.md). The short version:
 
 ---
 
-## Cloudflare Pages deployment
+## Cloudflare Workers deployment
 
-The pipeline lives entirely in Cloudflare: create the Pages project from the
-repository and Cloudflare builds and deploys on every push. There is no CI
-workflow in this repository.
+The pipeline lives entirely in Cloudflare Workers Builds: the Worker project is
+connected to this repository, and every push to `main` builds and deploys.
+There is no CI workflow in this repository.
 
-1. Create a Pages project from the repository.
-2. Build command: `npm run typecheck && npm test && npm run build`.
-3. Output directory: `build/client`.
-4. Environment variable: `VITE_SITE_URL=https://your-domain` (used for canonical, OG and sitemap).
-5. Node version: 22 (`.nvmrc`).
+`wrangler.toml` declares a static-assets Worker — no Worker script runs, the
+asset directory is uploaded as-is:
+
+```toml
+name = "lumo-website"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = "./build/client"
+html_handling = "auto-trailing-slash"
+not_found_handling = "404-page"
+```
+
+Build settings in the Cloudflare dashboard:
+
+| Field | Value |
+| --- | --- |
+| Build command | `npm run typecheck && npm test && npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Root directory | `/` |
+| Build variable | `VITE_SITE_URL=https://your-domain` (canonical, OG and sitemap) |
+| Node version | 22 (`.nvmrc`) |
+
+`not_found_handling = "404-page"` makes unknown URLs return the generated
+`404.html` with a real 404 status; `public/_headers` and `public/_redirects` are
+honoured from the asset directory.
 
 ### Local deploy
 
@@ -144,7 +165,8 @@ VITE_SITE_URL=https://your-domain npm run build
 npm run deploy
 ```
 
-`wrangler.toml` already points Pages at `./build/client`.
+`npm run preview` runs `wrangler dev`, so local behaviour (trailing-slash
+redirects, 404 handling, response headers) matches production exactly.
 
 ---
 
