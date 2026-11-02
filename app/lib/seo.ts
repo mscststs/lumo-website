@@ -1,6 +1,6 @@
 import type { MetaDescriptor } from "react-router";
 import { LOCALE_META, switchLocalePath, type Locale } from "./site-manifest";
-import { OG_IMAGE, SITE_URL } from "./site";
+import { ogImageUrl, siteOrigin } from "./site";
 
 export interface PageSeo {
   locale: Locale;
@@ -19,7 +19,7 @@ function withTrailingSlash(path: string): string {
 
 function absolute(path: string): string {
   const normalized = withTrailingSlash(path);
-  return `${SITE_URL}${normalized === "/" ? "" : normalized}`;
+  return `${siteOrigin()}${normalized === "/" ? "" : normalized}`;
 }
 
 /**
@@ -65,7 +65,7 @@ export function pageMeta({
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:url", content: url },
-    { property: "og:image", content: OG_IMAGE },
+    { property: "og:image", content: ogImageUrl() },
     { property: "og:image:width", content: "1200" },
     { property: "og:image:height", content: "630" },
     { property: "og:locale", content: LOCALE_META[locale].ogLocale },
@@ -73,7 +73,7 @@ export function pageMeta({
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
-    { name: "twitter:image", content: OG_IMAGE },
+    { name: "twitter:image", content: ogImageUrl() },
   ];
 }
 

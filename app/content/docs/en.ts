@@ -568,8 +568,8 @@ export const en: DocCollection = {
             text: "Build command `npm run typecheck && npm test && npm run build`, deploy command `npx wrangler deploy`, Node 22.",
           },
           {
-            title: "Set the site URL",
-            text: "Add `VITE_SITE_URL=https://your-domain` so canonical and Open Graph URLs are absolute and correct.",
+            title: "Any domain works",
+            text: "No build variables: the origin of canonical, OG, JSON-LD and sitemap URLs is replaced at the edge with the request domain, so `*.workers.dev`, preview URLs and custom domains all work as-is.",
           },
           {
             title: "Deploy",
@@ -581,7 +581,7 @@ export const en: DocCollection = {
         type: "code",
         lang: "toml",
         title: "wrangler.toml",
-        code: "name = \"lumo-website\"\ncompatibility_date = \"2025-01-01\"\n\n[assets]\ndirectory = \"./build/client\"\nhtml_handling = \"auto-trailing-slash\"\nnot_found_handling = \"404-page\"",
+        code: "name = \"lumo-website\"\nmain = \"./src/worker.ts\"\ncompatibility_date = \"2025-01-01\"\n\n[assets]\ndirectory = \"./build/client\"\nbinding = \"ASSETS\"\nhtml_handling = \"auto-trailing-slash\"\nnot_found_handling = \"404-page\"\nrun_worker_first = true",
       },
       { type: "h2", text: "Headers and redirects" },
       {
@@ -605,7 +605,7 @@ export const en: DocCollection = {
         type: "ol",
         items: [
           "Add the domain under Worker → Settings → Domains & Routes and follow the DNS instructions.",
-          "Set `VITE_SITE_URL` to the final HTTPS origin and redeploy.",
+          "Switching domains needs no reconfiguration: canonical and sitemap URLs follow the request domain.",
           "Submit the generated `sitemap.xml` in Search Console.",
         ],
       },
@@ -661,7 +661,7 @@ export const en: DocCollection = {
       { type: "h2", text: "Can I self-host this website?" },
       {
         type: "p",
-        text: "Yes. It is a static Vite build. Run `npm run build` and serve `build/client` from any static host. Set `VITE_SITE_URL` so canonical and social URLs point at your domain.",
+        text: "Yes. It is a static Vite build. Run `npm run build` and serve `build/client` from any static host. Without the Worker that rewrites origins, set `VITE_SITE_URL` so canonical and social URLs point at your domain.",
       },
       {
         type: "callout",

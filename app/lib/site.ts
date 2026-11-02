@@ -3,13 +3,34 @@
  * change is one edit, not a grep across marketing pages.
  */
 
-const configuredSiteUrl = import.meta.env.VITE_SITE_URL as string | undefined;
+import { resolveSiteOrigin } from "./site-origin";
 
-export const SITE_URL = (
-  configuredSiteUrl && configuredSiteUrl.length > 0
-    ? configuredSiteUrl
-    : "https://lumo-website.example.com"
-).replace(/\/$/, "");
+/**
+ * Absolute origin used at build time and during prerendering. When
+ * `VITE_SITE_URL` is not set this is a placeholder that the Worker swaps for the
+ * request origin; `siteOrigin()` resolves the real value in the browser.
+ */
+export const SITE_URL = resolveSiteOrigin(
+  import.meta.env.VITE_SITE_URL as string | undefined,
+);
+
+/**
+ * The origin absolute URLs should point at right now: the live document origin
+ * in the browser, the build-time origin during prerendering.
+ */
+export function siteOrigin(): string {
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return window.location.origin === "null"
+      ? SITE_URL
+      : window.location.origin;
+  }
+  return SITE_URL;
+}
+
+/** Social preview image for the current origin. */
+export function ogImageUrl(): string {
+  return `${siteOrigin()}/brand/og.png`;
+}
 
 export const SITE_VERSION = "0.2.0";
 
@@ -29,5 +50,3 @@ export const LINKS = {
 } as const;
 
 export const DOCS_EDIT_BASE = `${LINKS.siteRepo}/edit/main`;
-
-export const OG_IMAGE = `${SITE_URL}/brand/og.png`;

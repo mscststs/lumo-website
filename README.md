@@ -70,7 +70,8 @@ app/
     theme/                 # registry, provider, first-paint script
     seo.ts                 # title/description/OG/hreflang/canonical
     site-manifest.ts       # locales, paths, doc slugs
-    site.ts                # links, site URL, version
+    site.ts                # links, canonical origin, version
+    site-origin.ts         # placeholder origin + edge rewrite helpers
   styles/globals.css       # OKLCH tokens, palettes, motion, prose, Shiki
 public/
   brand/                   # logo marks + OG image
@@ -78,7 +79,8 @@ public/
   robots.txt, site.webmanifest, favicon.svg
 react-router.config.ts     # ssr: false + full prerender
 scripts/build-sitemap.mjs  # sitemap from pre-rendered HTML
-wrangler.toml              # Worker + static asset directory
+src/worker.ts              # serves assets, rewrites the origin per request
+wrangler.toml              # Worker entry + static asset directory
 docs/SPEC.md               # product/technical spec
 docs/DESIGN.md             # design system
 AGENTS.md                  # agent development guide
@@ -90,8 +92,20 @@ AGENTS.md                  # agent development guide
 `react-router.config.ts` sets `ssr: false` and pre-renders every static route plus every documentation slug. The build writes complete HTML per URL into `build/client`; hydration turns it into a normal SPA. There is **no runtime server**.
 
 - Every route exports `meta()` for title, description, Open Graph, Twitter, canonical and hreflang.
-- Cloudflare Workers serves the generated `404.html` (with a 404 status) for unknown URLs; known routes are pre-rendered. Non-root routes are normalized to a trailing slash at the edge, and canonical/sitemap URLs use the same form.
+- Workers serves the generated `404.html` (with a 404 status) for unknown URLs; known routes are pre-rendered. Non-root routes are normalized to a trailing slash at the edge, and canonical/sitemap URLs use the same form.
 - `scripts/build-sitemap.mjs` walks the generated HTML after the build.
+
+### Origin-agnostic URLs
+
+Absolute URLs need an origin at build time, but the site has to serve any domain
+(`*.workers.dev`, a custom domain, a preview deployment) with **no build
+variables**. So:
+
+1. The build stamps `https://site.invalid` (`SITE_ORIGIN_PLACEHOLDER`) into canonical, hreflang, Open Graph, JSON-LD, `sitemap.xml` and `robots.txt`.
+2. `src/worker.ts` replaces that placeholder with the origin of the incoming request before the response leaves the edge.
+3. In the browser, `siteOrigin()` returns `window.location.origin`, so client-side navigation produces the same URLs as the served HTML.
+
+Set `VITE_SITE_URL` only to pin a single canonical origin (for example when the site is also served from a plain static host without the Worker).
 
 ### Internationalization
 
@@ -130,28 +144,34 @@ The pipeline lives entirely in Cloudflare Workers Builds: the Worker project is
 connected to this repository, and every push to `main` builds and deploys.
 There is no CI workflow in this repository.
 
-`wrangler.toml` declares a static-assets Worker — no Worker script runs, the
-asset directory is uploaded as-is:
+`wrangler.toml` declares a Worker whose only job is to serve the pre-rendered
+assets and rewrite their absolute URLs to the request origin:
 
 ```toml
 name = "lumo-website"
+main = "./src/worker.ts"
 compatibility_date = "2025-01-01"
 
 [assets]
 directory = "./build/client"
+binding = "ASSETS"
 html_handling = "auto-trailing-slash"
 not_found_handling = "404-page"
+run_worker_first = true
 ```
 
-Build settings in the Cloudflare dashboard:
+Build settings in the Cloudflare dashboard — nothing else to configure:
 
 | Field | Value |
 | --- | --- |
 | Build command | `npm run typecheck && npm test && npm run build` |
 | Deploy command | `npx wrangler deploy` |
 | Root directory | `/` |
-| Build variable | `VITE_SITE_URL=https://your-domain` (canonical, OG and sitemap) |
 | Node version | 22 (`.nvmrc`) |
+
+No build variables are required: the site derives its canonical origin from the
+incoming request, so `*.workers.dev`, preview URLs and custom domains all produce
+correct metadata.
 
 `not_found_handling = "404-page"` makes unknown URLs return the generated
 `404.html` with a real 404 status; `public/_headers` and `public/_redirects` are
@@ -161,12 +181,12 @@ honoured from the asset directory.
 
 ```bash
 npx wrangler login
-VITE_SITE_URL=https://your-domain npm run build
+npm run build
 npm run deploy
 ```
 
-`npm run preview` runs `wrangler dev`, so local behaviour (trailing-slash
-redirects, 404 handling, response headers) matches production exactly.
+`npm run preview` runs `wrangler dev`, so local behaviour (origin rewriting,
+trailing-slash redirects, 404 handling, response headers) matches production.
 
 ---
 

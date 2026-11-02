@@ -225,11 +225,11 @@ DocsSidebar、DocsToc、DocBlocks、CodeBlock、Callout、StepList、DataTable�
 | 图标 | `lucide-react` | 与产品一致；矢量、可 tree-shake |
 | 代码高亮 | `shiki`（按需动态加载） | 与产品一致；双主题 token |
 | 测试 | `vitest` + `@testing-library/react` + `jsdom` | 与产品一致 |
-| 部署 | **Cloudflare Workers 静态资产** | 纯资产 Worker，无需运行时托管代码；`_headers` / `_redirects` 兼容；流水线在 Cloudflare 侧（Git 导入） |
+| 部署 | **Cloudflare Worker + 静态资产** | Edge 只做资产投递与源站改写，不做 SSR；`_headers` / `_redirects` 兼容；任意域名零构建变量；流水线在 Cloudflare 侧（Git 导入） |
 
 ### 7.2 为什么不是普通 SPA
 
-普通 Vite SPA 首屏只有空 `<div>`，营销站/文档站的 SEO 与首屏体验都吃亏。React Router 8 的 `ssr:false + prerender` 在构建期把每个路由渲染成静态 HTML，运行时仍是 SPA 导航，不需要任何服务端。这是「Vite + React + Cloudflare Workers 静态资产」的现代最优解。
+普通 Vite SPA 首屏只有空 `<div>`，营销站/文档站的 SEO 与首屏体验都吃亏。React Router 8 的 `ssr:false + prerender` 在构建期把每个路由渲染成静态 HTML，运行时仍是 SPA 导航，不需要任何服务端；Edge 只负责把占位源换成请求域源。这是「Vite + React + Cloudflare Worker 静态资产」的现代最优解。
 
 ### 7.3 目录结构
 
@@ -277,6 +277,7 @@ public/
   sitemap.xml (构建生成)
 react-router.config.ts
 vite.config.ts
+src/worker.ts              # 资产投递 + 源站改写（无 SSR）
 wrangler.toml
 ```
 
@@ -315,14 +316,16 @@ wrangler.toml
 - `public/robots.txt` + 构建后生成 `sitemap.xml`。
 - 静态 HTML 已含正文，不依赖 JS 执行。
 
-### 7.8 Cloudflare Workers（静态资产）
+### 7.8 Cloudflare Workers（静态资产 + 源站改写）
 
-- `wrangler.toml`：`[assets] directory = "./build/client"`、`html_handling = "auto-trailing-slash"`、`not_found_handling = "404-page"`；不声明 `main`，不运行任何 Worker 脚本。
-- 每个已知路由都有预渲染 HTML；请求非根路径时由边缘层 307 到尾斜杠形式。
+- `wrangler.toml`：`main = "./src/worker.ts"` + `[assets] directory = "./build/client"`、`binding = "ASSETS"`、`html_handling = "auto-trailing-slash"`、`not_found_handling = "404-page"`、`run_worker_first = true`。
+- `src/worker.ts` 不渲染任何东西：取资产后，把构建占位源 `SITE_ORIGIN_PLACEHOLDER`（`https://site.invalid`）整篇替换为请求域源；只处理 `text/html`、`application/xml`、`text/xml`、`text/plain`，其余直接透传。
+- 因此**无需任何构建变量**：`*.workers.dev`、预览域名、自定义域名都会得到正确的 canonical / hreflang / OG / JSON-LD / `sitemap.xml` / `robots.txt`。浏览器内 `siteOrigin()` 返回 `window.location.origin`，客户端导航与静态 HTML 一致。
+- 每个已知路由都有预渲染 HTML；请求非根路径时由资产层 307 到尾斜杠形式。
 - 未知 URL 由构建生成的 `404.html` 返回真实 404 状态；React Router 在客户端渲染对应语言的 404。
-- `public/_redirects` 不再做 SPA 重写；`public/_headers` 负责安全头与资产缓存，Workers 静态资产同样读取这两个文件。
+- `public/_redirects` 不做 SPA 重写；`public/_headers` 负责安全头与资产缓存，二者由资产层直接生效。
 - 流水线：Cloudflare Workers Builds 从 Git 仓库导入，构建命令 `npm run typecheck && npm test && npm run build`，部署命令 `npx wrangler deploy`；仓库内不放置 CI 工作流。
-- 本地：`npm run preview`（`wrangler dev`）验证 `build/client`，转发与 404 行为与生产一致。
+- 本地：`npm run preview`（`wrangler dev`）验证 `build/client`，源站改写、转发与 404 行为与生产一致。
 
 ---
 

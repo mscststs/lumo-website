@@ -3,23 +3,17 @@ import path from "node:path";
 
 const OUT_DIR = path.resolve("build/client");
 
-const configuredSiteUrl = (
-  process.env.VITE_SITE_URL ||
-  process.env.SITE_URL ||
-  ""
-).trim();
-
-if (!configuredSiteUrl) {
-  console.warn(
-    "sitemap: VITE_SITE_URL is not set, so canonical, Open Graph and sitemap URLs " +
-      "fall back to https://lumo-website.example.com. Set it in the Worker build " +
-      "variables to the deployed origin.",
-  );
-}
+// Keep in sync with SITE_ORIGIN_PLACEHOLDER in app/lib/site-origin.ts; the
+// Worker swaps it for the request origin, so no build-time domain is needed.
+const SITE_ORIGIN_PLACEHOLDER = "https://site.invalid";
 
 const SITE_URL = (
-  configuredSiteUrl || "https://lumo-website.example.com"
-).replace(/\/$/, "");
+  process.env.VITE_SITE_URL ||
+  process.env.SITE_URL ||
+  SITE_ORIGIN_PLACEHOLDER
+)
+  .trim()
+  .replace(/\/$/, "");
 
 async function walk(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true });

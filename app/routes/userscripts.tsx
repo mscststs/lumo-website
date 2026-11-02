@@ -40,7 +40,7 @@ import { useLocale } from "@/lib/i18n";
 import { useLocalePath } from "@/lib/i18n/use-path";
 import { translate } from "@/lib/i18n/translate";
 import { absoluteUrl, pageMeta } from "@/lib/seo";
-import { LINKS, SITE_URL } from "@/lib/site";
+import { LINKS, siteOrigin } from "@/lib/site";
 import { getLocale, localePath, type Locale } from "@/lib/site-manifest";
 import { cn } from "@/lib/utils";
 
@@ -184,7 +184,7 @@ export default function UserscriptsPage() {
           description: t("seo.userscripts.description"),
           inLanguage: locale === "zh" ? "zh-CN" : "en",
           offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-          publisher: { "@type": "Organization", name: "Lumo", url: SITE_URL },
+          publisher: { "@type": "Organization", name: "Lumo", url: siteOrigin() },
         }}
       />
 

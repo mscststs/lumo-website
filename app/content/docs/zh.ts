@@ -560,8 +560,8 @@ export const zh: DocCollection = {
             text: "构建命令 `npm run typecheck && npm test && npm run build`，部署命令 `npx wrangler deploy`，Node 22。",
           },
           {
-            title: "设置站点 URL",
-            text: "添加 `VITE_SITE_URL=https://your-domain`，让 canonical 与 Open Graph URL 是绝对且正确的。",
+            title: "任意域名都可用",
+            text: "不需要构建变量：canonical、OG、JSON-LD 与 sitemap 的源会在边缘替换为请求域名，`*.workers.dev`、预览域名与自定义域名都能直接用。",
           },
           {
             title: "部署",
@@ -573,7 +573,7 @@ export const zh: DocCollection = {
         type: "code",
         lang: "toml",
         title: "wrangler.toml",
-        code: "name = \"lumo-website\"\ncompatibility_date = \"2025-01-01\"\n\n[assets]\ndirectory = \"./build/client\"\nhtml_handling = \"auto-trailing-slash\"\nnot_found_handling = \"404-page\"",
+        code: "name = \"lumo-website\"\nmain = \"./src/worker.ts\"\ncompatibility_date = \"2025-01-01\"\n\n[assets]\ndirectory = \"./build/client\"\nbinding = \"ASSETS\"\nhtml_handling = \"auto-trailing-slash\"\nnot_found_handling = \"404-page\"\nrun_worker_first = true",
       },
       { type: "h2", text: "响应头与重定向" },
       {
@@ -597,7 +597,7 @@ export const zh: DocCollection = {
         type: "ol",
         items: [
           "在 Worker → Settings → Domains & Routes 添加自定义域名，按提示配置 DNS。",
-          "把 `VITE_SITE_URL` 设为最终 HTTPS 源，然后重新部署。",
+          "换域名无需重新配置：canonical 与 sitemap 跟随请求域名。",
           "在 Search Console 提交生成的 `sitemap.xml`。",
         ],
       },
@@ -652,7 +652,7 @@ export const zh: DocCollection = {
       { type: "h2", text: "可以自托管本站吗？" },
       {
         type: "p",
-        text: "可以。它是静态 Vite 构建。运行 `npm run build`，把 `build/client` 放到任意静态托管上。设置 `VITE_SITE_URL`，让 canonical 与社交 URL 指向你的域名。",
+        text: "可以。它是静态 Vite 构建。运行 `npm run build`，把 `build/client` 放到任意静态托管上；若没有 Worker 做源站改写，则设置 `VITE_SITE_URL`，让 canonical 与社交 URL 指向你的域名。",
       },
       {
         type: "callout",

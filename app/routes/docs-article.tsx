@@ -19,7 +19,7 @@ import { useLocalePath } from "@/lib/i18n/use-path";
 import { translate } from "@/lib/i18n/translate";
 import { formatDate } from "@/lib/format";
 import { absoluteUrl, pageMeta } from "@/lib/seo";
-import { DOCS_EDIT_BASE, SITE_URL } from "@/lib/site";
+import { DOCS_EDIT_BASE, siteOrigin } from "@/lib/site";
 import {
   docPath,
   getLocale,
@@ -89,8 +89,8 @@ export default function DocsArticlePage() {
           dateModified: article.updated,
           inLanguage: locale === "zh" ? "zh-CN" : "en",
           url: absoluteUrl(docPath(locale, article.slug)),
-          author: { "@type": "Organization", name: "Lumo", url: SITE_URL },
-          publisher: { "@type": "Organization", name: "Lumo", url: SITE_URL },
+          author: { "@type": "Organization", name: "Lumo", url: siteOrigin() },
+          publisher: { "@type": "Organization", name: "Lumo", url: siteOrigin() },
         }}
       />
 

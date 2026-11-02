@@ -31,7 +31,7 @@ import { useLocale } from "@/lib/i18n";
 import { useLocalePath } from "@/lib/i18n/use-path";
 import { translate } from "@/lib/i18n/translate";
 import { pageMeta } from "@/lib/seo";
-import { SITE_URL } from "@/lib/site";
+import { siteOrigin } from "@/lib/site";
 import {
   getLocale,
   localePath,
@@ -251,13 +251,13 @@ export default function HomePage() {
           "@context": "https://schema.org",
           "@type": "WebSite",
           name: "Lumo",
-          url: SITE_URL,
+          url: siteOrigin(),
           inLanguage: locale === "zh" ? "zh-CN" : "en",
           description: t("seo.home.description"),
           publisher: {
             "@type": "Organization",
             name: "Lumo",
-            url: SITE_URL,
+            url: siteOrigin(),
             sameAs: [
               "https://github.com/mscststs/lumo",
               "https://github.com/mscststs/lumo-userscript-manager",

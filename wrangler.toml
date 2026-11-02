@@ -1,11 +1,15 @@
 name = "lumo-website"
+main = "./src/worker.ts"
 compatibility_date = "2025-01-01"
 
-# Static-only Worker: `wrangler deploy` uploads the pre-rendered site as assets
-# and runs no Worker script. `_headers` and `_redirects` keep working from the
-# asset directory, and `404-page` serves the generated 404.html with a real 404
-# status for unknown URLs.
+# Static site plus an origin-rewriting Worker. The Worker serves `build/client`
+# through the ASSETS binding and replaces the build's placeholder origin with the
+# origin of each request, so the site works on any domain without build-time
+# variables. `_headers` / `_redirects` are still honoured, and `404-page` serves
+# the generated 404.html with a real 404 status for unknown URLs.
 [assets]
 directory = "./build/client"
+binding = "ASSETS"
 html_handling = "auto-trailing-slash"
 not_found_handling = "404-page"
+run_worker_first = true
