@@ -225,7 +225,7 @@ DocsSidebar、DocsToc、DocBlocks、CodeBlock、Callout、StepList、DataTable�
 | 图标 | `lucide-react` | 与产品一致；矢量、可 tree-shake |
 | 代码高亮 | `shiki`（按需动态加载） | 与产品一致；双主题 token |
 | 测试 | `vitest` + `@testing-library/react` + `jsdom` | 与产品一致 |
-| 部署 | **Cloudflare Pages** | 静态产物 + `_headers` / `_redirects` + GitHub Actions |
+| 部署 | **Cloudflare Pages** | 静态产物 + `_headers` / `_redirects`；流水线在 Cloudflare 侧（Git 导入） |
 
 ### 7.2 为什么不是普通 SPA
 
@@ -321,7 +321,7 @@ wrangler.toml
 - 每个已知路由都有预渲染 HTML；非根路径由 Pages 规范化为尾斜杠。
 - 未知 URL 由构建生成的 `404.html` 返回真实 404 状态；React Router 在客户端渲染对应语言的 404。
 - `public/_redirects` 不再做 SPA 重写；`public/_headers` 负责安全头与资产缓存。
-- GitHub Actions：Node 22 → `npm ci` → `npm run build` → `wrangler pages deploy build/client`。
+- 流水线：在 Cloudflare Pages 侧从 Git 仓库导入，构建命令 `npm run typecheck && npm test && npm run build`，输出目录 `build/client`；仓库内不放置 CI 工作流。
 - 本地：`npm run preview` 验证 `build/client`。
 
 ---

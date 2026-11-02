@@ -126,30 +126,15 @@ See [`docs/DESIGN.md`](docs/DESIGN.md). The short version:
 
 ## Cloudflare Pages deployment
 
-### Option A — Git integration
+The pipeline lives entirely in Cloudflare: create the Pages project from the
+repository and Cloudflare builds and deploys on every push. There is no CI
+workflow in this repository.
 
 1. Create a Pages project from the repository.
-2. Build command: `npm run build`.
+2. Build command: `npm run typecheck && npm test && npm run build`.
 3. Output directory: `build/client`.
-4. Environment: `VITE_SITE_URL=https://your-domain` (used for canonical, OG and sitemap).
-5. Node version: 22.
-
-### Option B — GitHub Actions
-
-`.github/workflows/deploy.yml` runs typecheck, tests and build, then:
-
-```bash
-wrangler pages deploy build/client --project-name=lumo-website
-```
-
-Add repository secrets:
-
-| Secret | Purpose |
-| --- | --- |
-| `CLOUDFLARE_API_TOKEN` | Pages deploy token |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account id |
-
-Optionally add a repository variable `SITE_URL` (e.g. `https://lumo.app`) so the build emits correct absolute URLs.
+4. Environment variable: `VITE_SITE_URL=https://your-domain` (used for canonical, OG and sitemap).
+5. Node version: 22 (`.nvmrc`).
 
 ### Local deploy
 
