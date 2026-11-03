@@ -40,7 +40,7 @@ export default function DocsLayout() {
         {article ? (
           <aside aria-label={t("docs.toc")} className="hidden xl:block">
             <div className="sticky top-24 max-h-[calc(100dvh-7rem)] overflow-y-auto pl-2 scrollbar-lumo">
-              <DocsToc article={article} />
+              <DocsToc blocks={article.blocks} />
             </div>
           </aside>
         ) : null}

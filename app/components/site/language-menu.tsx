@@ -15,12 +15,24 @@ import { writeLocalePreference } from "@/lib/i18n/detect";
 import {
   LOCALES,
   LOCALE_META,
-  switchLocalePath,
+  switchLocaleHref,
   type Locale,
 } from "@/lib/site-manifest";
 import { cn } from "@/lib/utils";
 
-export function LanguageMenu({ className }: { className?: string }) {
+export function LanguageMenu({
+  className,
+  modal,
+}: {
+  className?: string;
+  /**
+   * `false` keeps the page scrollable and the viewport scrollbar in place
+   * while the menu is open — required for header/footer popovers, where a
+   * scroll lock would shift the fixed header by the scrollbar width. Keep the
+   * Radix default (`true`) when rendered inside a dialog or sheet.
+   */
+  modal?: boolean;
+}) {
   const { t } = useTranslation();
   const locale = useLocale();
   const location = useLocation();
@@ -32,11 +44,14 @@ export function LanguageMenu({ className }: { className?: string }) {
     // Persist before navigating: the boot script enforces this choice on the
     // next root visit, and the provider's own effect would only run later.
     writeLocalePreference(next);
-    navigate(switchLocalePath(location.pathname, next));
+    // Plain `navigate`: the href is already fully localized for the *target*
+    // locale, and the localized primitives would re-prefix it for the current
+    // one. Path, query and hash all survive the switch.
+    navigate(switchLocaleHref(location, next));
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={modal}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"

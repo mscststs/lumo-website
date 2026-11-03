@@ -27,8 +27,8 @@
 | --- | --- |
 | 体验 | 首屏 LCP < 2.0s（本地构建产物、4G 模拟），CLS < 0.02 |
 | 响应式 | 360 / 390 / 768 / 1024 / 1440 五档无横向溢出、无控件挤压 |
-| 主题 | 亮/暗/跟随系统 + 3 套调色板 + 5 个主题色轴，首帧无闪白 |
-| 国际化 | 中文/英文全站覆盖，路径级 locale，首次访问按浏览器语言路由，`hreflang` 完整 |
+| 主题 | 亮/暗/跟随系统三选一（暗色固定 Midnight），首帧无闪白 |
+| 国际化 | 中文/英文全站覆盖，路径级 locale（URL 决定语言，链接不存语言），`/` 入口按偏好路由，`hreflang` 完整 |
 | 可访问性 | 键盘全可达、可见焦点、对比度 AA、`prefers-reduced-motion` 降级 |
 | SEO | 每路由独立 title/description/OG/canonical，静态 HTML 可被爬虫直接读取 |
 | 工程质量 | `typecheck`、`test`、`build` 全绿；构建产物可直接作为 Worker 资产上线 |
@@ -70,26 +70,26 @@ Lumo 不把浏览器变成另一个操作系统，而是把「理解」和「控
 
 | 路径（EN） | 路径（ZH） | 页面 | 说明 |
 | --- | --- | --- | --- |
-| `/` | `/zh` | 首页 | 品牌入口、双产品、设计哲学、技术底座 |
+| `/` | `/zh` | 首页 | 品牌入口、双产品 Tab 舞台 |
 | `/lumo` | `/zh/lumo` | Lumo 产品主页 | Hero 拼接、能力舞台、MCP、模型、隐私、安装 |
 | `/userscripts` | `/zh/userscripts` | Userscripts 产品主页 | Hero 拼接、安装流、编辑器、GM API、权限、外观 |
 | `/docs` | `/zh/docs` | 文档首页 | 搜索、分类、精选文章 |
 | `/docs/:slug` | `/zh/docs/:slug` | 文档正文 | 侧栏、TOC、代码高亮、上一篇/下一篇 |
-| `/changelog` | `/zh/changelog` | 版本动态 | 双产品发布节奏 |
-| `/privacy` | `/zh/privacy` | 隐私说明 | 数据边界与权限说明 |
+| `/lumo/privacy` | `/zh/lumo/privacy` | Lumo 隐私政策 | 直接渲染产品仓库的 PRIVACY.md |
+| `/userscripts/privacy` | `/zh/userscripts/privacy` | Userscripts 隐私政策 | 直接渲染产品仓库的 PRIVACY.md |
 | `*` | `*` | 404 | 品牌化错误页 |
 
 ### 3.2 全局导航
 
-- **Products**：下拉面板，两个产品卡（图标、定位、3 个能力点、进入箭头）。
+- **Products**：下拉面板，两个产品条目（图标 + 名称 + 一句定位）。
 - **Docs**：直接进入文档首页。
-- **Changelog**：版本动态。
 - **右侧**：搜索（⌘K）、主题菜单、语言菜单、GitHub、主 CTA「Get Lumo」。
-- **移动端**：Sheet 抽屉，产品区 + 页面链接 + 主题/语言 + CTA。
+- **移动端**：Sheet 抽屉，产品区 + 文档 / 两个产品隐私 + 主题/语言 + CTA。
+- 版本动态不做独立页面：完整历史在 GitHub Releases，页面不再维护第二份时间线。
 
 ### 3.3 页脚
 
-四列：品牌陈述 + 产品 + 资源 + 法务/社交。底部为版权、构建标记、主题/语言快捷入口。
+四列：品牌陈述 + 产品 + 资源 + 法务/社交。法务列直接指向两个产品的隐私政策（不再有站点级隐私页）。底部为版权、构建标记、主题/语言快捷入口。
 
 ---
 
@@ -110,12 +110,12 @@ Lumo 不把浏览器变成另一个操作系统，而是把「理解」和「控
 | --- | --- |
 | 渐进式隐藏 | 产品下拉默认收起；移动端只保留必要动作；搜索框在导航中表现为快捷键提示而非大输入框 |
 | 交互归一 | 所有外链、CTA、主题菜单、语言菜单的 hover/active/focus 统一；所有 Hero 的圆角、边框、光晕同一套 token |
-| 渐进式披露 | 首页先给双产品摘要，产品页逐层展开能力；文档侧栏分组折叠；权限表按需展开 |
+| 渐进式披露 | 首页用 Tab 一次展开一个产品，产品页逐层展开能力；文档侧栏分组折叠；权限表按需展开 |
 | 物理级动效 | 滚动 reveal 使用同一曲线；面板视差有层级关系；退场快于入场；`prefers-reduced-motion` 全降级 |
 
 ### 4.3 设计令牌（详见 DESIGN.md）
 
-- 颜色：OKLCH；Paper / Graphite / Midnight 三套调色板；azure / violet / emerald / amber / rose 五个主题色轴。
+- 颜色：OKLCH；亮色 Paper、暗色 Midnight 两套外壳；固定 azure 主题色。
 - 字体：Inter Variable（拉丁）+ 系统中文字体栈；JetBrains Mono（代码/技术标识）。
 - 字号：展示级 `clamp()`；正文 16–18px；技术元数据 12–13px。
 - 圆角：控件 10px / 卡片 16px / 舞台 24px / 浮层 20px / 胶囊 full。
@@ -135,15 +135,11 @@ Lumo 不把浏览器变成另一个操作系统，而是把「理解」和「控
 
 ### 5.1 首页 `/`
 
-1. **Announcement**：产品发布胶囊（真实链接）。
-2. **Hero**：品牌主张 + 双 CTA + 关键技术标签 + 中央浏览器/侧边栏/脚本面板组合 mockup + 极光背景 + 滚动视差。
-3. **产品双卡**：Lumo / Userscripts，各含 mini mockup、定位句、3 个能力、进入链接。
-4. **The Lumo way**：四条设计法则卡片，图标 + 一句解释。
-5. **能力舞台**：两组交错 Hero（聊天理解页面 / 脚本管理站点），每组一个渐变舞台 + 产品 mockup + 亮点列表。
-6. **技术底座**：WXT、React 19、Tailwind 4、AI SDK、MCP、IndexedDB、i18next、Cloudflare 的网格。
-7. **能力带**：MCP、不限步数、BYOK、MV3 等定性能力，不展示具体数量。
-8. **文档入口**：代码片段 + 文档分类链接。
-9. **最终 CTA**：大渐变面板，双产品入口。
+1. **Hero**：品牌主张 + 双 CTA + 中央浏览器/侧边栏/脚本面板组合 mockup + 极光背景 + 滚动视差。
+2. **产品线 Tab 舞台**：居中的胶囊式分段控件（Lumo / Lumo Userscripts，Apple 风格滑片指示器 + 弹簧过渡）切换同一块渐变舞台，不设区块标题；每个面板包含产品标识、一句定位、标题、描述、3 条能力与进入产品页的 CTA，右侧是该产品的真实 mockup。两个面板都写入预渲染 HTML，非激活面板以 `data-[state=inactive]:hidden` 隐藏，因此静态文档仍保留完整产品文案。
+3. **最终 CTA**：大渐变面板，双产品入口。
+
+首页不承载技术底座、关键能力带与文档入口：技术栈与协议归产品页与文档，首页只留产品叙事。能力舞台不再与产品双卡并列重复——Tab 舞台本身就是产品介绍。
 
 ### 5.2 Lumo 产品页 `/lumo`
 
@@ -177,13 +173,13 @@ Lumo 不把浏览器变成另一个操作系统，而是把「理解」和「控
 - **搜索**：客户端索引标题、描述、H2/H3；⌘K 打开；支持键盘上下/回车。
 - **文章**：`introduction`、`getting-started`、`architecture`、`mcp`、`agent-loop`、`userscripts-runtime`、`agent-connections`、`design-system`、`i18n`、`deployment`、`agent-protocol`、`faq`。
 
-### 5.5 Changelog `/changelog`
+### 5.5 产品隐私政策 `/lumo/privacy`、`/userscripts/privacy`
 
-双产品时间线，包含版本、日期、3–5 条变更、GitHub 链接；顶部说明「本页只列关键版本，完整记录见 GitHub Releases」。
-
-### 5.6 Privacy `/privacy`
-
-按产品分节：收集什么、不收集什么、权限用途、数据存放位置、第三方 API、删除方式。复用参考项目 PRIVACY.md 的事实，不编造承诺。
+- 每个产品一页，直接展示该产品仓库 `PRIVACY.md` 的中英双语版本，不做站点级汇总页。
+- 正文使用文档的 `DocBlock` 模型与排版（标题、段落、列表、提示块、右栏 TOC、锚点），因此法律文本与技术文档共享一套阅读体验。
+- 内容在 `app/content/privacy/{en,zh}.ts`：`updated` 与上游文件日期一致；测试保证中英结构完全一致、锚点唯一、内链不带语言前缀。
+- 页头提供「在 GitHub 查看原文」，页尾提供返回所属产品与另一产品政策的交叉链接。
+- 旧 `/privacy` 通过 `_redirects` 301 到 `/lumo/privacy`；`/changelog` 301 回首页。
 
 ---
 
@@ -195,7 +191,7 @@ Button、Badge、Card、Separator、Tooltip、DropdownMenu、NavigationMenu、Di
 
 ### 6.2 品牌与布局
 
-BrandMark、ProductMark、SiteHeader、MobileNav、SiteFooter、Container、SectionHeading、Eyebrow、GradientText、AnnouncementPill、ThemeMenu、LanguageMenu、SearchTrigger、CommandPalette、ScrollProgress。
+BrandMark、ProductMark、SiteHeader、MobileNav、SiteFooter、Container、SectionHeading、Eyebrow、GradientText、ThemeMenu、LanguageMenu、SearchTrigger、CommandPalette、ScrollProgress。
 
 ### 6.3 动效
 
@@ -203,7 +199,7 @@ Reveal、Stagger、Parallax、TiltCard、Aurora、GridPattern、NoiseOverlay、M
 
 ### 6.4 Mockup（产品视觉复刻）
 
-BrowserFrame、SidebarChatMock、McpServerCard、ProviderMarquee、PrivacyDiagram、UserscriptsDashboardMock、InstallFlowMock、CodeEditorMock、GmApiGrid、PermissionTable、PaletteShowcase、FeatureStage、MetricBand、DocsPreview。
+BrowserFrame、MockScaler、SidebarChatMock、McpServerCard、ProviderMarquee、PrivacyDiagram、UserscriptsDashboardMock、InstallFlowMock、CodeEditorMock、GmApiGrid、PermissionTable、PaletteShowcase、FeatureStage、MetricBand、DocsPreview。
 
 ### 6.5 文档
 
@@ -246,29 +242,30 @@ app/
     docs-layout.tsx
     docs-index.tsx
     docs-article.tsx
-    changelog.tsx
-    privacy.tsx
+    lumo-privacy.tsx       # 产品隐私政策（每个产品一个 route module）
+    userscripts-privacy.tsx
     not-found.tsx
   components/
     ui/                    # shadcn primitives
     brand/                 # BrandMark / ProductMark
-    site/                  # Header / Footer / CommandPalette / ThemeMenu
+    site/                  # Header / Footer / CommandPalette / ThemeMenu / LocaleLink
     motion/                # Reveal / Parallax / Aurora / ...
     mockups/               # 产品视觉复刻
     docs/                  # DocsSidebar / Toc / Blocks / Search
+    privacy/               # 产品隐私政策页面（复用 DocBlocks + Toc）
     home/ lumo/ userscripts/
   content/
     docs/en.ts             # 英文文档内容
     docs/zh.ts             # 中文文档内容
-    changelog.ts
+    privacy/{en,zh}.ts     # 产品隐私政策（与上游 PRIVACY.md 同步）
   lib/
     i18n/                  # 初始化、locale 解析、资源
     theme/                 # 主题注册表、应用、preload
     seo.ts                 # meta / canonical / hreflang / JSON-LD
-    routes.ts              # locale-aware href 工具
+    site-manifest.ts       # locale 工具、站点路由表、产品隐私路径
     utils.ts
   styles/
-    globals.css            # 令牌、palette、动画、基础层
+    globals.css            # 令牌、主题块、动画、基础层
 public/
   brand/*.svg
   _headers
@@ -284,22 +281,23 @@ wrangler.toml
 ### 7.4 国际化
 
 - 路径级 locale：默认英文无前缀，中文 `/zh`。
-- 首次访问：`<head>` 内联脚本读取已存偏好；无偏好时按 `navigator.languages` 选择。中文浏览器从无前缀路径跳到 `/zh`，英文浏览器留在原地。
-- 显式 `/zh` URL 永远不被重定向；同源深链不切换语言；爬虫（UA/`navigator.webdriver`）不重定向。
-- 渲染出的 locale 会写入偏好，语言菜单在跳转前显式写入；`/` 后续访问因此保持选择。
-- `LocaleProvider` 从 `useLocation()` 推导 locale，同步 `i18n.changeLanguage` 与 `<html lang>`。
-- 所有 UI 文案在 `app/lib/i18n/resources/en.ts` / `zh.ts`；文档正文在 `app/content/docs/*`。
-- 语言切换保持当前路径语义（`/lumo` ↔ `/zh/lumo`，`/docs/mcp` ↔ `/zh/docs/mcp`）。
-- `hreflang`、`og:locale`、`canonical` 由 `seo.ts` 统一生成。
+- **URL 拥有语言**：`/zh/...` 是中文，`/...` 是英文，任何显式路径都不会被改写。只有 `/`（唯一不带语言的路径）在首帧前选一次语言：已存偏好 → 来源页面语言 → `navigator.languages`。因此在新标签页打开英文链接不会因为偏好是中文而跳到 `/zh`。
+- 爬虫（UA/`navigator.webdriver`）永不重定向；内联脚本与 `resolveLocaleRedirect` 由同一组测试用例约束。
+- 渲染出的 locale 会写入偏好，语言菜单在跳转前显式写入。
+- `LocaleProvider` 从 `useLocation()` 推导 locale（无 `locale` prop），同步 `i18n.changeLanguage` 与 `<html lang>`；因此门户（下拉、Sheet）里的链接也不会错语言。
+- **链接只写一次、不带语言**：`/lumo`、`/docs/mcp`。`LocaleLink` / `LocaleNavLink` / `useLocaleNavigate`（`components/site/locale-link.tsx`）按当前 URL 补前缀；`localePath` 幂等，已带前缀的显式目标保持原样（语言菜单、跨语言链接）。
+- 文档正文里的内链同样不带语言前缀；测试会扫描内容与关键组件，发现 `"/zh/` 字面量即失败。
+- 语言切换保持当前文档语义并保留 query 与 hash（`switchLocaleHref`）。
+- `hreflang`、`og:locale`、`canonical` 由 `seo.ts` 统一生成；`hreflang` 列出全部 locale 并附 `x-default`。
 - 测试保证两套 key 完全一致。
 
 ### 7.5 主题
 
-- 三轴：`mode`（light/dark/system）、`palette`（paper/graphite/midnight）、`accent`（5 色）。
-- DOM：`<html class="dark" data-palette="midnight" data-accent="violet">`。
+- 单轴：`mode`（light/dark/system）；亮色固定 Paper，暗色固定 Midnight，主题色固定 azure。
+- DOM：`<html class="dark">`。
 - 首帧：root `<head>` 内联 classic script 同步读 `localStorage` 镜像并写 DOM，避免闪白。
-- 主题菜单：模式 + 调色板 + 主题色，使用同一套预览芯片。
-- 无 JS 时：`@media (prefers-color-scheme: dark)` 兜底。
+- 主题菜单：只有模式切换。
+- 无 JS 时：保持预渲染的浅色外壳。
 
 ### 7.6 动效
 
@@ -318,11 +316,12 @@ wrangler.toml
 
 ### 7.8 Cloudflare Workers（静态资产 + 源站改写）
 
-- `wrangler.toml`：`main = "./src/worker.ts"` + `[assets] directory = "./build/client"`、`binding = "ASSETS"`、`html_handling = "auto-trailing-slash"`、`not_found_handling = "404-page"`、`run_worker_first = true`。
+- `wrangler.toml`：`main = "./src/worker.ts"` + `[assets] directory = "./build/client"`、`binding = "ASSETS"`、`html_handling = "drop-trailing-slash"`、`not_found_handling = "404-page"`、`run_worker_first = true`。
+- **尾斜杠唯一形态**：`/docs/mcp` 由 `docs/mcp/index.html` 直接响应，`/docs/mcp/` 307 到无斜杠形式；canonical、sitemap、站内链接三者一致，硬加载不再多一跳。
 - `src/worker.ts` 不渲染任何东西：取资产后，把构建占位源 `SITE_ORIGIN_PLACEHOLDER`（`https://site.invalid`）整篇替换为请求域源；只处理 `text/html`、`application/xml`、`text/xml`、`text/plain`，其余直接透传。
 - 因此**无需任何构建变量**：`*.workers.dev`、预览域名、自定义域名都会得到正确的 canonical / hreflang / OG / JSON-LD / `sitemap.xml` / `robots.txt`。浏览器内 `siteOrigin()` 返回 `window.location.origin`，客户端导航与静态 HTML 一致。
-- 每个已知路由都有预渲染 HTML；请求非根路径时由资产层 307 到尾斜杠形式。
-- 未知 URL 由构建生成的 `404.html` 返回真实 404 状态；React Router 在客户端渲染对应语言的 404。
+- 每个已知路由都有预渲染 HTML，无需任何运行时重写。
+- 未知 URL 由构建生成的 `404.html` 返回真实 404 状态；`/zh/*` 的未命中由 Worker 换成预渲染的 `/zh/404`，因此中文站点不会返回英文 404 文档。
 - `public/_redirects` 不做 SPA 重写；`public/_headers` 负责安全头与资产缓存，二者由资产层直接生效。
 - 流水线：Cloudflare Workers Builds 从 Git 仓库导入，构建命令 `npm run typecheck && npm test && npm run build`，部署命令 `npx wrangler deploy`；仓库内不放置 CI 工作流。
 - 本地：`npm run preview`（`wrangler dev`）验证 `build/client`，源站改写、转发与 404 行为与生产一致。
@@ -362,7 +361,7 @@ wrangler.toml
 ### 9.2 手工验收
 
 - 360 / 390 / 768 / 1024 / 1440 截图检查。
-- 亮/暗/午夜 + 5 主题色切换，首帧无闪白。
+- 亮/暗/跟随系统切换，暗色为 Midnight，首帧无闪白。
 - 中英文切换，路径保持。
 - 键盘 Tab 遍历 Header → Hero → 内容 → Footer；⌘K 搜索；Esc 关闭。
 - `prefers-reduced-motion` 下无位移动画。
@@ -380,5 +379,5 @@ wrangler.toml
 6. Lumo 产品页。
 7. Userscripts 产品页。
 8. 文档系统与 12 篇文章（双语）。
-9. Changelog、Privacy、404、SEO 资源。
+9. 产品隐私政策、404、SEO 资源。
 10. 测试、构建、Cloudflare 部署文件、截图验收。

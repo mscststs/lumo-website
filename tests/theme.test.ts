@@ -2,15 +2,16 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
-  ACCENTS,
-  ACCENT_IDS,
   DEFAULT_THEME,
-  PALETTES,
+  THEME_BACKGROUND,
+  isDarkResolved,
   normalizeThemePreference,
-  resolvePalette,
 } from "@/lib/theme/registry";
 
 const CSS = readFileSync(resolve(process.cwd(), "app/styles/globals.css"), "utf8");
+
+/** Fixed azure accent axis declared in `globals.css`. */
+const ACCENT = { lightness: 0.552, chroma: 0.17, hue: 258 };
 
 function oklchToLinearRgb(l: number, c: number, h: number): [number, number, number] {
   const hRad = (h * Math.PI) / 180;
@@ -45,50 +46,48 @@ function contrast(a: [number, number, number], b: [number, number, number]): num
 }
 
 describe("theme registry", () => {
-  it("keeps every palette background identical to the stylesheet", () => {
-    for (const palette of Object.values(PALETTES)) {
-      expect(CSS).toContain(`--color-background: ${palette.background};`);
-    }
+  it("keeps both shell backgrounds identical to the stylesheet", () => {
+    expect(CSS).toContain(`--color-background: ${THEME_BACKGROUND.light};`);
+    expect(CSS).toContain(`--color-background: ${THEME_BACKGROUND.dark};`);
   });
 
-  it("declares every accent axis in the stylesheet", () => {
-    for (const id of ACCENT_IDS) {
-      expect(CSS).toContain(`[data-accent="${id}"]`);
-      expect(ACCENTS[id].hue).toBeGreaterThan(0);
-      expect(ACCENTS[id].chroma).toBeGreaterThan(0);
-    }
+  it("declares the fixed accent axis in the stylesheet", () => {
+    expect(CSS).toContain(`--accent-h: ${ACCENT.hue};`);
+    expect(CSS).toContain(`--accent-c: ${ACCENT.chroma};`);
+    expect(CSS).toContain(`--accent-l: ${ACCENT.lightness};`);
+    expect(CSS).not.toContain("[data-accent=");
   });
 
-  it("resolves light and dark palettes", () => {
-    expect(resolvePalette("light", true, "midnight")).toBe("paper");
-    expect(resolvePalette("dark", false, "midnight")).toBe("midnight");
-    expect(resolvePalette("system", true, "graphite")).toBe("graphite");
-    expect(resolvePalette("system", false, "graphite")).toBe("paper");
+  it("resolves dark mode for explicit and system preferences", () => {
+    expect(isDarkResolved("light", true)).toBe(false);
+    expect(isDarkResolved("dark", false)).toBe(true);
+    expect(isDarkResolved("system", true)).toBe(true);
+    expect(isDarkResolved("system", false)).toBe(false);
   });
 
   it("normalises unknown preferences to the default", () => {
     expect(normalizeThemePreference(null)).toEqual(DEFAULT_THEME);
+    expect(normalizeThemePreference({ mode: "neon" })).toEqual(DEFAULT_THEME);
+    expect(normalizeThemePreference({ mode: "dark" })).toEqual({ mode: "dark" });
+  });
+
+  it("drops the retired palette and accent keys", () => {
     expect(
-      normalizeThemePreference({ mode: "neon", palette: "pink", accent: "gold" }),
-    ).toEqual(DEFAULT_THEME);
-    expect(
-      normalizeThemePreference({ mode: "dark", palette: "midnight", accent: "rose" }),
-    ).toEqual({ mode: "dark", palette: "midnight", accent: "rose" });
+      normalizeThemePreference({ mode: "dark", palette: "graphite", accent: "rose" }),
+    ).toEqual({ mode: "dark" });
   });
 
   it("keeps solid accent buttons above AA contrast", () => {
-    for (const accent of Object.values(ACCENTS)) {
-      const light = contrast(
-        [accent.lightness, accent.chroma, accent.hue],
-        [0.995, 0, 0],
-      );
-      expect(light, `light ${accent.id}`).toBeGreaterThanOrEqual(4.5);
+    const light = contrast(
+      [ACCENT.lightness, ACCENT.chroma, ACCENT.hue],
+      [0.995, 0, 0],
+    );
+    expect(light).toBeGreaterThanOrEqual(4.5);
 
-      const dark = contrast(
-        [0.78, accent.chroma * 0.78, accent.hue],
-        [0.185, 0.015, accent.hue],
-      );
-      expect(dark, `dark ${accent.id}`).toBeGreaterThanOrEqual(4.5);
-    }
+    const dark = contrast(
+      [0.78, ACCENT.chroma * 0.78, ACCENT.hue],
+      [0.185, 0.015, ACCENT.hue],
+    );
+    expect(dark).toBeGreaterThanOrEqual(4.5);
   });
 });

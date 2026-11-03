@@ -4,7 +4,6 @@ export const en = {
     tagline: "A quieter, more capable web.",
     products: "Products",
     docs: "Docs",
-    changelog: "Changelog",
     privacy: "Privacy",
     github: "GitHub",
     search: "Search",
@@ -43,21 +42,12 @@ export const en = {
   },
   nav: {
     productsLabel: "Products",
-    productsTitle: "Two tools, one philosophy",
-    productsDescription:
-      "Understand the page with an AI agent. Control the page with a userscript manager.",
-    docsDescription: "Architecture, APIs, design tokens and deployment.",
-    changelogDescription: "What shipped, and when.",
     installLumo: "Install Lumo",
-    getUserscripts: "Get Userscripts",
+    installUserscripts: "Install Userscripts",
     productLumoName: "Lumo",
     productLumoTagline: "AI browser sidebar",
-    productLumoDescription:
-      "An agent that reads the page, calls browser tools and completes the task with you.",
     productUserscriptsName: "Lumo Userscripts",
     productUserscriptsTagline: "Userscript manager",
-    productUserscriptsDescription:
-      "Install, edit and control userscripts with native MV3 registration and real GM APIs.",
     searchAria: "Open search",
     themeAria: "Change appearance",
     languageAria: "Change language",
@@ -74,31 +64,18 @@ export const en = {
     releases: "Releases",
     github: "GitHub",
     privacy: "Privacy",
-    changelog: "Changelog",
+    lumoPrivacy: "Lumo privacy",
+    userscriptsPrivacy: "Userscripts privacy",
     license: "License",
     builtWith: "Built with Vite, React and Tailwind. Served from Cloudflare Workers.",
     siteVersion: "Site {{version}}",
   },
   theme: {
     title: "Appearance",
-    description: "Mode, dark palette and accent.",
     mode: "Mode",
-    palette: "Dark palette",
-    accent: "Accent",
     light: "Light",
     dark: "Dark",
     system: "System",
-    paper: "Paper",
-    graphite: "Graphite",
-    midnight: "Midnight",
-    azure: "Azure",
-    violet: "Violet",
-    emerald: "Emerald",
-    amber: "Amber",
-    rose: "Rose",
-    paperDescription: "Warm neutral white",
-    graphiteDescription: "Near-black neutral",
-    midnightDescription: "Cool blue dark",
   },
   language: {
     title: "Language",
@@ -113,6 +90,8 @@ export const en = {
     changeTheme: "Change appearance",
     changeLanguage: "Change language",
     github: "Open the Lumo GitHub organization",
+    lumoGithub: "Open Lumo on GitHub",
+    userscriptsGithub: "Open Lumo Userscripts on GitHub",
     external: "Opens in a new tab",
     skip: "Skip to content",
     primaryNav: "Primary",
@@ -121,38 +100,27 @@ export const en = {
     toc: "Table of contents",
   },
   home: {
-    announcement: {
-      label: "Agent loop, DevTools, MCP",
-      description: "Browser and DevTools tools, your own MCP servers, your own key.",
-      cta: "See what shipped",
-    },
     hero: {
-      eyebrow: "Two tools. One browser.",
       title: "A calmer, more capable web.",
       titleLead: "A calmer,",
       titleAccent: "more capable",
       titleTail: "web.",
-      description:
-        "A browser agent that acts on the page, and a userscript manager it can operate.",
-      primary: "Explore Lumo",
-      secondary: "Meet Userscripts",
-      tertiary: "Read the docs",
-      chips: ["Agent loop", "Local-first", "Chrome MV3", "Open source"],
       mock: {
         tab: "Product notes — Lumo",
-        url: "lumo.app/docs",
-        greeting: "Good afternoon",
+        url: "lumo.wsd.pub/docs",
         prompt: "Summarize this page and pull out the three decisions.",
         answer:
           "The page defines a local-first browser agent. Three decisions stand out:",
         decisionOne: "Tools run through MCP, not hard-wired commands.",
         decisionTwo: "Conversations stay on the device.",
         decisionThree: "Every provider is bring-your-own-key.",
-        tool: "page_read",
-        toolDone: "Read 1,284 words",
-        context: "Context",
-        model: "Claude · Sonnet",
-        input: "Ask about this page…",
+        pageContextPreview:
+          "tabId: 412977 title: The local-first browser agent url: lumo.wsd.pub/docs",
+        pastedPreview:
+          "A sidebar agent with a typed tool surface. It reads the page, calls real browser tools, and keeps every decision on the device.",
+        toolOneSummary: "tabId: 412977",
+        toolTwoSummary: "action: click, x: 412, y: 686",
+        toolThreeSummary: "scope: fullpage",
         scripts: "Userscripts",
         scriptOne: "GitHub focus mode",
         scriptTwo: "Reader cleanup",
@@ -172,64 +140,19 @@ export const en = {
       },
     },
     products: {
-      eyebrow: "The lineup",
-      title: "Two precision tools for the browser you actually use.",
-      description: "Two products. One philosophy: local-first and calm.",
       lumo: {
         name: "Lumo",
         tagline: "AI browser sidebar",
-        description:
-          "A full agent loop with MCP browser tools, CDP DevTools and your own model.",
-        bullets: [
-          "Multi-step tool calling",
-          "DevTools, remote MCP and extension providers",
-          "Bring your own model",
-        ],
         cta: "Explore Lumo",
       },
       userscripts: {
         name: "Lumo Userscripts",
         tagline: "Userscript manager + agent endpoint",
-        description:
-          "A native MV3 userscript manager with an MCP endpoint.",
-        bullets: [
-          "Agent endpoint with write gates and audit",
-          "Native chrome.userScripts and GM APIs",
-          "CodeMirror 6, backups and diagnostics",
-        ],
         cta: "Explore Userscripts",
       },
     },
-    philosophy: {
-      eyebrow: "The Lumo way",
-      title: "Craft, not chrome.",
-      description: "Four rules. They are the review checklist.",
-      items: [
-        {
-          title: "Invisible assistance",
-          description:
-            "A good feature needs no explanatory sentence. Form and state should say what to do next.",
-        },
-        {
-          title: "Coherent familiarity",
-          description:
-            "The same action feels the same everywhere. One dropdown, one dialog, one focus ring.",
-        },
-        {
-          title: "Progressive disclosure",
-          description:
-            "Start with the decision. Fold the internals until someone asks for them.",
-        },
-        {
-          title: "Cinematic momentum",
-          description:
-            "Motion explains cause and effect. Elements push their neighbours; nothing teleports.",
-        },
-      ],
-    },
     stages: {
       lumo: {
-        eyebrow: "Lumo",
         title: "Ask. Act. Verify.",
         description:
           "Lumo reads the page, then keeps calling tools until the job is done.",
@@ -238,10 +161,8 @@ export const en = {
           "DevTools, remote MCP and extension tools",
           "Stop, retry and context compaction",
         ],
-        cta: "See the agent loop",
       },
       userscripts: {
-        eyebrow: "Userscripts",
         title: "Scripts you can ask for.",
         description:
           "Describe the change, approve the write, keep the audit.",
@@ -250,46 +171,7 @@ export const en = {
           "Read-only until you allow writes",
           "Native chrome.userScripts",
         ],
-        cta: "See the agent endpoint",
       },
-    },
-    stack: {
-      eyebrow: "Technical foundation",
-      title: "Built on primitives that last.",
-      description: "The products and this site share one stack.",
-      items: [
-        { name: "WXT + MV3", detail: "Extension runtime" },
-        { name: "React 19", detail: "Interface" },
-        { name: "Tailwind 4", detail: "Design tokens" },
-        { name: "Vercel AI SDK", detail: "Agent loop" },
-        { name: "MCP", detail: "Browser + agent tools" },
-        { name: "IndexedDB", detail: "Local storage" },
-        { name: "i18next", detail: "Bilingual UI" },
-        { name: "Cloudflare Workers", detail: "Static delivery" },
-      ],
-    },
-    metrics: {
-      eyebrow: "What matters",
-      title: "Small surface. Deep capability.",
-      items: [
-        { value: "MCP", label: "browser + agent tools" },
-        { value: "∞", label: "steps per turn" },
-        { value: "BYOK", label: "your own provider" },
-        { value: "MV3", label: "native platform APIs" },
-      ],
-    },
-    docs: {
-      codeNote: "Static HTML, per-route metadata, zero runtime server.",
-      eyebrow: "Documentation",
-      title: "Read the system, not just the marketing.",
-      description: "Agent loop, MCP, protocol, runtime and deployment.",
-      primary: "Open the docs",
-      secondary: "Start with the architecture",
-      links: [
-        { title: "Agent loop", detail: "Steps, tool calls, stopping and compaction." },
-        { title: "Connections", detail: "Connect from Lumo or authorize from Userscripts." },
-        { title: "Protocol", detail: "L0 probe, L1 MCP and the security invariants." },
-      ],
     },
     cta: {
       title: "Start with the browser you already use.",
@@ -308,12 +190,12 @@ export const en = {
     completed: "Completed",
     running: "Running",
     interrupted: "Interrupted",
-    thought: "Thought for 4s",
+    reasoning: "Reasoning",
+    input: "Input",
     output: "Output",
-    placeholder: "Ask about this page…",
-    pageContext: "Page context",
-    pageContextDetail: "Pricing — Northwind",
-    pasted: "Pasted text · 1,284 words",
+    placeholder: "Type a message...",
+    attachmentPage: "Page",
+    attachmentPasted: "Pasted",
     thinking: "Working through the tool result…",
     settingsTitle: "Settings",
     groupCore: "Core",
@@ -388,22 +270,20 @@ export const en = {
     productName: "Lumo",
     hero: {
       eyebrow: "Lumo for Chrome",
-      title: "An agent that acts inside the page.",
-      description:
-        "A sidebar agent that plans, calls browser and DevTools tools, checks the result, and keeps going until the task is done.",
-      primary: "Install from Chrome Web Store",
+      // `\n` is an authored line break, not a paragraph break.
+      title: "An agent that\nacts inside\nthe page.",
+      summary:
+        "Reads the page, calls tools and takes screenshots — every step visible, always interruptible.",
+      primary: "Add to Chrome",
       secondary: "Read the agent docs",
-      chips: ["Agent loop", "DevTools via CDP", "MCP", "Your own key"],
       mock: {
         model: "Claude Sonnet 4.5",
         user: "Open the pricing page, find the plan with SSO, and screenshot the comparison table.",
         assistant:
           "Team is the only plan with SSO. I opened the comparison table and captured it.",
-        toolOneDetail: "1,284 words · 3 sections",
-        toolOneOutput:
-          "{ \"tiers\": [\"Starter\", \"Pro\", \"Team\"], \"sso\": [\"Team\"] }",
-        toolTwoDetail: "click (412, 686)",
-        toolThreeDetail: "full page · 1440×3120",
+        toolOneDetail: "tabId: 313, mode: article",
+        toolTwoDetail: "action: click, x: 412, y: 686",
+        toolThreeDetail: "scope: fullpage",
       },
     },
     anchors: {
@@ -459,11 +339,12 @@ export const en = {
       },
       mock: {
         user: "Compare the three pricing tiers, then screenshot the table.",
-        stepOneSummary: "accessibility tree · 42 refs",
+        stepOneSummary: "interactiveOnly: true",
+        stepOneInput: "{ \"interactiveOnly\": true }",
         stepOneOutput:
           "{ \"refs\": 42, \"table\": \"pricing-comparison\", \"rows\": 9 }",
-        stepTwoSummary: "2 tabs · pricing, docs",
-        stepThreeSummary: "click (412, 686)",
+        stepTwoSummary: "action: list",
+        stepThreeSummary: "action: click, x: 412, y: 686",
       },
     },
     tools: {
@@ -562,37 +443,48 @@ export const en = {
       one: "Single",
       two: "Dual",
       three: "Triple",
-      hint: "independent panes",
-      requirement: "Split view unlocks as the side panel widens.",
-      dividers: "draggable dividers",
-      paneHint: "Each pane keeps its own history and model.",
       panes: [
         {
           model: "Claude Sonnet 4.5",
+          context: "Page context",
+          contextDetail: "Pricing — Northwind",
           prompt: "Summarize this pricing page.",
-          answer: "Three tiers; SSO is only on Team.",
-          tool: "page_read",
-          result: "1,284 words",
-          tool2: "page_screenshot",
-          result2: "table captured",
+          answer: "Three tiers, and SSO is only on Team.",
+          tools: [
+            { name: "page_read", summary: "1,284 words" },
+            { name: "page_screenshot", summary: "table captured" },
+          ],
+          snapshot: {
+            plan: "Plan",
+            sso: "SSO",
+            rows: [
+              { name: "Starter", sso: false },
+              { name: "Team", sso: true },
+              { name: "Enterprise", sso: true },
+            ],
+          },
         },
         {
           model: "GPT-4.1",
+          context: "Page context",
+          contextDetail: "Docs — SAML guide",
           prompt: "Find the docs page for SSO.",
           answer: "The SAML guide is under Security.",
-          tool: "browser_tabs",
-          result: "opened",
-          tool2: "page_read",
-          result2: "3 sections",
+          tools: [
+            { name: "browser_tabs", summary: "opened" },
+            { name: "page_read", summary: "3 sections" },
+          ],
         },
         {
           model: "Claude Opus 4.1",
+          context: "Page context",
+          contextDetail: "Notes — Northwind Team",
           prompt: "Draft the team note.",
-          answer: "Short note with the SSO row attached.",
-          tool: "file_write",
-          result: "saved",
-          tool2: "file_read",
-          result2: "verified",
+          answer: null,
+          tools: [
+            { name: "file_write", summary: "saved" },
+            { name: "file_read", summary: "verified" },
+          ],
         },
       ],
     },
@@ -662,12 +554,11 @@ export const en = {
     productName: "Lumo Userscripts",
     hero: {
       eyebrow: "Lumo Userscripts",
-      title: "Scripts you can ask for.",
-      description:
-        "A native MV3 userscript manager with a standard MCP endpoint. Lumo can create, edit and enable scripts through it — with your approval.",
+      title: "Scripts you\ncan ask for.",
+      summary:
+        "Describe the change you want. The agent writes the script, installs it, and it runs on the next reload.",
       primary: "Get from GitHub",
       secondary: "Read the agent docs",
-      chips: ["MCP endpoint", "chrome.userScripts", "GM API", "Local-first"],
       mock: {
         scripts: [
           {
@@ -699,6 +590,24 @@ export const en = {
             meta: "v0.1.0 · lumo · @match",
             badge: "Created by agent",
             enabled: true,
+          },
+          {
+            name: "YouTube Shorts off",
+            meta: "v1.2.0 · northwind · @match",
+            badge: "",
+            enabled: true,
+          },
+          {
+            name: "HN thread collapse",
+            meta: "v0.6.4 · personal · @match",
+            badge: "",
+            enabled: true,
+          },
+          {
+            name: "Changelog diff replay",
+            meta: "v1.0.0 · lumo · @match",
+            badge: "Pending review",
+            enabled: false,
           },
         ],
       },
@@ -947,7 +856,7 @@ export const en = {
       platform: "The agent loop, MCP and the shared architecture.",
       products: "Lumo, Lumo Userscripts and the agent connection between them.",
       engineering: "The extension-provider protocol, i18n, deployment and maintenance.",
-      design: "Tokens, palettes, motion and accessibility.",
+      design: "Tokens, light and dark shells, motion and accessibility.",
     },
     sidebar: "Documentation",
     toc: "On this page",
@@ -961,7 +870,6 @@ export const en = {
     staticPreRendered: "static pre-rendered",
     minRead: "{{minutes}} min read",
     updated: "Updated {{date}}",
-    editPage: "Edit this page",
     copyCode: "Copy code",
     copiedCode: "Copied",
     previous: "Previous",
@@ -974,50 +882,14 @@ export const en = {
     noToc: "This page has no sections.",
     related: "Related",
   },
-  changelog: {
-    all: "All",
-    title: "Changelog",
-    description:
-      "Key releases from Lumo and Lumo Userscripts. Full histories and downloads live on GitHub.",
-    subtitle:
-      "A curated record of what changed and why. The complete commit history is always on GitHub.",
-    viewReleases: "View GitHub releases",
-    released: "Released",
-    highlights: "Highlights",
-    products: {
-      lumo: "Lumo",
-      userscripts: "Userscripts",
-      site: "Website",
-    },
-    backHome: "Back home",
-  },
   privacy: {
-    title: "Privacy",
-    description:
-      "What Lumo stores, what it sends, and what it never touches. No account, no relay server.",
-    lastUpdated: "Last updated {{date}}",
-    summary:
-      "Lumo is local-first. Both products store their data in your browser. Model requests go directly from your browser to the provider you configure, using the key you provide.",
-    sections: {
-      collect: "What we collect",
-      notCollect: "What we do not collect",
-      storage: "Where data lives",
-      permissions: "Permissions",
-      providers: "Third-party providers",
-      delete: "Deleting your data",
-    },
-    collectBody:
-      "Settings, conversations, generated files and script metadata are stored locally in extension storage. The website itself is static and does not set analytics cookies.",
-    notCollectBody:
-      "No account, no email, no advertising identifiers, no analytics profile, no relay of prompts or page content to Lumo servers.",
-    storageBody:
-      "Small settings live in chrome.storage.local. Conversations, files and script bodies live in IndexedDB. The website stores only your theme and language preferences in localStorage.",
-    permissionsBody:
-      "Each permission is requested for a named capability and listed in the documentation. Optional capabilities are requested only when you enable the feature that needs them.",
-    providersBody:
-      "When you send a message, the request goes to the model provider you configured. Their terms and retention policy apply. You can use a local model to keep everything on-device.",
-    deleteBody:
-      "Clear a conversation, delete a script, empty the recycle bin, or remove the extension. Removing the extension deletes its storage. The website can be reset by clearing site data.",
+    eyebrow: "Privacy",
+    breadcrumb: "Privacy",
+    toc: "Contents",
+    updated: "Last updated {{date}}",
+    source: "View the source on GitHub",
+    backToProduct: "Back to product",
+    otherProduct: "Also read",
   },
   notFound: {
     code: "404",
@@ -1051,13 +923,15 @@ export const en = {
       description:
         "Agent loop, MCP, extension-provider protocol, userscript runtime, design tokens, i18n and Cloudflare deployment.",
     },
-    changelog: {
-      title: "Changelog — Lumo",
-      description: "Key releases from Lumo and Lumo Userscripts.",
-    },
     privacy: {
-      title: "Privacy — Lumo",
-      description: "What Lumo stores locally, what it sends to providers, and what it never collects.",
+      lumo: {
+        description:
+          "What Lumo stores locally, what it sends to your model provider, and what it never collects.",
+      },
+      userscripts: {
+        description:
+          "What Lumo Userscripts stores locally, how scripts run, and what it never collects.",
+      },
     },
     notFound: {
       title: "Page not found — Lumo",

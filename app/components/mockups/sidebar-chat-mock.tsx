@@ -11,9 +11,9 @@ import {
   Plus,
   Send,
   Settings,
-  Sparkles,
   Wrench,
 } from "lucide-react";
+import { ContextRing } from "@/components/mockups/context-ring";
 import { cn } from "@/lib/utils";
 
 /**
@@ -22,26 +22,13 @@ import { cn } from "@/lib/utils";
  * The proportions come straight from the product: a 32px header with a borderless
  * model select on the left and three 28px ghost icon buttons on the right, a
  * full-width assistant column (no bubble), a `rounded-2xl` user bubble at 85%
- * max width, collapsible tool cards at 11px mono, and a `rounded-xl` composer
- * with a 2px border that turns accent-coloured on focus.
+ * max width preceded by collapsible attachment cards, tool calls as one-line
+ * collapsible rows (11px mono, chevron + wrench + name + `key: value` input
+ * summary + status), and a `rounded-xl` composer with a 2px border.
  *
  * Everything here is decorative (`aria-hidden`) and reads from the same
  * semantic tokens as the site, so re-theming the site re-themes the mockup.
  */
-
-function ContextRing({ value = 35 }: { value?: number }) {
-  return (
-    <span
-      aria-hidden="true"
-      className="relative inline-flex h-4 w-4 items-center justify-center rounded-full"
-      style={{
-        background: `conic-gradient(var(--color-primary) 0 ${value}%, var(--color-muted) ${value}% 100%)`,
-      }}
-    >
-      <span className="h-2.5 w-2.5 rounded-full bg-card" />
-    </span>
-  );
-}
 
 function HeaderIcon({ children }: { children: React.ReactNode }) {
   return (
@@ -54,11 +41,13 @@ function HeaderIcon({ children }: { children: React.ReactNode }) {
 function ToolCard({
   name,
   summary,
+  input,
   output,
   state = "done",
 }: {
   name: string;
   summary: string;
+  input?: string;
   output?: string;
   state?: "done" | "running" | "interrupted";
 }) {
@@ -77,6 +66,7 @@ function ToolCard({
     },
   }[state];
   const Icon = meta.icon;
+  const expanded = Boolean(input || output);
 
   return (
     <div
@@ -86,12 +76,17 @@ function ToolCard({
       )}
     >
       <div className="flex min-w-0 items-center gap-1.5 px-2 py-1.5">
-        <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground" />
+        <ChevronRight
+          className={cn(
+            "h-3 w-3 shrink-0 text-muted-foreground",
+            expanded && "rotate-90",
+          )}
+        />
         <Wrench className="h-3 w-3 shrink-0 text-muted-foreground" />
         <span className="max-w-[45%] shrink-0 truncate font-mono text-[0.6875rem] font-medium text-foreground">
           {name}
         </span>
-        <span className="min-w-0 flex-1 truncate text-[0.6875rem] text-muted-foreground">
+        <span className="min-w-0 flex-1 truncate text-[0.6875rem] text-muted-foreground/70">
           {summary}
         </span>
         <span className="ms-auto flex shrink-0 items-center gap-1 ps-1">
@@ -99,14 +94,28 @@ function ToolCard({
           <span className={cn("text-[0.625rem]", meta.className)}>{meta.label}</span>
         </span>
       </div>
-      {output ? (
-        <div className="flex flex-col gap-1 border-t border-border/60 px-2 py-1.5">
-          <span className="text-[0.625rem] font-medium uppercase tracking-wide text-muted-foreground/70">
-            {t("mockUi.output")}
-          </span>
-          <pre className="max-h-24 overflow-hidden whitespace-pre-wrap break-all rounded-md border border-border/60 bg-background/80 p-1.5 font-mono text-[0.6875rem] leading-relaxed text-foreground">
-            {output}
-          </pre>
+      {expanded ? (
+        <div className="flex flex-col gap-1.5 border-t border-border/60 px-2 py-1.5">
+          {input ? (
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="text-[0.625rem] font-medium uppercase tracking-wide text-muted-foreground/70">
+                {t("mockUi.input")}
+              </span>
+              <pre className="max-h-24 overflow-hidden whitespace-pre-wrap break-all rounded-md border border-border/60 bg-background/80 p-1.5 font-mono text-[0.6875rem] leading-relaxed text-foreground">
+                {input}
+              </pre>
+            </div>
+          ) : null}
+          {output ? (
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="text-[0.625rem] font-medium uppercase tracking-wide text-muted-foreground/70">
+                {t("mockUi.output")}
+              </span>
+              <pre className="max-h-24 overflow-hidden whitespace-pre-wrap break-all rounded-md border border-border/60 bg-background/80 p-1.5 font-mono text-[0.6875rem] leading-relaxed text-foreground">
+                {output}
+              </pre>
+            </div>
+          ) : null}
         </div>
       ) : null}
     </div>
@@ -121,7 +130,7 @@ function ReasoningCard() {
         <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground" />
         <Brain className="h-3 w-3 shrink-0 text-muted-foreground" />
         <span className="truncate text-[0.6875rem] font-medium text-muted-foreground">
-          {t("mockUi.thought")}
+          {t("mockUi.reasoning")}
         </span>
       </div>
     </div>
@@ -152,6 +161,32 @@ function AssistantTurn({
   );
 }
 
+function AttachmentCard({
+  kind,
+  label,
+  preview,
+}: {
+  kind: "page" | "text";
+  label: string;
+  preview: string;
+}) {
+  const Icon = kind === "page" ? Globe : FileText;
+  return (
+    <div className="w-full overflow-hidden rounded-lg border border-border bg-muted/30">
+      <div className="flex w-full items-center gap-2 px-2.5 py-1.5">
+        <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        <span className="shrink-0 text-xs font-medium text-muted-foreground">
+          {label}
+        </span>
+        <span className="min-w-0 flex-1 truncate text-start text-xs text-muted-foreground/70">
+          {preview}
+        </span>
+        <ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground" />
+      </div>
+    </div>
+  );
+}
+
 export function SidebarChatMock({
   mode = "lumo",
   className,
@@ -171,7 +206,6 @@ export function SidebarChatMock({
     >
       <header className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-2">
         <span className="flex h-8 min-w-0 items-center gap-1 rounded-md px-1.5 text-xs font-medium text-foreground">
-          <Sparkles className="h-3.5 w-3.5 shrink-0 text-primary" />
           <span className="truncate">{t("mockUi.model")}</span>
           <ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground" />
         </span>
@@ -197,6 +231,7 @@ export function SidebarChatMock({
               <ToolCard
                 name="page_snapshot"
                 summary={t("lumo.agent.mock.stepOneSummary")}
+                input={t("lumo.agent.mock.stepOneInput")}
                 output={t("lumo.agent.mock.stepOneOutput")}
               />
               <ToolCard
@@ -217,19 +252,35 @@ export function SidebarChatMock({
           </>
         ) : mode === "home" ? (
           <>
-            <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2 py-1 text-[10px] text-muted-foreground">
-                <Globe className="h-3 w-3" />
-                {t("mockUi.pageContext")}
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-2 py-1 text-[10px] text-muted-foreground">
-                <FileText className="h-3 w-3" />
-                {t("mockUi.pasted")}
-              </span>
+            <div className="flex w-full flex-col items-end gap-2">
+              <div className="flex w-full max-w-[85%] flex-col gap-1.5">
+                <AttachmentCard
+                  kind="page"
+                  label={t("mockUi.attachmentPage")}
+                  preview={t("home.hero.mock.pageContextPreview")}
+                />
+                <AttachmentCard
+                  kind="text"
+                  label={t("mockUi.attachmentPasted")}
+                  preview={t("home.hero.mock.pastedPreview")}
+                />
+              </div>
+              <UserTurn>{t("home.hero.mock.prompt")}</UserTurn>
             </div>
-            <UserTurn>{t("home.hero.mock.prompt")}</UserTurn>
             <AssistantTurn>
-              <p className="leading-relaxed text-foreground">
+              <ToolCard
+                name="page_read"
+                summary={t("home.hero.mock.toolOneSummary")}
+              />
+              <ToolCard
+                name="debug_input"
+                summary={t("home.hero.mock.toolTwoSummary")}
+              />
+              <ToolCard
+                name="page_screenshot"
+                summary={t("home.hero.mock.toolThreeSummary")}
+              />
+              <p className="mt-2 leading-relaxed text-foreground">
                 {t("home.hero.mock.answer")}
               </p>
               <ul className="mt-1 space-y-1.5 text-[13px] leading-relaxed text-muted-foreground">
@@ -244,24 +295,15 @@ export function SidebarChatMock({
                   </li>
                 ))}
               </ul>
-              <ToolCard
-                name="page_read"
-                summary="1,284 words · markdown"
-                output={t("home.hero.mock.toolDone")}
-              />
             </AssistantTurn>
           </>
         ) : (
           <>
             <UserTurn>{t("lumo.hero.mock.user")}</UserTurn>
             <AssistantTurn>
-              <p className="leading-relaxed text-foreground">
-                {t("lumo.hero.mock.assistant")}
-              </p>
               <ToolCard
                 name="page_read"
                 summary={t("lumo.hero.mock.toolOneDetail")}
-                output={t("lumo.hero.mock.toolOneOutput")}
               />
               <ToolCard
                 name="debug_input"
@@ -271,8 +313,11 @@ export function SidebarChatMock({
               <ToolCard
                 name="page_screenshot"
                 summary={t("lumo.hero.mock.toolThreeDetail")}
-                state="running"
+                state="done"
               />
+              <p className="mt-2 leading-relaxed text-foreground">
+                {t("lumo.hero.mock.assistant")}
+              </p>
             </AssistantTurn>
           </>
         )}

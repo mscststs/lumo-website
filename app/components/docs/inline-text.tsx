@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Link } from "react-router";
+import { LocaleLink } from "@/components/site/locale-link";
 
 const TOKEN_RE = /(`[^`]+`|\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
 
@@ -25,9 +25,9 @@ export function InlineText({ text }: { text: string }) {
           const label = link[1] ?? "";
           const href = link[2] ?? "#";
           return href.startsWith("/") ? (
-            <Link key={index} to={href}>
+            <LocaleLink key={index} to={href}>
               {label}
-            </Link>
+            </LocaleLink>
           ) : (
             <a key={index} href={href} target="_blank" rel="noreferrer noopener">
               {label}

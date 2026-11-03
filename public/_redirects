@@ -1,3 +1,16 @@
 # No SPA rewrite is needed: every known route is pre-rendered to its own HTML,
 # and Workers static assets serve the generated 404.html (with a 404 status) for
 # unknown URLs. React Router then renders the matching not-found route.
+
+# Privacy is owned by each product. Legacy shared URLs keep working, with and
+# without the trailing slash (the asset layer only normalizes existing pages).
+/privacy /lumo/privacy 301
+/privacy/ /lumo/privacy 301
+/zh/privacy /zh/lumo/privacy 301
+/zh/privacy/ /zh/lumo/privacy 301
+
+# The changelog section was removed; send old links home instead of 404.
+/changelog / 301
+/changelog/ / 301
+/zh/changelog /zh 301
+/zh/changelog/ /zh 301

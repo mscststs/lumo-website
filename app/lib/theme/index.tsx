@@ -12,11 +12,7 @@ import {
   DEFAULT_THEME,
   isDarkResolved,
   readThemePreference,
-  resolvePalette,
   writeThemePreference,
-  type AccentId,
-  type DarkPalette,
-  type PaletteId,
   type ThemeMode,
   type ThemePreference,
 } from "./registry";
@@ -24,11 +20,8 @@ import {
 interface ThemeContextValue {
   preference: ThemePreference;
   systemDark: boolean;
-  palette: PaletteId;
   isDark: boolean;
   setMode: (mode: ThemeMode) => void;
-  setPalette: (palette: DarkPalette) => void;
-  setAccent: (accent: AccentId) => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -39,7 +32,7 @@ const DARK_QUERY = "(prefers-color-scheme: dark)";
  * Theme state for the marketing surfaces.
  *
  * The first paint is handled by the inline preload script; this provider only
- * takes over after hydration so it can never overwrite the stored palette with
+ * takes over after hydration so it can never overwrite the stored mode with
  * the server default for a frame.
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -85,26 +78,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setMode = useCallback((mode: ThemeMode) => {
-    setPreference((current) => ({ ...current, mode }));
-  }, []);
-  const setPalette = useCallback((palette: DarkPalette) => {
-    setPreference((current) => ({ ...current, palette }));
-  }, []);
-  const setAccent = useCallback((accent: AccentId) => {
-    setPreference((current) => ({ ...current, accent }));
+    setPreference({ mode });
   }, []);
 
   const value = useMemo<ThemeContextValue>(
     () => ({
       preference,
       systemDark,
-      palette: resolvePalette(preference.mode, systemDark, preference.palette),
       isDark: isDarkResolved(preference.mode, systemDark),
       setMode,
-      setPalette,
-      setAccent,
     }),
-    [preference, systemDark, setMode, setPalette, setAccent],
+    [preference, systemDark, setMode],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router";
 import { Aurora } from "@/components/motion/aurora";
 import { Reveal } from "@/components/motion/reveal";
+import { LocaleLink } from "./locale-link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -64,10 +64,10 @@ export function CtaPanel({
                 </Button>
               ) : (
                 <Button asChild size="lg">
-                  <Link to={primary.href}>
+                  <LocaleLink to={primary.href}>
                     {primary.label}
                     <ArrowRight className="h-4 w-4" />
-                  </Link>
+                  </LocaleLink>
                 </Button>
               )}
               {secondary ? (
@@ -83,7 +83,7 @@ export function CtaPanel({
                   </Button>
                 ) : (
                   <Button asChild variant="outline" size="lg">
-                    <Link to={secondary.href}>{secondary.label}</Link>
+                    <LocaleLink to={secondary.href}>{secondary.label}</LocaleLink>
                   </Button>
                 )
               ) : null}

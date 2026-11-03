@@ -57,7 +57,7 @@ export const en: DocCollection = {
           },
           {
             title: "Use the design system",
-            text: "Tokens, palettes, motion and accessibility rules are documented as executable constraints.",
+            text: "Tokens, light and dark shells, motion and accessibility rules are documented as executable constraints.",
           },
         ],
       },
@@ -189,7 +189,7 @@ export const en: DocCollection = {
       {
         type: "ul",
         items: [
-          "OKLCH semantic tokens, with palette and accent axes.",
+          "OKLCH semantic tokens, with light and dark shells.",
           "The same type scale, radii, material and motion curves.",
           "The same four design laws, applied to marketing and tool surfaces differently.",
           "i18next resources with strict English/Chinese key parity.",
@@ -367,7 +367,7 @@ export const en: DocCollection = {
     category: "design",
     title: "Design system",
     description:
-      "The tokens, palettes, motion curves and accessibility rules shared by the products and this site.",
+      "The tokens, light and dark shells, motion curves and accessibility rules shared by the products and this site.",
     updated: "2025-11-01",
     blocks: [
       {
@@ -399,16 +399,16 @@ export const en: DocCollection = {
       {
         type: "code",
         lang: "css",
-        title: "Accent axis",
-        code: ":root[data-accent='emerald'] {\n  --accent-h: 162;\n  --accent-c: 0.135;\n  --accent-l: 0.535;\n}\n\n--color-primary: oklch(var(--accent-l) var(--accent-c) var(--accent-h));",
+        title: "Primary accent",
+        code: ":root {\n  --accent-h: 258;\n  --accent-c: 0.17;\n  --accent-l: 0.552;\n}\n\n--color-primary: oklch(var(--accent-l) var(--accent-c) var(--accent-h));",
       },
-      { type: "h2", text: "Palettes" },
+      { type: "h2", text: "Theme" },
       {
         type: "ul",
         items: [
           "**Paper** — warm neutral light. Long reading without the clinical blue cast of pure white.",
-          "**Graphite** — near-black neutral. The quietest dark surface.",
-          "**Midnight** — cool blue dark with a clearer lightness ladder.",
+          "**Midnight** — cool blue dark with a clearer lightness ladder. Every dark surface resolves here.",
+          "The theme menu switches light / dark / system only; the accent hue is fixed.",
           "Dark surfaces separate by lightness: background → card → popover → hover. Borders sit above every surface.",
         ],
       },
@@ -436,7 +436,7 @@ export const en: DocCollection = {
         type: "callout",
         tone: "tip",
         title: "Test the tokens, not the screenshot",
-        text: "Contrast is computed from OKLCH in the test suite. A palette cannot ship because it looked fine on one monitor.",
+        text: "Contrast is computed from OKLCH in the test suite. A colour scheme cannot ship because it looked fine on one monitor.",
       },
     ],
   }),
@@ -453,29 +453,34 @@ export const en: DocCollection = {
         type: "p",
         text: "Locale is part of the URL. English is unprefixed; Chinese lives under `/zh`, so every page is shareable, cacheable and indexable in both languages.",
       },
-      { type: "h2", text: "First visit" },
+      { type: "h2", text: "The URL owns the language" },
       {
         type: "p",
-        text: "A tiny script in `<head>` reads the stored preference, then `navigator.languages`. A Chinese browser entering an unprefixed URL is sent to `/zh` before first paint; an English browser stays. The redirect is deliberately one-way: a `/zh` URL is never redirected, same-site deep links keep the language being read, and crawlers are skipped.",
+        text: "`/zh/...` is Chinese, `/...` is English, and neither is ever rewritten. Only `/` — the one path with no language of its own — picks one before first paint, from the stored preference, then the linking page, then `navigator.languages`.",
       },
       {
         type: "ul",
         items: [
-          "A rendered locale is stored, and the language menu writes it before navigating.",
-          "The redirect preserves the path, query and hash.",
+          "Opening an English link in a new tab stays English, whatever language you read last.",
+          "A stored preference is written by every rendered page and by the language menu, so it always matches what you were reading.",
+          "Crawlers and automated browsers are never redirected.",
           "Both locales are pre-rendered; the script only chooses an entry point, never generates a page.",
         ],
       },
       { type: "h2", text: "Routing" },
       {
+        type: "p",
+        text: "Links are written once, in their locale-agnostic form (`/lumo`, `/docs/mcp`). `LocaleLink`, `LocaleNavLink` and `useLocaleNavigate` prefix them with the locale of the current URL, so no call site can forget a prefix and no translation stores one.",
+      },
+      {
         type: "code",
         lang: "ts",
         title: "Locale helpers",
-        code: "localePath('zh', '/docs/mcp') // '/zh/docs/mcp'\nstripLocale('/zh/docs/mcp')    // '/docs/mcp'\nswitchLocalePath('/lumo', 'zh') // '/zh/lumo'",
+        code: "localePath('zh', '/docs/mcp')      // '/zh/docs/mcp'\nlocalePath('zh', '/zh/docs/mcp')  // '/zh/docs/mcp' (idempotent)\nstripLocale('/zh/docs/mcp')        // '/docs/mcp'\nswitchLocaleHref(location, 'en')   // path + query + hash, one language over",
       },
       {
         type: "p",
-        text: "The route table is generated per locale, so a product page and its translation are the same component. The locale provider derives the current language from `useLocation()` and selects the matching i18next instance.",
+        text: "The route table is generated per locale, so a product page and its translation are the same component. The locale provider reads the language from `useLocation()` and selects the matching i18next instance.",
       },
       { type: "h2", text: "Synchronous pre-render" },
       {
@@ -503,7 +508,8 @@ export const en: DocCollection = {
         type: "ul",
         items: [
           "Each route emits its own title, description, canonical, Open Graph and Twitter tags.",
-          "`hreflang` pairs both languages and includes `x-default` for the English page.",
+          "`hreflang` lists every locale for the same document plus an `x-default` pointing at the default locale.",
+          "Canonical URLs carry no trailing slash; `drop-trailing-slash` makes the asset layer agree with every link.",
           "The sitemap is generated from the pre-rendered HTML after the build.",
         ],
       },

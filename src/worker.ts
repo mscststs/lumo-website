@@ -1,3 +1,4 @@
+import { DEFAULT_LOCALE, getLocale } from "../app/lib/site-manifest";
 import {
   isRewritableContentType,
   rewriteOrigin,
@@ -17,11 +18,31 @@ interface Env {
  * placeholder origin (`https://site.invalid`) to the origin of the incoming
  * request, so canonical, hreflang, Open Graph, JSON-LD, `sitemap.xml` and
  * `robots.txt` are correct on any domain without build-time configuration.
- * Nothing else is transformed, and the body is only read for text responses.
+ *
+ * It also gives unknown URLs a 404 document in the requested language: the
+ * asset layer can only serve one `404.html`, so a `/zh/...` miss is answered
+ * with the pre-rendered Chinese not-found page. Everything else is untouched.
  */
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const response = await env.ASSETS.fetch(request);
+    const url = new URL(request.url);
+    let response = await env.ASSETS.fetch(request);
+
+    if (shouldServeLocalizedNotFound(url.pathname, response)) {
+      const localized = await env.ASSETS.fetch(
+        new Request(new URL("/zh/404", url), {
+          method: "GET",
+          headers: request.headers,
+        }),
+      );
+      if (localized.ok) {
+        response = new Response(await localized.text(), {
+          status: 404,
+          statusText: "Not Found",
+          headers: localized.headers,
+        });
+      }
+    }
 
     if (
       request.method === "HEAD" ||
@@ -35,9 +56,21 @@ export default {
       return withBody(response, body);
     }
 
-    return withBody(response, rewriteOrigin(body, new URL(request.url).origin));
+    return withBody(response, rewriteOrigin(body, url.origin));
   },
 };
+
+/** A missing page under a non-default locale should speak that locale. */
+function shouldServeLocalizedNotFound(
+  pathname: string,
+  response: Response,
+): boolean {
+  return (
+    response.status === 404 &&
+    getLocale(pathname) !== DEFAULT_LOCALE &&
+    isRewritableContentType(response.headers.get("content-type"))
+  );
+}
 
 /**
  * Rebuilds the response around a decoded body: the asset layer may hand back a

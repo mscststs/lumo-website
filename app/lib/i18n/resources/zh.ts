@@ -10,7 +10,6 @@ export const zh: Translation = {
     tagline: "更安静，也更能干的浏览器。",
     products: "产品",
     docs: "文档",
-    changelog: "更新日志",
     privacy: "隐私",
     github: "GitHub",
     search: "搜索",
@@ -49,20 +48,12 @@ export const zh: Translation = {
   },
   nav: {
     productsLabel: "产品",
-    productsTitle: "两个工具，一套哲学",
-    productsDescription: "用 AI Agent 理解页面，用用户脚本管理器控制页面。",
-    docsDescription: "架构、API、设计令牌与部署。",
-    changelogDescription: "发布了什么，何时发布。",
     installLumo: "安装 Lumo",
-    getUserscripts: "获取 Userscripts",
+    installUserscripts: "安装 Userscripts",
     productLumoName: "Lumo",
     productLumoTagline: "AI 浏览器侧边栏",
-    productLumoDescription:
-      "读得懂当前页面、调得动浏览器工具，和你一起把任务做完的 Agent。",
     productUserscriptsName: "Lumo Userscripts",
     productUserscriptsTagline: "用户脚本管理器",
-    productUserscriptsDescription:
-      "用原生 MV3 注册、真实 GM API 安装、编辑和掌控用户脚本。",
     searchAria: "打开搜索",
     themeAria: "切换外观",
     languageAria: "切换语言",
@@ -79,31 +70,18 @@ export const zh: Translation = {
     releases: "发布",
     github: "GitHub",
     privacy: "隐私",
-    changelog: "更新日志",
+    lumoPrivacy: "Lumo 隐私",
+    userscriptsPrivacy: "Userscripts 隐私",
     license: "许可",
     builtWith: "使用 Vite、React 与 Tailwind 构建，由 Cloudflare Workers 提供静态资产。",
     siteVersion: "站点 {{version}}",
   },
   theme: {
     title: "外观",
-    description: "模式、暗色调色板与主题色。",
     mode: "模式",
-    palette: "暗色调色板",
-    accent: "主题色",
     light: "浅色",
     dark: "深色",
     system: "跟随系统",
-    paper: "纸白",
-    graphite: "石墨",
-    midnight: "午夜",
-    azure: "蔚蓝",
-    violet: "紫罗兰",
-    emerald: "翡翠",
-    amber: "琥珀",
-    rose: "玫红",
-    paperDescription: "温暖中性白",
-    graphiteDescription: "近黑中性",
-    midnightDescription: "冷调深蓝",
   },
   language: {
     title: "语言",
@@ -118,6 +96,8 @@ export const zh: Translation = {
     changeTheme: "切换外观",
     changeLanguage: "切换语言",
     github: "打开 Lumo 的 GitHub 组织",
+    lumoGithub: "在 GitHub 上打开 Lumo",
+    userscriptsGithub: "在 GitHub 上打开 Lumo Userscripts",
     external: "在新标签页打开",
     skip: "跳到正文",
     primaryNav: "主导航",
@@ -126,36 +106,26 @@ export const zh: Translation = {
     toc: "页面目录",
   },
   home: {
-    announcement: {
-      label: "智能体循环、DevTools、MCP",
-      description: "浏览器与 DevTools 工具、你自己的 MCP 服务、你自己的密钥。",
-      cta: "看看发布了什么",
-    },
     hero: {
-      eyebrow: "两个工具，一个浏览器",
       title: "更安静，更能干的浏览器。",
       titleLead: "更安静，",
       titleAccent: "更能干",
       titleTail: "的浏览器。",
-      description: "一个会在页面里动手的浏览器智能体，和一个它能直接操作的用户脚本管理器。",
-      primary: "探索 Lumo",
-      secondary: "认识 Userscripts",
-      tertiary: "阅读文档",
-      chips: ["智能体循环", "本地优先", "Chrome MV3", "开源"],
       mock: {
         tab: "产品笔记 — Lumo",
-        url: "lumo.app/docs",
-        greeting: "下午好",
+        url: "lumo.wsd.pub/docs",
         prompt: "总结这个页面，并抽出三个关键决策。",
         answer: "这个页面定义了一个本地优先的浏览器 Agent，三个决策最值得注意：",
         decisionOne: "工具通过 MCP 运行，而不是硬编码命令。",
         decisionTwo: "对话数据留在设备上。",
         decisionThree: "所有模型都由用户自带密钥。",
-        tool: "page_read",
-        toolDone: "读取 1,284 词",
-        context: "上下文",
-        model: "Claude · Sonnet",
-        input: "询问当前页面…",
+        pageContextPreview:
+          "tabId: 412977 title: 本地优先的浏览器 Agent url: lumo.wsd.pub/docs",
+        pastedPreview:
+          "一个拥有强类型工具面的侧边栏 Agent。它读取页面、调用真实浏览器工具，并把每个决策留在设备上。",
+        toolOneSummary: "tabId: 412977",
+        toolTwoSummary: "action: click, x: 412, y: 686",
+        toolThreeSummary: "scope: fullpage",
         scripts: "用户脚本",
         scriptOne: "GitHub 专注模式",
         scriptTwo: "阅读模式清理",
@@ -175,63 +145,19 @@ export const zh: Translation = {
       },
     },
     products: {
-      eyebrow: "产品线",
-      title: "为你每天在用的浏览器准备的两件精确工具。",
-      description: "两个产品，一种立场：本地优先，克制。",
       lumo: {
         name: "Lumo",
         tagline: "AI 浏览器侧边栏",
-        description:
-          "完整智能体循环，带 MCP 浏览器工具、CDP DevTools 与你的模型。",
-        bullets: [
-          "多步工具调用",
-          "DevTools、远程 MCP 与扩展工具",
-          "自带模型",
-        ],
         cta: "探索 Lumo",
       },
       userscripts: {
         name: "Lumo Userscripts",
         tagline: "用户脚本管理器 + 智能体端点",
-        description: "原生 MV3 用户脚本管理器，带 MCP 端点。",
-        bullets: [
-          "智能体端点，带写入门禁与审计",
-          "原生 chrome.userScripts 与 GM API",
-          "CodeMirror 6、备份与诊断",
-        ],
         cta: "探索 Userscripts",
       },
     },
-    philosophy: {
-      eyebrow: "Lumo 的方式",
-      title: "是工艺，不是花活。",
-      description: "四条法则，就是评审清单。",
-      items: [
-        {
-          title: "渐进式隐藏",
-          description:
-            "真正好用的功能不需要解释性文案。形态与状态本身就应该说明下一步。",
-        },
-        {
-          title: "交互归一化",
-          description:
-            "同一个动作在任何地方都应有一致的反馈。一个下拉、一个弹窗、一个焦点环。",
-        },
-        {
-          title: "渐进式披露",
-          description:
-            "先给决策，再展开内部细节。用户不问，就不必看到。",
-        },
-        {
-          title: "物理级动效",
-          description:
-            "动效解释因果。元素推动邻居，而不是凭空闪现。",
-        },
-      ],
-    },
     stages: {
       lumo: {
-        eyebrow: "Lumo",
         title: "提问。执行。验证。",
         description: "Lumo 读懂页面，然后持续调用工具直到任务完成。",
         bullets: [
@@ -239,10 +165,8 @@ export const zh: Translation = {
           "DevTools、远程 MCP 与扩展工具",
           "停止、重试与上下文压缩",
         ],
-        cta: "查看智能体循环",
       },
       userscripts: {
-        eyebrow: "Userscripts",
         title: "用一句话得到的脚本。",
         description: "描述改动，批准写入，留下审计。",
         bullets: [
@@ -250,46 +174,7 @@ export const zh: Translation = {
           "默认只读，写入需单独开启",
           "原生 chrome.userScripts",
         ],
-        cta: "查看智能体端点",
       },
-    },
-    stack: {
-      eyebrow: "技术底座",
-      title: "建立在经得起时间的基础设施上。",
-      description: "两个产品与本站共用一套技术栈。",
-      items: [
-        { name: "WXT + MV3", detail: "扩展运行时" },
-        { name: "React 19", detail: "界面" },
-        { name: "Tailwind 4", detail: "设计令牌" },
-        { name: "Vercel AI SDK", detail: "智能体循环" },
-        { name: "MCP", detail: "浏览器与智能体工具" },
-        { name: "IndexedDB", detail: "本地存储" },
-        { name: "i18next", detail: "双语界面" },
-        { name: "Cloudflare Workers", detail: "静态交付" },
-      ],
-    },
-    metrics: {
-      eyebrow: "关键能力",
-      title: "更小的界面，更深的功力。",
-      items: [
-        { value: "MCP", label: "浏览器与智能体工具" },
-        { value: "∞", label: "每轮步数" },
-        { value: "BYOK", label: "你自己的提供方" },
-        { value: "MV3", label: "原生平台 API" },
-      ],
-    },
-    docs: {
-      codeNote: "静态 HTML、逐路由元数据、零运行时服务器。",
-      eyebrow: "文档",
-      title: "读懂系统，而不只是营销。",
-      description: "智能体循环、MCP、协议、运行时与部署。",
-      primary: "打开文档",
-      secondary: "从架构开始",
-      links: [
-        { title: "智能体循环", detail: "步骤、工具调用、停止与压缩。" },
-        { title: "连接方式", detail: "从 Lumo 发起，或从 Userscripts 授权。" },
-        { title: "协议细节", detail: "L0 探测、L1 MCP 与安全不变量。" },
-      ],
     },
     cta: {
       title: "从你已经在用的浏览器开始。",
@@ -307,12 +192,12 @@ export const zh: Translation = {
     completed: "已完成",
     running: "执行中",
     interrupted: "已中断",
-    thought: "已思考 4 秒",
+    reasoning: "推理过程",
+    input: "输入",
     output: "输出",
-    placeholder: "问问这个页面…",
-    pageContext: "页面上下文",
-    pageContextDetail: "定价 — Northwind",
-    pasted: "已粘贴文本 · 1,284 词",
+    placeholder: "输入消息...",
+    attachmentPage: "页面",
+    attachmentPasted: "粘贴",
     thinking: "正在处理工具返回…",
     settingsTitle: "设置",
     groupCore: "核心",
@@ -387,21 +272,18 @@ export const zh: Translation = {
     productName: "Lumo",
     hero: {
       eyebrow: "Lumo for Chrome",
-      title: "会动手的浏览器智能体。",
-      description:
-        "一个会规划、调用浏览器与 DevTools 工具、检查结果并继续执行的侧边栏智能体。",
-      primary: "从 Chrome 应用商店安装",
+      title: "会动手的\n浏览器智能体。",
+      summary:
+        "在侧边栏里读页面、调用工具、截图表——每一步都看得见，也随时都能停。",
+      primary: "添加到 Chrome",
       secondary: "阅读智能体文档",
-      chips: ["智能体循环", "CDP DevTools", "MCP", "自带密钥"],
       mock: {
         model: "Claude Sonnet 4.5",
         user: "打开定价页，找出带 SSO 的套餐，并截一张对比表。",
         assistant: "只有 Team 套餐包含 SSO。我已打开对比表并完成截图。",
-        toolOneDetail: "1,284 词 · 3 个区块",
-        toolOneOutput:
-          "{ \"tiers\": [\"Starter\", \"Pro\", \"Team\"], \"sso\": [\"Team\"] }",
-        toolTwoDetail: "click (412, 686)",
-        toolThreeDetail: "整页 · 1440×3120",
+        toolOneDetail: "tabId: 313, mode: article",
+        toolTwoDetail: "action: click, x: 412, y: 686",
+        toolThreeDetail: "scope: fullpage",
       },
     },
     anchors: {
@@ -457,11 +339,12 @@ export const zh: Translation = {
       },
       mock: {
         user: "对比三个定价套餐，然后截一张对比表。",
-        stepOneSummary: "无障碍树 · 42 个引用",
+        stepOneSummary: "interactiveOnly: true",
+        stepOneInput: "{ \"interactiveOnly\": true }",
         stepOneOutput:
           "{ \"refs\": 42, \"table\": \"pricing-comparison\", \"rows\": 9 }",
-        stepTwoSummary: "2 个标签页 · 定价、文档",
-        stepThreeSummary: "click (412, 686)",
+        stepTwoSummary: "action: list",
+        stepThreeSummary: "action: click, x: 412, y: 686",
       },
     },
     tools: {
@@ -560,37 +443,48 @@ export const zh: Translation = {
       one: "单栏",
       two: "二栏",
       three: "三栏",
-      hint: "独立面板",
-      requirement: "侧边栏足够宽时解锁分屏。",
-      dividers: "可拖动分隔条",
-      paneHint: "每个面板保留自己的历史与模型。",
       panes: [
         {
           model: "Claude Sonnet 4.5",
+          context: "页面上下文",
+          contextDetail: "定价 — Northwind",
           prompt: "总结这个定价页。",
           answer: "三个套餐；SSO 只在 Team。",
-          tool: "page_read",
-          result: "1,284 词",
-          tool2: "page_screenshot",
-          result2: "已截取表格",
+          tools: [
+            { name: "page_read", summary: "1,284 词" },
+            { name: "page_screenshot", summary: "已截取表格" },
+          ],
+          snapshot: {
+            plan: "套餐",
+            sso: "SSO",
+            rows: [
+              { name: "Starter", sso: false },
+              { name: "Team", sso: true },
+              { name: "Enterprise", sso: true },
+            ],
+          },
         },
         {
           model: "GPT-4.1",
+          context: "页面上下文",
+          contextDetail: "文档 — SAML 指南",
           prompt: "找到 SSO 的文档页。",
           answer: "SAML 指南在 Security 下。",
-          tool: "browser_tabs",
-          result: "已打开",
-          tool2: "page_read",
-          result2: "3 个区块",
+          tools: [
+            { name: "browser_tabs", summary: "已打开" },
+            { name: "page_read", summary: "3 个区块" },
+          ],
         },
         {
           model: "Claude Opus 4.1",
+          context: "页面上下文",
+          contextDetail: "笔记 — Northwind Team",
           prompt: "起草团队笔记。",
-          answer: "附上 SSO 行的简短笔记。",
-          tool: "file_write",
-          result: "已保存",
-          tool2: "file_read",
-          result2: "已核对",
+          answer: null,
+          tools: [
+            { name: "file_write", summary: "已保存" },
+            { name: "file_read", summary: "已核对" },
+          ],
         },
       ],
     },
@@ -659,12 +553,11 @@ export const zh: Translation = {
     productName: "Lumo Userscripts",
     hero: {
       eyebrow: "Lumo Userscripts",
-      title: "用一句话得到的脚本。",
-      description:
-        "原生 MV3 用户脚本管理器，提供标准 MCP 端点。Lumo 可以在获得批准后创建、编辑并启用脚本。",
+      title: "用一句话\n得到的脚本。",
+      summary:
+        "说清你要的改动，智能体写好脚本、装进浏览器即生效。",
       primary: "从 GitHub 获取",
       secondary: "阅读智能体文档",
-      chips: ["MCP 端点", "chrome.userScripts", "GM API", "本地优先"],
       mock: {
         scripts: [
           {
@@ -696,6 +589,24 @@ export const zh: Translation = {
             meta: "v0.1.0 · lumo · @match",
             badge: "由智能体创建",
             enabled: true,
+          },
+          {
+            name: "YouTube Shorts off",
+            meta: "v1.2.0 · northwind · @match",
+            badge: "",
+            enabled: true,
+          },
+          {
+            name: "HN thread collapse",
+            meta: "v0.6.4 · personal · @match",
+            badge: "",
+            enabled: true,
+          },
+          {
+            name: "Changelog diff replay",
+            meta: "v1.0.0 · lumo · @match",
+            badge: "待复核",
+            enabled: false,
           },
         ],
       },
@@ -941,7 +852,7 @@ export const zh: Translation = {
       platform: "智能体循环、MCP 与共享架构。",
       products: "Lumo、Lumo Userscripts，以及两者之间的智能体连接。",
       engineering: "扩展提供方协议、国际化、部署与维护。",
-      design: "令牌、调色板、动效与可访问性。",
+      design: "令牌、明暗两套外壳、动效与可访问性。",
     },
     sidebar: "文档",
     toc: "本页目录",
@@ -955,7 +866,6 @@ export const zh: Translation = {
     staticPreRendered: "静态预渲染",
     minRead: "约 {{minutes}} 分钟",
     updated: "更新于 {{date}}",
-    editPage: "编辑此页",
     copyCode: "复制代码",
     copiedCode: "已复制",
     previous: "上一篇",
@@ -968,50 +878,14 @@ export const zh: Translation = {
     noToc: "本页没有分节。",
     related: "相关",
   },
-  changelog: {
-    all: "全部",
-    title: "更新日志",
-    description:
-      "Lumo 与 Lumo Userscripts 的关键版本。完整历史与下载在 GitHub。",
-    subtitle:
-      "一份经过整理的变更记录。完整的提交历史始终在 GitHub 上。",
-    viewReleases: "查看 GitHub Releases",
-    released: "发布于",
-    highlights: "亮点",
-    products: {
-      lumo: "Lumo",
-      userscripts: "Userscripts",
-      site: "官网",
-    },
-    backHome: "返回首页",
-  },
   privacy: {
-    title: "隐私",
-    description:
-      "Lumo 存什么、发什么，以及永远不会碰什么。没有账号，没有中转服务器。",
-    lastUpdated: "最后更新于 {{date}}",
-    summary:
-      "Lumo 本地优先。两个产品的数据都保存在你的浏览器里。模型请求从你的浏览器直接发往你配置的服务，使用你提供的密钥。",
-    sections: {
-      collect: "我们收集什么",
-      notCollect: "我们不收集什么",
-      storage: "数据存放在哪里",
-      permissions: "权限",
-      providers: "第三方模型服务",
-      delete: "删除你的数据",
-    },
-    collectBody:
-      "设置、对话、生成的文件与脚本元数据保存在扩展的本地存储中。本站是静态站点，不设置分析 Cookie。",
-    notCollectBody:
-      "没有账号、没有邮箱、没有广告标识、没有分析画像，也不会把提示词或页面内容转发到 Lumo 服务器。",
-    storageBody:
-      "小型设置放在 chrome.storage.local。对话、文件与脚本正文放在 IndexedDB。本站只在 localStorage 中保存你的主题与语言偏好。",
-    permissionsBody:
-      "每一项权限都对应一个明确能力，并在文档中列出。可选能力只在你启用需要它的功能时申请。",
-    providersBody:
-      "发送消息时，请求会到达你配置的模型服务，适用其条款与保留策略。你也可以使用本地模型，让一切留在设备上。",
-    deleteBody:
-      "清除对话、删除脚本、清空回收站，或者卸载扩展。卸载扩展会删除其存储。本站可通过清除站点数据重置。",
+    eyebrow: "隐私",
+    breadcrumb: "隐私",
+    toc: "本页目录",
+    updated: "最后更新于 {{date}}",
+    source: "在 GitHub 查看原文",
+    backToProduct: "返回产品",
+    otherProduct: "另见",
   },
   notFound: {
     code: "404",
@@ -1044,13 +918,15 @@ export const zh: Translation = {
       description:
         "智能体循环、MCP、扩展提供方协议、用户脚本运行时、设计令牌、国际化与 Cloudflare 部署。",
     },
-    changelog: {
-      title: "更新日志 — Lumo",
-      description: "Lumo 与 Lumo Userscripts 的关键版本。",
-    },
     privacy: {
-      title: "隐私 — Lumo",
-      description: "Lumo 在本地存什么、向模型服务发什么，以及永远不会收集什么。",
+      lumo: {
+        description:
+          "Lumo 在本地保存什么、向模型服务商发送什么，以及它从不收集什么。",
+      },
+      userscripts: {
+        description:
+          "Lumo Userscripts 在本地保存什么、脚本如何运行，以及它从不收集什么。",
+      },
     },
     notFound: {
       title: "页面不存在 — Lumo",

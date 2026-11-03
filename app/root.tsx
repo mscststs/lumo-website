@@ -10,7 +10,7 @@ import {
 import "@/styles/globals.css";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { Button } from "@/components/ui/button";
-import { getLocale } from "@/lib/site-manifest";
+import { getLocale, localePath } from "@/lib/site-manifest";
 import { translate } from "@/lib/i18n/translate";
 import { LOCALE_PRELOAD_SCRIPT } from "@/lib/i18n/detect";
 import { THEME_PRELOAD_SCRIPT } from "@/lib/theme/registry";
@@ -97,7 +97,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
         {description}
       </p>
       <Button asChild>
-        <a href={locale === "zh" ? "/zh" : "/"}>
+        <a href={localePath(locale, "/")}>
           {translate(locale, "notFound.home")}
         </a>
       </Button>

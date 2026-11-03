@@ -1,7 +1,7 @@
 # Lumo Website — 设计规范
 
-> 适用范围：品牌首页、两页产品主页、技术文档、更新日志、隐私与 404。
-> 实现载体：`app/styles/globals.css`（令牌与基础层）、`app/lib/theme/registry.ts`（调色板与主题色）、`app/components/ui/*`（基础组件）、`app/components/site/*`（页面骨架）、`app/components/mockups/*`（产品视觉复刻）。
+> 适用范围：品牌首页、两页产品主页、技术文档、产品隐私政策与 404。
+> 实现载体：`app/styles/globals.css`（令牌与基础层）、`app/lib/theme/registry.ts`（主题注册表）、`app/components/ui/*`（基础组件）、`app/components/site/*`（页面骨架）、`app/components/mockups/*`（产品视觉复刻）。
 > 本文是可执行规范：每条规则都对应代码位置，改动前先读对应章节。
 
 ---
@@ -70,7 +70,7 @@
 | `text-lg` | 18px | 强调正文 |
 | `text-display-sm` | `clamp(28px, 2.8vw, 40px)` | 区块标题 |
 | `text-display-md` | `clamp(36px, 3.8vw, 52px)` | 页面标题 |
-| `text-display-lg` | `clamp(44px, 5vw, 68px)` | 产品页 Hero |
+| `text-display-lg` | `clamp(44px, 4.4vw, 60px)` | 产品页 Hero |
 | `text-display-xl` | `clamp(52px, 6.4vw, 88px)` | 首页 Hero |
 
 规则：
@@ -89,7 +89,7 @@
 
 - OKLCH 的 `L` 是感知亮度，同一 L 在不同色相上亮度一致，适合建立统一的明暗阶梯。
 - 暗色主题可以按亮度分层（background → card → popover → hover），而不是叠半透明黑。
-- 主题色只需切换 `H`（色相），明度与彩度由主题控制。
+- 主题色由 `H`（色相）、`C`、`L` 三个变量描述，明暗外壳各自覆盖明度与彩度。
 
 ### 2.2 三层令牌
 
@@ -101,37 +101,32 @@ primitive（不直接使用）
 
 语义令牌清单见 `app/styles/globals.css` 的 `@theme` 块。
 
-### 2.3 调色板
+### 2.3 明暗两套外壳
 
-| ID | 名称 | Scheme | 背景 | 定位 |
-| --- | --- | --- | --- | --- |
-| `paper` | 纸白 | light | `oklch(0.985 0.002 95)` | 温暖中性白，长时间阅读 |
-| `graphite` | 石墨 | dark | `oklch(0.168 0.004 270)` | 近黑中性，弱光最安静 |
-| `midnight` | 午夜 | dark | `oklch(0.196 0.026 262)` | 冷蓝暗色，层级更分明 |
+| Scheme | 名称 | 背景 |
+| --- | --- | --- |
+| light | Paper 纸白 | `oklch(0.985 0.002 95)` |
+| dark | Midnight 午夜 | `oklch(0.196 0.026 262)` |
+
+用户只能选择模式（light / dark / system），暗色固定为 Midnight：冷蓝暗色在卡片、浮层与边框上分层更清晰。
 
 暗色分层顺序必须单调递增：`background < sidebar < card < popover < muted/accent`。边框亮度高于所有表面，否则卡片边界消失。
 
-### 2.4 主题色轴
+### 2.4 主题色
+
+主题色固定为蔚蓝，切换色相的能力不再暴露给用户：
 
 ```css
-[data-accent="emerald"] {
-  --accent-h: 162;
-  --accent-c: 0.135;
-  --accent-l: 0.535;
+:root {
+  --accent-h: 258;
+  --accent-c: 0.17;
+  --accent-l: 0.552;
 }
 
 --color-primary: oklch(var(--accent-l) var(--accent-c) var(--accent-h));
 ```
 
-| 预设 | H | C | L（亮） |
-| --- | --- | --- | --- |
-| azure 蔚蓝 | 258 | 0.170 | 0.552 |
-| violet 紫罗兰 | 296 | 0.175 | 0.552 |
-| emerald 翡翠 | 162 | 0.135 | 0.535 |
-| amber 琥珀 | 70 | 0.135 | 0.552 |
-| rose 玫红 | 18 | 0.175 | 0.552 |
-
-暗色主题 primary 固定 `L=0.78`、彩度 ×0.78，标签用 `L=0.185`。`tests/theme.test.ts` 为每个主题色重算对比度。
+暗色主题 primary 固定 `L=0.78`、彩度 ×0.78，标签用 `L=0.185`。`tests/theme.test.ts` 重算这组值的对比度。
 
 ### 2.5 品牌渐变
 
@@ -151,38 +146,34 @@ primitive（不直接使用）
 
 ## 3. 主题工程
 
-### 3.1 三轴偏好
+### 3.1 单一模式偏好
 
 | 字段 | 取值 | 回答 |
 | --- | --- | --- |
 | `mode` | `light` / `dark` / `system` | 亮暗偏好 |
-| `palette` | `graphite` / `midnight` | 解析为暗色时用哪套 |
-| `accent` | azure / violet / emerald / amber / rose | 强调色相 |
 
 DOM 只描述「现在画的是哪套」：
 
 ```
-<html class="dark" data-palette="midnight" data-accent="violet">
+<html class="dark">
 ```
 
-- `.dark`：驱动 Tailwind `dark:` 变体与 Shiki 暗色分支。
-- `data-palette`：选择具体调色板块。
-- `data-accent`：只切色相变量。
+- `.dark`：驱动 Tailwind `dark:` 变体与 Shiki 暗色分支，同时切换到 Midnight 令牌。
+- 旧版本落盘的 `palette` / `accent` 字段在归一化时丢弃，只保留合法的 `mode`。
 
 ### 3.2 首帧防闪烁
 
 1. `app/root.tsx` 的 `<head>` 内联 `THEME_PRELOAD_SCRIPT`，同步读 `localStorage` 镜像。
 2. 脚本在样式表绘制前写入 `class` / `data-*` / `background-color`。
 3. `ThemeProvider` 在水合后才接管，避免用服务端默认值覆盖已存偏好。
-4. CSS 兜底：`@media (prefers-color-scheme: dark) { html:not([data-palette]) { … } }`。
+4. 无 JS 时保持预渲染的浅色外壳，不猜测系统偏好，避免半套令牌造成的低对比。
 
-### 3.3 新增主题 / 主题色
+### 3.3 新增模式
 
-1. 扩展 `THEME_MODES` / `DARK_PALETTES` / `ACCENT_IDS`。
-2. 在 `PALETTES` / `ACCENTS` 增加定义（label key、背景、swatch、hue/chroma/lightness）。
-3. 在 `globals.css` 增加 `[data-accent="…"]` 块或 `.dark[data-palette="…"]` 块（必须重声明全部色令牌）。
+1. 扩展 `THEME_MODES`，并补齐 `en.ts` / `zh.ts` 的 `theme.*` 文案。
+2. 在 `isDarkResolved` / `applyThemeToDocument` 中定义它解析到哪套外壳。
+3. 主题菜单自动多出一项，无需改组件。
 4. 跑 `tests/theme.test.ts`。
-5. 主题菜单自动多出一项，无需改组件。
 
 ---
 
@@ -295,7 +286,7 @@ DOM 只描述「现在画的是哪套」：
 ### 6.4 Site Header
 
 - 固定顶部，64px；顶部透明，滚动 >8px 后 `glass-strong` + 底边框。
-- 左：品牌标记 + 字标 + Products 下拉 + Docs + Changelog。
+- 左：品牌标记 + 字标 + Products 下拉 + Docs。
 - 右：搜索（⌘K）、主题、语言、GitHub、主 CTA。
 - 移动端：搜索图标 + 菜单 Sheet；Sheet 内含产品卡、页面链接、主题/语言、CTA。
 - 产品下拉：两列产品卡，每卡包含品牌标记、名称、定位、描述、进入箭头。
@@ -305,18 +296,23 @@ DOM 只描述「现在画的是哪套」：
 - `stage` 基底：`rounded-stage`、1px 边框、三层径向光晕、网格遮罩。
 - 产品页 Hero：文字 5 / 视觉 7；FeatureStage：文字 4.5 / 视觉 5.5，交替方向。
 - 视觉必须放在 `TiltCard` 或 `Parallax` 中，但移动端不倾斜。
-- 浮动卡只在 `xl` 显示，避免与主视觉重叠。
+- 浮动卡只在 `xl` 显示，避免与主视觉重叠。只出现在首页 Hero；产品页 Hero 不再叠加浮动徽标，卡片边缘必须完整。
+- 两个产品页 Hero 统一由 `components/site/product-hero.tsx` 渲染：品牌标记 + 眉标 → 标题 → 一句说明 → 两个 CTA → 舞台。左右两页的文字宽度、间距、CTA 形态必须一致，不得就地拼装。
+- Hero 标题断行由文案中的 `\n` 决定（中文按语义断，交给浏览器会在词中间断开）；`text-display-lg` 不带字距，负字距只加在拉丁标题上。
+- 双 CTA 在 `sm` 以上并排、允许 `flex-wrap`，`sm` 以下全宽堆叠；主按钮文案控制在一行可容纳的长度（如 `Add to Chrome` / `添加到 Chrome`）。
 
 ### 6.6 Mockup
 
 所有 mockup 使用真实产品的字号与控件比例：
 
-- SidebarChatMock：复刻真实侧边栏——32px 头部（模型选择 + 三个 28px 图标按钮）、全宽助手列、`rounded-2xl` 用户气泡、可折叠工具卡、`rounded-xl` 双边框输入框、上下文环。
-- UserscriptsDashboardMock：复刻 options 窗口——56px 导航 rail + 抬升内容面板、单行页头、工具栏、固定列脚本行、开关与动作。
+- SidebarChatMock：复刻真实侧边栏——32px 头部（无图标模型选择 + 三个 28px 图标按钮）、全宽助手列、`rounded-2xl` 用户气泡，气泡上方是右对齐的附件卡（`页面` / `粘贴`：图标 + 标签 + 截断预览 + 折叠箭头）；工具调用是单行可折叠行（chevron + wrench + 名称 + `key: value` 输入摘要 + 状态，展开后为 `输入` / `输出` 代码块，成功调用默认收起）；底部是 `rounded-xl` 双边框输入框与 18px SVG 上下文环。助手消息按真实顺序排列：工具调用在前，总结文本在后。
+- UserscriptsDashboardMock：复刻 options 窗口——56px 导航 rail + 抬升内容面板、单行页头、工具栏、固定列脚本行、开关与动作。mock 根节点是容器查询容器：自身宽度 < 30rem 时 rail 收为图标，< 35rem 时隐藏时间列，因此同一组件在首页双列舞台与产品页 hero 中都不会挤压文字。
+- MockScaler：把 `BrowserFrame` 这类「界面截图」当作固定设计画布（首页 Hero 为 1024 × 500）。画布只按容器宽度等比 `scale`，**从不重排**——侧栏永远在文档右侧，不会在窄屏掉到下方；缩放高度回写给外层盒，章节节奏保持精确。静态 HTML 用 `aspect-ratio` 占位，首帧 `useLayoutEffect` 测出真实盒后替换，避免塌陷与跳动。
+- 因此画布内部禁止使用 `sm:` / `lg:` 断点类（断点跟随视口而不是画布，会破坏「只缩放」）；设计尺寸写死即可。
 - AgentAccessMock：复刻审批对话框与遮罩；AgentSettingsMock：复刻设置 → 智能体（端点/写入/复核/允许列表/活动）。
 - CodeEditorMock：全宽 CodeMirror 6、下划线标签条、保存快捷键、状态栏；不设元数据侧栏。
 - LumoProviderMock / LumoMcpSettingsMock：复刻真实设置页的分组导航、卡片密度与状态徽标。
-- SplitViewShowcase：1 / 2 / 3 面板的真实布局比例，控件可切换；窄屏纵向堆叠。
+- SplitViewShowcase：复刻分屏视图——每个面板是完整的 `ChatPanel`（48px 头部、附件卡 + 右对齐气泡、可折叠工具行、`rounded-xl` 双边框输入框与 18px 上下文环），面板角色按产品规则分配：最左面板块拥有分屏按钮、最右面板拥有设置、其余面板拥有关闭。舞台为 1120 × 544 固定画布（`MockScaler`），三个 360px 面板的真实比例在任何视口下都不重排；1 / 2 / 3 由 `ToggleGroup` 切换，面板宽度过渡 300ms。分隔条是 8px 的列，指针抓住后实时改写宽度比例（按画布缩放换算位移），并在 360px 处夹紧——与「多宽才放得下」是同一条规则，因此「可拖动」是操作而非文案。
 - AgentLoopDiagram / AgentBridgeDiagram：不是产品截图，而是用同一套令牌解释循环与协议的工程示意。
 
 Mockup 是装饰性内容：根节点 `aria-hidden="true"`，周围有真实标题与说明。
@@ -390,9 +386,8 @@ Mockup 是装饰性内容：根节点 `aria-hidden="true"`，周围有真实标�
 
 ```
 Header
-Hero: announcement → H1 → description → CTAs → chips → browser + chat + floating cards
-Products: two product stages
-The Lumo way: four law cards
+Hero: H1 → CTAs → browser + chat + floating cards
+Products: two product stages — 文案只留名称、定位、入口；mock 按 01 → 02 依次升起，整块舞台即入口链接
 Stage Lumo: chat with page
 Stage Userscripts: manager dashboard
 Technical foundation: 8-cell stack grid + metrics
@@ -427,9 +422,9 @@ Docs index: hero + search + categories + all articles
 Article: breadcrumb → title → meta → mobile TOC → blocks → pager
 ```
 
-### 10.5 Changelog / Privacy / 404
+### 10.5 产品隐私政策 / 404
 
-- Changelog：stage hero + product filters + timeline cards。
+- 隐私政策：与文档正文同构——面包屑、产品标识、标题与摘要、更新日期与原文链接、右栏 TOC、文档排版、页尾返回/互链卡片。
 - Privacy：stage hero + six local-first cards + product PRIVACY.md links。
 - 404：品牌标记 + 404 + 标题 + 说明 + 首页/搜索入口。
 
@@ -456,7 +451,7 @@ Article: breadcrumb → title → meta → mobile TOC → blocks → pager
 | 规范 | 文件 |
 | --- | --- |
 | 令牌、主题块、动效 keyframes、prose、Shiki | `app/styles/globals.css` |
-| 主题与主题色注册表、preload 脚本 | `app/lib/theme/registry.ts` |
+| 主题注册表、preload 脚本 | `app/lib/theme/registry.ts` |
 | 主题 Provider | `app/lib/theme/index.tsx` |
 | i18n 资源 / Provider / 翻译 | `app/lib/i18n/*` |
 | 文档模型与集合 | `app/content/docs/*` |

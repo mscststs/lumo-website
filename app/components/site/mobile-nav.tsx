@@ -1,12 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useLocation } from "react-router";
-import {
-  ArrowRight,
-  FileText,
-  Rocket,
-  Shield,
-} from "lucide-react";
+import { useLocation } from "react-router";
+import { ArrowRight, FileText, Shield } from "lucide-react";
 import { BrandMark, Wordmark } from "@/components/brand/brand-mark";
 import { GithubIcon } from "@/components/brand/icons";
 import { Button } from "@/components/ui/button";
@@ -19,11 +14,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useLocalePath } from "@/lib/i18n/use-path";
-import { LINKS } from "@/lib/site";
-import { stripLocale } from "@/lib/site-manifest";
+import { PRIVACY_PATHS, SITE_ROUTES, stripLocale } from "@/lib/site-manifest";
+import { productCtaForPath } from "@/lib/product-cta";
 import { cn } from "@/lib/utils";
 import { LanguageMenu } from "./language-menu";
+import { LocaleLink } from "./locale-link";
 import { useSearch } from "./search-provider";
 import { ThemeMenu } from "./theme-menu";
 
@@ -40,7 +35,7 @@ function MobileLink({
 }) {
   return (
     <SheetClose asChild>
-      <Link
+      <LocaleLink
         to={to}
         className={cn(
           "flex items-center gap-3 rounded-control px-3 py-3 text-sm font-medium transition-colors",
@@ -52,18 +47,18 @@ function MobileLink({
         <Icon className="h-4 w-4 shrink-0" />
         {label}
         <ArrowRight className="ml-auto h-4 w-4 shrink-0 opacity-40" />
-      </Link>
+      </LocaleLink>
     </SheetClose>
   );
 }
 
 export function MobileNav({ children }: { children: ReactNode }) {
   const { t } = useTranslation();
-  const localize = useLocalePath();
   const location = useLocation();
   const path = stripLocale(location.pathname);
   const { openSearch } = useSearch();
   const [open, setOpen] = useState(false);
+  const productCta = productCtaForPath(location.pathname);
 
   useEffect(() => {
     setOpen(false);
@@ -84,8 +79,8 @@ export function MobileNav({ children }: { children: ReactNode }) {
         <SheetBody className="flex flex-col gap-1 px-3 py-4">
           <div className="grid gap-1">
             <SheetClose asChild>
-              <Link
-                to={localize("/lumo")}
+              <LocaleLink
+                to={SITE_ROUTES.lumo}
                 className="flex items-start gap-3 rounded-card border border-border bg-card p-3.5 shadow-surface transition-colors hover:bg-accent"
               >
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-control border border-border bg-background">
@@ -97,11 +92,11 @@ export function MobileNav({ children }: { children: ReactNode }) {
                     {t("nav.productLumoTagline")}
                   </span>
                 </span>
-              </Link>
+              </LocaleLink>
             </SheetClose>
             <SheetClose asChild>
-              <Link
-                to={localize("/userscripts")}
+              <LocaleLink
+                to={SITE_ROUTES.userscripts}
                 className="flex items-start gap-3 rounded-card border border-border bg-card p-3.5 shadow-surface transition-colors hover:bg-accent"
               >
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-control border border-border bg-background">
@@ -115,28 +110,28 @@ export function MobileNav({ children }: { children: ReactNode }) {
                     {t("nav.productUserscriptsTagline")}
                   </span>
                 </span>
-              </Link>
+              </LocaleLink>
             </SheetClose>
           </div>
 
           <div className="mt-3 grid gap-0.5">
             <MobileLink
-              to={localize("/docs")}
+              to={SITE_ROUTES.docs}
               icon={FileText}
               label={t("common.docs")}
               active={path.startsWith("/docs")}
             />
             <MobileLink
-              to={localize("/changelog")}
-              icon={Rocket}
-              label={t("common.changelog")}
-              active={path.startsWith("/changelog")}
+              to={PRIVACY_PATHS.lumo}
+              icon={Shield}
+              label={t("footer.lumoPrivacy")}
+              active={path === PRIVACY_PATHS.lumo}
             />
             <MobileLink
-              to={localize("/privacy")}
+              to={PRIVACY_PATHS.userscripts}
               icon={Shield}
-              label={t("common.privacy")}
-              active={path.startsWith("/privacy")}
+              label={t("footer.userscriptsPrivacy")}
+              active={path === PRIVACY_PATHS.userscripts}
             />
           </div>
 
@@ -157,27 +152,30 @@ export function MobileNav({ children }: { children: ReactNode }) {
             </SheetClose>
           </div>
 
-          <div className="mt-3 flex flex-col gap-2">
-            <SheetClose asChild>
-              <Button asChild size="lg" className="w-full">
-                <Link to={`${localize("/lumo")}#install`}>
-                  {t("nav.installLumo")}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </SheetClose>
-            <SheetClose asChild>
-              <a
-                href={LINKS.githubOrg}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-control border border-border text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-              >
-                <GithubIcon className="h-4 w-4" />
-                GitHub
-              </a>
-            </SheetClose>
-          </div>
+          {productCta ? (
+            <div className="mt-3 flex flex-col gap-2">
+              <SheetClose asChild>
+                <Button asChild size="lg" className="w-full">
+                  <LocaleLink to={productCta.installHref}>
+                    {t(productCta.installLabelKey)}
+                    <ArrowRight className="h-4 w-4" />
+                  </LocaleLink>
+                </Button>
+              </SheetClose>
+              <SheetClose asChild>
+                <a
+                  href={productCta.repo}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  aria-label={t(productCta.repoAriaKey)}
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-control border border-border text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                >
+                  <GithubIcon className="h-4 w-4" />
+                  {t("common.github")}
+                </a>
+              </SheetClose>
+            </div>
+          ) : null}
         </SheetBody>
       </SheetContent>
     </Sheet>

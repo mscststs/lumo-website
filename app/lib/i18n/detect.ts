@@ -1,14 +1,20 @@
 import { getLocale, LOCALES, type Locale } from "@/lib/site-manifest";
 
 /**
- * Locale detection and first-visit routing.
+ * Locale detection for the site's single entry point.
  *
- * Two rules keep this predictable:
- *  1. An explicit URL wins. A `/zh/...` path is never redirected away from, so
- *     a shared Chinese link opens in Chinese regardless of the browser.
- *  2. A stored preference wins over a guess, and only an *unprefixed* path is
- *     ever redirected. The redirect therefore can never loop: it always lands
- *     on a prefixed path, which rule 1 leaves alone.
+ * The rule is deliberately narrow, because a language switcher that fires on
+ * every navigation is worse than no detection at all: **the URL owns the
+ * language**. `/zh/...` is Chinese, `/...` is English, and neither is ever
+ * rewritten. Only `/` — a path that carries no language information — picks one
+ * for a first-time visitor.
+ *
+ * Resolution order at `/`:
+ *  1. The stored preference (written by the language menu and by every rendered
+ *     page, so it always matches the language last read).
+ *  2. The referrer, when it is a same-origin page (continuity for visitors whose
+ *     storage is unavailable).
+ *  3. `navigator.languages`.
  *
  * Detection runs from a tiny inline script in `<head>`, before the first paint,
  * so the English pre-render never flashes on a Chinese browser.
@@ -24,8 +30,8 @@ export interface LocaleRedirectInput {
   preference: Locale | null;
   /** `navigator.languages`, most preferred first. */
   languages: readonly string[];
-  /** True when the document was reached from another page of this site. */
-  internalNavigation?: boolean;
+  /** Locale of the same-origin page that linked here, if any. */
+  referrerLocale?: Locale | null;
   userAgent?: string;
 }
 
@@ -109,10 +115,10 @@ export function localeHref(
 /**
  * The href to redirect to, or `null` to render the requested document.
  *
- * Deep links reached from inside this site are left alone: once someone is
- * reading English, the next link they click must not silently change language.
- * A direct entry (root, bookmark, shared link) is routed by preference, then by
- * `Accept-Language` equivalent.
+ * Only `/` can be redirected: it is the one path with no language of its own.
+ * Every other URL keeps the language it declares, so opening an English link in
+ * a new tab can never land on the Chinese page (and vice versa) just because of
+ * a stored preference.
  */
 export function resolveLocaleRedirect({
   pathname,
@@ -120,77 +126,62 @@ export function resolveLocaleRedirect({
   hash = "",
   preference,
   languages,
-  internalNavigation = false,
+  referrerLocale = null,
   userAgent = "",
 }: LocaleRedirectInput): string | null {
   if (isBotUserAgent(userAgent)) return null;
+  if (pathname !== "/") return null;
   if (isPrefixed(pathname)) return null;
-  if (preference === "en") return null;
-  if (!preference && internalNavigation && pathname !== "/") return null;
 
-  const detected = preference ?? detectLocaleFromLanguages(languages);
+  const detected =
+    preference ?? referrerLocale ?? detectLocaleFromLanguages(languages);
   if (detected !== "zh") return null;
   if (getLocale(pathname) === "zh") return null;
   return localeHref(pathname, "zh", search, hash);
 }
 
 /**
- * Self-contained boot script, serialised into `<head>`.
+ * Self-contained boot script, inlined into `<head>`.
  *
- * Kept free of imports and modern syntax that older Chromium can choke on; it
- * must run before the stylesheet so no English frame is ever painted.
+ * Kept as a literal string rather than `fn.toString()`: the server and client
+ * bundles are transformed independently, so a serialized function body can
+ * differ by whitespace between the pre-rendered HTML and the hydrating client
+ * and trip React's hydration check. A constant is byte-identical everywhere.
+ *
+ * It mirrors `resolveLocaleRedirect` exactly: only `/` may be redirected, and
+ * only to `/zh`. `tests/locale-detect.test.ts` executes this script against a
+ * fake window to keep the two implementations honest.
  */
-function localePreload() {
+export const LOCALE_PRELOAD_SCRIPT = `(function () {
   try {
     var path = window.location.pathname;
-    var search = window.location.search;
-    var hash = window.location.hash;
+    if (path !== "/") return;
     var ua = navigator.userAgent || "";
-    if (
-      /bot|crawler|spider|slurp|bingpreview|facebookexternalhit|headlesschrome|lighthouse|pagespeed/i.test(
-        ua,
-      ) ||
-      navigator.webdriver
-    ) {
-      return;
-    }
-    if (path === "/zh" || path.indexOf("/zh/") === 0) return;
-
+    if (/bot|crawler|spider|slurp|bingpreview|facebookexternalhit|headlesschrome|lighthouse|pagespeed/i.test(ua) || navigator.webdriver) return;
     var pref = null;
-    try {
-      pref = localStorage.getItem("lumo-site-locale");
-    } catch (error) {
-      pref = null;
-    }
+    try { pref = localStorage.getItem("lumo-site-locale"); } catch (error) { pref = null; }
     if (pref !== "zh" && pref !== "en") pref = null;
     if (pref === "en") return;
-
-    var internal =
-      path !== "/" &&
-      document.referrer.indexOf(window.location.origin + "/") === 0;
-    if (!pref && internal) return;
-
-    var detected = pref;
+    var referrerLocale = null;
+    var origin = window.location.origin;
+    if (document.referrer.indexOf(origin + "/") === 0) {
+      var rest = document.referrer.slice(origin.length);
+      var cut = rest.search(/[?#]/);
+      var referrerPath = cut < 0 ? rest : rest.slice(0, cut);
+      referrerLocale = referrerPath === "/zh" || referrerPath.indexOf("/zh/") === 0 ? "zh" : "en";
+    }
+    var detected = pref || referrerLocale;
     if (!detected) {
       var languages = navigator.languages || [navigator.language || ""];
       for (var i = 0; i < languages.length; i += 1) {
         var tag = String(languages[i]).toLowerCase().replace(/_/g, "-");
-        if (tag === "zh" || tag.indexOf("zh-") === 0) {
-          detected = "zh";
-          break;
-        }
-        if (tag === "en" || tag.indexOf("en-") === 0) {
-          detected = "en";
-          break;
-        }
+        if (tag === "zh" || tag.indexOf("zh-") === 0) { detected = "zh"; break; }
+        if (tag === "en" || tag.indexOf("en-") === 0) { detected = "en"; break; }
       }
     }
-
     if (detected !== "zh") return;
-    window.location.replace("/zh" + (path === "/" ? "" : path) + search + hash);
+    window.location.replace("/zh" + window.location.search + window.location.hash);
   } catch (error) {
     /* A failed redirect must never block the page. */
   }
-}
-
-export const LOCALE_PRELOAD_SCRIPT = `(${localePreload.toString()})();`;
+})();`;

@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import {
   ArrowRight,
   Bug,
@@ -12,9 +11,9 @@ import {
   Terminal,
 } from "lucide-react";
 import { AnchorNav } from "@/components/site/anchor-nav";
-import { BrandMark } from "@/components/brand/brand-mark";
 import { CrossSell } from "@/components/site/cross-sell";
 import { JsonLd } from "@/components/site/json-ld";
+import { ProductHero } from "@/components/site/product-hero";
 import { SectionHeading } from "@/components/site/section-heading";
 import { AgentLoopDiagram } from "@/components/mockups/agent-loop-diagram";
 import { FeatureStage } from "@/components/mockups/feature-stage";
@@ -24,18 +23,22 @@ import { PrivacyDiagram } from "@/components/mockups/privacy-diagram";
 import { ProviderProtocolGrid, DevToolsToolGrid } from "@/components/mockups/provider-protocol-grid";
 import { SidebarChatMock } from "@/components/mockups/sidebar-chat-mock";
 import { SplitViewShowcase } from "@/components/mockups/split-view-showcase";
-import { Aurora } from "@/components/motion/aurora";
 import { Reveal } from "@/components/motion/reveal";
-import { TiltCard } from "@/components/motion/tilt-card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { GithubIcon } from "@/components/brand/icons";
 import { useLocale } from "@/lib/i18n";
-import { useLocalePath } from "@/lib/i18n/use-path";
+import { LocaleLink } from "@/components/site/locale-link";
 import { translate } from "@/lib/i18n/translate";
 import { absoluteUrl, pageMeta } from "@/lib/seo";
 import { LINKS, siteOrigin } from "@/lib/site";
-import { getLocale, localePath, type Locale } from "@/lib/site-manifest";
+import {
+  getLocale,
+  isExternalHref,
+  localePath,
+  PRIVACY_PATHS,
+  SITE_ROUTES,
+  type Locale,
+} from "@/lib/site-manifest";
 
 export function meta({ location }: { location: { pathname: string } }) {
   const locale = getLocale(location.pathname);
@@ -76,15 +79,25 @@ function InstallCard({
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         <p className="text-sm leading-6 text-muted-foreground">{detail}</p>
       </div>
-      <a
-        href={href}
-        target="_blank"
-        rel="noreferrer noopener"
-        className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-primary"
-      >
-        {action}
-        <ExternalLinkIcon className="h-3.5 w-3.5" />
-      </a>
+      {isExternalHref(href) ? (
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-primary"
+        >
+          {action}
+          <ExternalLinkIcon className="h-3.5 w-3.5" />
+        </a>
+      ) : (
+        <LocaleLink
+          to={href}
+          className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-primary"
+        >
+          {action}
+          <ArrowRight className="h-3.5 w-3.5" />
+        </LocaleLink>
+      )}
     </div>
   );
 }
@@ -92,7 +105,6 @@ function InstallCard({
 export default function LumoPage() {
   const { t } = useTranslation();
   const locale = useLocale() as Locale;
-  const localize = useLocalePath();
 
   const anchors = [
     { id: "overview", label: t("lumo.anchors.overview") },
@@ -134,80 +146,27 @@ export default function LumoPage() {
         }}
       />
 
-      <section
-        id="overview"
-        className="relative scroll-mt-24 overflow-hidden pb-16 pt-14 sm:pb-20 sm:pt-20"
-      >
-        <Aurora tone="lumo" />
-        <div className="container-page relative grid grid-cols-1 items-center gap-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-          <Reveal className="flex flex-col items-start gap-5">
-            <div className="flex items-center gap-3">
-              <span className="flex h-12 w-12 items-center justify-center rounded-card border border-border bg-card/80 shadow-card">
-                <BrandMark variant="lumo" className="h-8 w-8" />
-              </span>
-              <div className="flex flex-col">
-                <p className="text-eyebrow font-semibold uppercase text-muted-foreground">
-                  {t("lumo.hero.eyebrow")}
-                </p>
-                <p className="text-sm font-semibold text-foreground">Lumo</p>
-              </div>
-            </div>
-            <h1 className="max-w-[16ch] text-balance text-display-lg font-semibold text-foreground">
-              {t("lumo.hero.title")}
-            </h1>
-            <p className="max-w-[56ch] text-pretty text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
-              {t("lumo.hero.description")}
-            </p>
-            <div className="flex flex-col items-start gap-2.5 sm:flex-row sm:items-center">
-              <Button asChild size="lg">
-                <a href={LINKS.lumoStore} target="_blank" rel="noreferrer noopener">
-                  <Download className="h-4 w-4" />
-                  {t("lumo.hero.primary")}
-                </a>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link to={localize("/docs/agent-loop")}>
-                  {t("lumo.hero.secondary")}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-            <div className="mt-1 flex flex-wrap gap-2">
-              {(t("lumo.hero.chips", { returnObjects: true }) as string[]).map(
-                (chip) => (
-                  <Badge key={chip} variant="outline">
-                    {chip}
-                  </Badge>
-                ),
-              )}
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.1} className="relative">
-            <TiltCard>
-              <SidebarChatMock
-                mode="loop"
-                className="mx-auto h-[32rem] max-w-md"
-              />
-            </TiltCard>
-            <div className="absolute -top-12 right-6 hidden rounded-panel border border-border bg-card/90 p-3 shadow-float backdrop-blur lg:block">
-              <div className="flex items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-control bg-brand-violet/15 text-brand-violet">
-                  <Bug className="h-3.5 w-3.5" />
-                </span>
-                <div>
-                  <p className="text-[10px] font-semibold text-foreground">
-                    DevTools Advanced
-                  </p>
-                  <p className="font-mono text-[8px] text-muted-foreground">
-                    chrome.debugger · CDP
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      <ProductHero
+        variant="lumo"
+        eyebrow={t("lumo.hero.eyebrow")}
+        title={t("lumo.hero.title")}
+        summary={t("lumo.hero.summary")}
+        primary={{
+          label: t("lumo.hero.primary"),
+          href: LINKS.lumoStore,
+          icon: <Download className="h-4 w-4" />,
+        }}
+        secondary={{
+          label: t("lumo.hero.secondary"),
+          href: `${SITE_ROUTES.docs}/agent-loop`,
+        }}
+        visual={
+          <SidebarChatMock
+            mode="loop"
+            className="mx-auto h-[26rem] w-full max-w-[34rem] sm:h-[30rem] lg:h-[33rem]"
+          />
+        }
+      />
 
       <AnchorNav items={anchors} ariaLabel={t("lumo.anchors.overview")} />
 
@@ -220,7 +179,7 @@ export default function LumoPage() {
           description={t("lumo.agent.description")}
           bullets={t("lumo.agent.bullets", { returnObjects: true }) as string[]}
           ctaLabel={t("lumo.agent.cta")}
-          ctaHref={localize("/docs/agent-loop")}
+          ctaHref={`${SITE_ROUTES.docs}/agent-loop`}
           visual={<AgentLoopDiagram />}
         />
 
@@ -231,10 +190,10 @@ export default function LumoPage() {
             description={t("lumo.tools.description")}
             action={
               <Button asChild variant="outline" size="sm">
-                <Link to={localize("/docs/mcp")}>
+                <LocaleLink to={`${SITE_ROUTES.docs}/mcp`}>
                   {t("common.readDocs")}
                   <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
+                </LocaleLink>
               </Button>
             }
           />
@@ -289,7 +248,7 @@ export default function LumoPage() {
               t("lumo.providers.bullets", { returnObjects: true }) as string[]
             }
             ctaLabel={t("lumo.providers.cta")}
-            ctaHref={localize("/docs/agent-loop")}
+            ctaHref={`${SITE_ROUTES.docs}/agent-loop`}
             visual={<LumoProviderMock />}
           />
           <section className="container-page">
@@ -310,7 +269,7 @@ export default function LumoPage() {
           description={t("lumo.privacy.description")}
           bullets={t("lumo.privacy.bullets", { returnObjects: true }) as string[]}
           ctaLabel={t("common.privacy")}
-          ctaHref={localize("/privacy")}
+          ctaHref={PRIVACY_PATHS.lumo}
           visual={<PrivacyDiagram />}
         />
 
@@ -364,13 +323,13 @@ export default function LumoPage() {
             <ShieldCheck className="h-4 w-4 text-success" />
             {t("lumo.install.requirement")}
           </span>
-          <Link
-            to={localize("/privacy")}
+          <LocaleLink
+            to={PRIVACY_PATHS.lumo}
             className="inline-flex items-center gap-1 font-medium text-foreground hover:text-primary"
           >
             {t("common.privacy")}
             <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+          </LocaleLink>
         </div>
       </section>
 
@@ -381,7 +340,7 @@ export default function LumoPage() {
           title={t("lumo.cross.title")}
           description={t("lumo.cross.description")}
           cta={t("lumo.cross.cta")}
-          href={localize("/userscripts")}
+          href={SITE_ROUTES.userscripts}
         />
       </div>
     </>

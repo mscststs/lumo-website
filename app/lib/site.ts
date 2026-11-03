@@ -45,8 +45,5 @@ export const LINKS = {
     "https://github.com/mscststs/lumo-userscript-manager/releases",
   userscriptsPrivacy:
     "https://github.com/mscststs/lumo-userscript-manager/blob/main/PRIVACY.md",
-  siteRepo: "https://github.com/mscststs/lumo-website",
   githubOrg: "https://github.com/mscststs",
 } as const;
-
-export const DOCS_EDIT_BASE = `${LINKS.siteRepo}/edit/main`;

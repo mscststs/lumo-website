@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { ArrowRight, Check } from "lucide-react";
-import { Link } from "react-router";
 import { Eyebrow } from "@/components/site/section-heading";
 import { Reveal } from "@/components/motion/reveal";
+import { LocaleLink } from "@/components/site/locale-link";
 import { cn } from "@/lib/utils";
 
 export function FeatureStage({
@@ -64,13 +64,13 @@ export function FeatureStage({
               ))}
             </ul>
             {ctaLabel && ctaHref ? (
-              <Link
+              <LocaleLink
                 to={ctaHref}
                 className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
               >
                 {ctaLabel}
                 <ArrowRight className="h-4 w-4" />
-              </Link>
+              </LocaleLink>
             ) : null}
           </div>
           <div

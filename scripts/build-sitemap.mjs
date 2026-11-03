@@ -27,29 +27,28 @@ async function walk(dir) {
   return files.flat();
 }
 
+// Keep in sync with LOCALES / DEFAULT_LOCALE in app/lib/site-manifest.ts.
+const LOCALES = ["en", "zh"];
+const DEFAULT_LOCALE = "en";
+const HREFLANG = { en: "en", zh: "zh-CN" };
+
+// No trailing slashes: `drop-trailing-slash` in wrangler.toml makes
+// `/docs/mcp` the canonical form, so the sitemap, the `<link rel=canonical>`
+// and every in-app link agree on exactly one URL per document.
 function toPath(file) {
   const relative = path.relative(OUT_DIR, file).replace(/\\/g, "/");
   if (relative === "index.html") return "/";
   if (relative.endsWith("/index.html")) {
-    return `/${relative.slice(0, -"/index.html".length)}/`;
+    return `/${relative.slice(0, -"/index.html".length)}`;
   }
   return `/${relative.replace(/\.html$/, "")}`;
 }
 
-function withSlash(value) {
-  if (!value || value === "/") return "/";
-  return value.endsWith("/") ? value : `${value}/`;
-}
-
-function alternate(url, locale) {
-  const clean = url === "/" ? "/" : url.replace(/\/$/, "");
-  const next =
-    locale === "zh"
-      ? clean.replace(/^\/zh/, "") || "/"
-      : clean === "/"
-        ? "/zh"
-        : `/zh${clean}`;
-  return `${SITE_URL}${withSlash(next) === "/" ? "/" : withSlash(next)}`;
+function localeUrl(url, locale) {
+  const clean = url === "/" ? "/" : url.replace(/^\/zh(?=\/|$)/, "").replace(/\/+$/, "") || "/";
+  if (locale === DEFAULT_LOCALE) return `${SITE_URL}${clean === "/" ? "/" : clean}`;
+  const prefixed = clean === "/" ? `/${locale}` : `/${locale}${clean}`;
+  return `${SITE_URL}${prefixed}`;
 }
 
 const files = (await walk(OUT_DIR)).filter(
@@ -68,17 +67,17 @@ const urls = Array.from(new Set(files.map(toPath))).sort((a, b) => {
 
 const entries = urls
   .map((url) => {
-    const locale = url === "/zh" || url.startsWith("/zh/") ? "zh" : "en";
-    const other = locale === "zh" ? "en" : "zh";
-    const locPath = withSlash(url);
-    const loc = `${SITE_URL}${locPath === "/" ? "/" : locPath}`;
-    const defaultPath = withSlash(url.replace(/^\/zh/, "") || "/");
-    const defaultUrl = `${SITE_URL}${defaultPath === "/" ? "/" : defaultPath}`;
+    const locale = url === "/zh" || url.startsWith("/zh/") ? "zh" : DEFAULT_LOCALE;
+    const alternates = LOCALES.map(
+      (entry) =>
+        `    <xhtml:link rel="alternate" hreflang="${HREFLANG[entry]}" href="${localeUrl(url, entry)}"/>`,
+    );
+    alternates.push(
+      `    <xhtml:link rel="alternate" hreflang="x-default" href="${localeUrl(url, DEFAULT_LOCALE)}"/>`,
+    );
     return `  <url>
-    <loc>${loc}</loc>
-    <xhtml:link rel="alternate" hreflang="${locale === "zh" ? "zh-CN" : "en"}" href="${loc}"/>
-    <xhtml:link rel="alternate" hreflang="${other === "zh" ? "zh-CN" : "en"}" href="${alternate(url, locale)}"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="${defaultUrl}"/>
+    <loc>${localeUrl(url, locale)}</loc>
+${alternates.join("\n")}
     <changefreq>weekly</changefreq>
   </url>`;
   })

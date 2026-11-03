@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import {
   ArrowRight,
   BookOpen,
@@ -19,12 +18,12 @@ import { Aurora } from "@/components/motion/aurora";
 import { Reveal } from "@/components/motion/reveal";
 import { Kbd } from "@/components/ui/kbd";
 import { useLocale } from "@/lib/i18n";
-import { useLocalePath } from "@/lib/i18n/use-path";
 import { formatDate } from "@/lib/format";
 import { translate } from "@/lib/i18n/translate";
 import { pageMeta } from "@/lib/seo";
-import { docPath, getLocale, localePath, type DocCategory } from "@/lib/site-manifest";
+import { getLocale, localePath, SITE_ROUTES, type DocCategory } from "@/lib/site-manifest";
 import { cn } from "@/lib/utils";
+import { LocaleLink } from "@/components/site/locale-link";
 
 const CATEGORY_ICON: Record<DocCategory, LucideIcon> = {
   start: Rocket,
@@ -47,7 +46,6 @@ export function meta({ location }: { location: { pathname: string } }) {
 export default function DocsIndexPage() {
   const { t } = useTranslation();
   const locale = useLocale();
-  const localize = useLocalePath();
   const { openSearch } = useSearch();
   const groups = getDocsByCategory(locale);
   const docs = getDocs(locale);
@@ -123,11 +121,11 @@ export default function DocsIndexPage() {
             const first = group.articles[0];
             return (
               <Reveal key={group.category}>
-                <Link
+                <LocaleLink
                   to={
                     first
-                      ? docPath(locale, first.slug)
-                      : localize("/docs")
+                      ? `${SITE_ROUTES.docs}/${first.slug}`
+                      : SITE_ROUTES.docs
                   }
                   className="group flex h-full flex-col gap-3 rounded-card border border-border bg-card p-5 shadow-surface transition-colors hover:border-primary/25"
                 >
@@ -146,7 +144,7 @@ export default function DocsIndexPage() {
                     {first?.title}
                     <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                   </span>
-                </Link>
+                </LocaleLink>
               </Reveal>
             );
           })}
@@ -165,8 +163,8 @@ export default function DocsIndexPage() {
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {docs.map((article) => (
             <Reveal key={article.slug}>
-              <Link
-                to={docPath(locale, article.slug)}
+              <LocaleLink
+                to={`${SITE_ROUTES.docs}/${article.slug}`}
                 className={cn(
                   "group flex h-full flex-col gap-2 rounded-card border border-border bg-card p-5 shadow-surface transition-colors hover:border-primary/25",
                 )}
@@ -188,7 +186,7 @@ export default function DocsIndexPage() {
                   <span className="h-1 w-1 rounded-full bg-border" />
                   <span>{formatDate(article.updated, locale)}</span>
                 </div>
-              </Link>
+              </LocaleLink>
             </Reveal>
           ))}
         </div>

@@ -1,8 +1,8 @@
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/motion/reveal";
+import { LocaleLink } from "./locale-link";
 import { cn } from "@/lib/utils";
 
 export function CrossSell({
@@ -48,10 +48,10 @@ export function CrossSell({
               </div>
             </div>
             <Button asChild variant="outline" size="lg" className="shrink-0">
-              <Link to={href}>
+              <LocaleLink to={href}>
                 {cta}
                 <ArrowRight className="h-4 w-4" />
-              </Link>
+              </LocaleLink>
             </Button>
           </div>
         </div>

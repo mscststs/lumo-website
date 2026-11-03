@@ -41,8 +41,9 @@ export function slugifyHeading(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-export function getHeadings(article: DocArticle): DocHeading[] {
-  return article.blocks
+/** Works for docs and for any other `DocBlock[]` document (privacy pages). */
+export function getHeadings(source: { blocks: DocBlock[] }): DocHeading[] {
+  return source.blocks
     .filter(
       (block): block is Extract<DocBlock, { type: "h2" | "h3" }> =>
         block.type === "h2" || block.type === "h3",

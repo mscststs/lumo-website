@@ -10,9 +10,16 @@ import {
   SITE_ORIGIN_PLACEHOLDER,
 } from "@/lib/site-origin";
 
-function attribute(descriptors: MetaDescriptor[], rel: string): string | undefined {
+function attribute(
+  descriptors: MetaDescriptor[],
+  rel: string,
+  hrefLang?: string,
+): string | undefined {
   for (const descriptor of descriptors) {
     if ("rel" in descriptor && descriptor.rel === rel) {
+      if (hrefLang && (!("hrefLang" in descriptor) || descriptor.hrefLang !== hrefLang)) {
+        continue;
+      }
       const href = descriptor.href;
       return typeof href === "string" ? href : undefined;
     }
@@ -69,8 +76,16 @@ describe("origin-agnostic absolute URLs", () => {
       description: "How Lumo speaks MCP.",
     });
 
+    // No trailing slash: the asset layer redirects the slash form away, so the
+    // canonical must describe the URL that is actually served.
     expect(attribute(meta, "canonical")).toBe(
-      `${window.location.origin}/docs/mcp/`,
+      `${window.location.origin}/docs/mcp`,
+    );
+    expect(attribute(meta, "alternate", "zh-CN")).toBe(
+      `${window.location.origin}/zh/docs/mcp`,
+    );
+    expect(attribute(meta, "alternate", "x-default")).toBe(
+      `${window.location.origin}/docs/mcp`,
     );
   });
 });

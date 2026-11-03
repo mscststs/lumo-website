@@ -56,14 +56,14 @@ function AppFrame({
     <div
       aria-hidden="true"
       className={cn(
-        "flex min-w-0 overflow-hidden rounded-panel border border-border bg-sidebar text-foreground shadow-float",
+        "@container flex min-w-0 overflow-hidden rounded-panel border border-border bg-sidebar text-foreground shadow-float",
         className,
       )}
     >
-      <aside className="flex w-12 shrink-0 flex-col py-2 sm:w-36">
+      <aside className="flex w-12 shrink-0 flex-col py-2 @[30rem]:w-36">
         <div className="flex h-10 items-center gap-2 px-2.5">
           <BrandMark variant="userscripts" className="h-6 w-6 shrink-0" />
-          <p className="hidden min-w-0 truncate text-[10px] font-semibold text-foreground sm:block">
+          <p className="hidden min-w-0 truncate text-[10px] font-semibold text-foreground @[30rem]:block">
             {t("userscripts.productName")}
           </p>
         </div>
@@ -87,11 +87,11 @@ function AppFrame({
                     isActive && "text-primary",
                   )}
                 />
-                <span className="hidden truncate sm:block">
+                <span className="hidden truncate @[30rem]:block">
                   {t(`mockUi.usNav.${item.key}`)}
                 </span>
                 {item.key === "logs" ? (
-                  <span className="ml-auto hidden h-1.5 w-1.5 rounded-full bg-destructive sm:block" />
+                  <span className="ml-auto hidden h-1.5 w-1.5 rounded-full bg-destructive @[30rem]:block" />
                 ) : null}
               </span>
             );
@@ -160,7 +160,7 @@ interface ScriptRow {
 function ScriptListRow({ script }: { script: ScriptRow }) {
   const { t } = useTranslation();
   return (
-    <div className="grid grid-cols-[1.5rem_minmax(0,1fr)_auto] items-center gap-x-2.5 rounded-control px-2 py-1.5 transition-colors hover:bg-accent/60 sm:grid-cols-[1.5rem_minmax(0,1fr)_auto_auto]">
+    <div className="grid grid-cols-[1.5rem_minmax(0,1fr)_auto] items-center gap-x-2.5 rounded-control px-2 py-1.5 transition-colors hover:bg-accent/60 @[35rem]:grid-cols-[1.5rem_minmax(0,1fr)_auto_auto]">
       <span
         className={cn(
           "flex h-6 w-6 items-center justify-center rounded-[5px] border border-border bg-gradient-to-br from-brand-cyan/20 to-brand-violet/10 text-brand-cyan",
@@ -192,7 +192,7 @@ function ScriptListRow({ script }: { script: ScriptRow }) {
           <p className="truncate text-[9px] text-destructive">{script.error}</p>
         ) : null}
       </div>
-      <span className="hidden whitespace-nowrap text-right text-[9px] tabular-nums text-muted-foreground sm:block">
+      <span className="hidden whitespace-nowrap text-right text-[9px] tabular-nums text-muted-foreground @[35rem]:block">
         {t("mockUi.updatedNow")}
       </span>
       <div className="flex items-center justify-end gap-1">

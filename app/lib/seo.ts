@@ -1,5 +1,11 @@
 import type { MetaDescriptor } from "react-router";
-import { LOCALE_META, switchLocalePath, type Locale } from "./site-manifest";
+import {
+  DEFAULT_LOCALE,
+  LOCALES,
+  LOCALE_META,
+  localePath,
+  type Locale,
+} from "./site-manifest";
 import { ogImageUrl, siteOrigin } from "./site";
 
 export interface PageSeo {
@@ -12,20 +18,27 @@ export interface PageSeo {
   noIndex?: boolean;
 }
 
-function withTrailingSlash(path: string): string {
+/**
+ * Canonical URLs never carry a trailing slash: `drop-trailing-slash` in
+ * `wrangler.toml` serves `/docs/mcp` from `docs/mcp/index.html` and redirects
+ * the slash form away, so the canonical, the sitemap and every in-app link
+ * describe exactly one URL.
+ */
+function withoutTrailingSlash(path: string): string {
   if (path === "/" || path === "") return "/";
-  return path.endsWith("/") ? path : `${path}/`;
+  return path.replace(/\/+$/, "") || "/";
 }
 
 function absolute(path: string): string {
-  const normalized = withTrailingSlash(path);
+  const normalized = withoutTrailingSlash(path);
   return `${siteOrigin()}${normalized === "/" ? "" : normalized}`;
 }
 
 /**
  * Every route returns static metadata at build time. The canonical URL is the
- * localised path; hreflang pairs the English and Chinese documents so search
- * engines never have to guess.
+ * localised path; `hreflang` lists every locale for the same document plus an
+ * `x-default` pointing at the default locale, so search engines never have to
+ * guess which language a URL belongs to.
  */
 export function pageMeta({
   locale,
@@ -36,8 +49,13 @@ export function pageMeta({
   noIndex = false,
 }: PageSeo): MetaDescriptor[] {
   const url = absolute(path);
-  const alternate = switchLocalePath(path, locale === "en" ? "zh" : "en");
   const other = locale === "en" ? "zh" : "en";
+  const localeAlternates = LOCALES.map((entry) => ({
+    tagName: "link" as const,
+    rel: "alternate" as const,
+    hrefLang: LOCALE_META[entry].htmlLang,
+    href: absolute(localePath(entry, path)),
+  }));
 
   return [
     { title },
@@ -47,19 +65,13 @@ export function pageMeta({
       content: noIndex ? "noindex, follow" : "index, follow, max-image-preview:large",
     },
     { tagName: "link", rel: "canonical", href: url },
+    ...localeAlternates,
     {
       tagName: "link",
       rel: "alternate",
-      hreflang: LOCALE_META[locale].htmlLang,
-      href: url,
+      hrefLang: "x-default",
+      href: absolute(localePath(DEFAULT_LOCALE, path)),
     },
-    {
-      tagName: "link",
-      rel: "alternate",
-      hreflang: LOCALE_META[other].htmlLang,
-      href: absolute(alternate),
-    },
-    { tagName: "link", rel: "alternate", hreflang: "x-default", href: absolute(path.replace(/^\/zh/, "") || "/") },
     { property: "og:type", content: type },
     { property: "og:site_name", content: "Lumo" },
     { property: "og:title", content: title },

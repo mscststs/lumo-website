@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import {
   Braces,
   FileText,
@@ -10,6 +10,7 @@ import {
   Layers,
   Palette,
   Rocket,
+  ShieldCheck,
   Sparkles,
   Wrench,
 } from "lucide-react";
@@ -34,12 +35,13 @@ import {
 import { Kbd } from "@/components/ui/kbd";
 import { useSearch } from "./search-provider";
 import { useLocale } from "@/lib/i18n";
-import { useLocalePath } from "@/lib/i18n/use-path";
+import { useLocaleHref, useLocaleNavigate } from "./locale-link";
 import {
   docPath,
-  localePath,
   LOCALE_META,
-  switchLocalePath,
+  PRIVACY_PATHS,
+  SITE_ROUTES,
+  switchLocaleHref,
   type DocCategory,
 } from "@/lib/site-manifest";
 import { getAllSearchResults, searchDocs } from "@/content/docs";
@@ -58,8 +60,8 @@ export function CommandPalette() {
   const { open, setOpen } = useSearch();
   const locale = useLocale();
   const location = useLocation();
-  const navigate = useNavigate();
-  const localize = useLocalePath();
+  const go = useLocaleNavigate();
+  const href = useLocaleHref();
   const [query, setQuery] = useState("");
 
   const otherLocale = locale === "en" ? "zh" : "en";
@@ -68,28 +70,49 @@ export function CommandPalette() {
   const pages = useMemo(
     () =>
       [
-        { key: "home", label: t("common.brand"), href: "/", icon: Home },
-        { key: "lumo", label: t("nav.productLumoName"), href: "/lumo", icon: Sparkles },
+        { key: "home", label: t("common.brand"), href: SITE_ROUTES.home, icon: Home },
+        {
+          key: "lumo",
+          label: t("nav.productLumoName"),
+          href: SITE_ROUTES.lumo,
+          icon: Sparkles,
+        },
         {
           key: "userscripts",
           label: t("nav.productUserscriptsName"),
-          href: "/userscripts",
+          href: SITE_ROUTES.userscripts,
           icon: Braces,
         },
-        { key: "docs", label: t("common.docs"), href: "/docs", icon: FileText },
-        { key: "changelog", label: t("common.changelog"), href: "/changelog", icon: Rocket },
-        { key: "privacy", label: t("common.privacy"), href: "/privacy", icon: Layers },
+        {
+          key: "docs",
+          label: t("common.docs"),
+          href: SITE_ROUTES.docs,
+          icon: FileText,
+        },
+        {
+          key: "lumo-privacy",
+          label: t("footer.lumoPrivacy"),
+          href: PRIVACY_PATHS.lumo,
+          icon: ShieldCheck,
+        },
+        {
+          key: "userscripts-privacy",
+          label: t("footer.userscriptsPrivacy"),
+          href: PRIVACY_PATHS.userscripts,
+          icon: ShieldCheck,
+        },
       ] as const,
     [t],
   );
 
-  const go = useCallback(
-    (href: string) => {
+  /** Close the palette, then navigate to a locale-agnostic target. */
+  const run = useCallback(
+    (target: string) => {
       setOpen(false);
       setQuery("");
-      navigate(href);
+      go(target);
     },
-    [navigate, setOpen],
+    [go, setOpen],
   );
 
   const filteredPages = useMemo(() => {
@@ -115,7 +138,7 @@ export function CommandPalette() {
               : t("language.switchToEn"),
           keywords: `${LOCALE_META[otherLocale].nativeLabel} language locale`,
           icon: Languages,
-          run: () => go(switchLocalePath(location.pathname, otherLocale)),
+          run: () => run(switchLocaleHref(location, otherLocale)),
         },
         {
           key: "github",
@@ -132,10 +155,10 @@ export function CommandPalette() {
           label: t("docs.allDocs"),
           keywords: "documentation docs index",
           icon: FileText,
-          run: () => go(localePath(locale, "/docs")),
+          run: () => run(SITE_ROUTES.docs),
         },
       ] as const,
-    [locale, location.pathname, otherLocale, setOpen, t],
+    [location, otherLocale, run, setOpen, t],
   );
 
   const filteredActions = useMemo(() => {
@@ -182,11 +205,11 @@ export function CommandPalette() {
                     <CommandItem
                       key={page.key}
                       value={`page ${page.key} ${page.label}`}
-                      onSelect={() => go(localize(page.href))}
+                      onSelect={() => run(page.href)}
                     >
                       <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
                       <span>{page.label}</span>
-                      <CommandShortcut>{page.href}</CommandShortcut>
+                      <CommandShortcut>{href(page.href)}</CommandShortcut>
                     </CommandItem>
                   );
                 })}
@@ -205,7 +228,7 @@ export function CommandPalette() {
                     <CommandItem
                       key={doc.slug}
                       value={`doc ${doc.slug} ${doc.title}`}
-                      onSelect={() => go(docPath(locale, doc.slug))}
+                      onSelect={() => run(docPath(locale, doc.slug))}
                     >
                       <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
                       <div className="flex min-w-0 flex-col">

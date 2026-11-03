@@ -1,9 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { Link, useLocation } from "react-router";
+import { useLocation } from "react-router";
 import { FileText } from "lucide-react";
 import { getDocsByCategory } from "@/content/docs";
 import { useLocale } from "@/lib/i18n";
-import { docPath, stripLocale } from "@/lib/site-manifest";
+import { SITE_ROUTES, stripLocale } from "@/lib/site-manifest";
+import { LocaleLink } from "@/components/site/locale-link";
 import { cn } from "@/lib/utils";
 
 export function DocsSidebar({
@@ -24,8 +25,8 @@ export function DocsSidebar({
       aria-label={t("a11y.docsNav")}
       className={cn("flex flex-col gap-6", className)}
     >
-      <Link
-        to={docPath(locale, "index")}
+      <LocaleLink
+        to={SITE_ROUTES.docs}
         onClick={onNavigate}
         aria-current={path === "/docs" ? "page" : undefined}
         className={cn(
@@ -37,7 +38,7 @@ export function DocsSidebar({
       >
         <FileText className="h-4 w-4 shrink-0" />
         {t("docs.allDocs")}
-      </Link>
+      </LocaleLink>
 
       {groups.map((group) => (
         <div key={group.category} className="flex flex-col gap-2">
@@ -49,8 +50,8 @@ export function DocsSidebar({
               const active = path === `/docs/${article.slug}`;
               return (
                 <li key={article.slug}>
-                  <Link
-                    to={docPath(locale, article.slug)}
+                  <LocaleLink
+                    to={`${SITE_ROUTES.docs}/${article.slug}`}
                     onClick={onNavigate}
                     aria-current={active ? "page" : undefined}
                     className={cn(
@@ -67,7 +68,7 @@ export function DocsSidebar({
                       )}
                     />
                     <span className="min-w-0 truncate">{article.title}</span>
-                  </Link>
+                  </LocaleLink>
                 </li>
               );
             })}

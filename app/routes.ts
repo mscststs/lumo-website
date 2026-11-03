@@ -41,11 +41,15 @@ function localeTree(locale: string): RouteConfigEntry {
         ],
       },
       {
-        id: `changelog-${locale}`,
-        path: "changelog",
-        file: "routes/changelog.tsx",
+        id: `lumo-privacy-${locale}`,
+        path: "lumo/privacy",
+        file: "routes/lumo-privacy.tsx",
       },
-      { id: `privacy-${locale}`, path: "privacy", file: "routes/privacy.tsx" },
+      {
+        id: `userscripts-privacy-${locale}`,
+        path: "userscripts/privacy",
+        file: "routes/userscripts-privacy.tsx",
+      },
       {
         id: `not-found-page-${locale}`,
         path: "404",

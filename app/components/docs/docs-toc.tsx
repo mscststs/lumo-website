@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getDocHeadings } from "@/content/docs";
-import type { DocArticle } from "@/content/docs/types";
+import { getHeadings, type DocBlock } from "@/content/docs/types";
 import { cn } from "@/lib/utils";
 
-export function DocsToc({ article }: { article: DocArticle }) {
+/**
+ * Section list for any `DocBlock[]` document — docs articles and the product
+ * privacy policies share one heading model, so they share one table of
+ * contents.
+ */
+export function DocsToc({ blocks }: { blocks: DocBlock[] }) {
   const { t } = useTranslation();
-  const headings = useMemo(() => getDocHeadings(article), [article]);
+  const headings = useMemo(() => getHeadings({ blocks }), [blocks]);
   const [active, setActive] = useState(headings[0]?.id ?? "");
 
   useEffect(() => {

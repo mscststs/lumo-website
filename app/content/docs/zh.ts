@@ -56,7 +56,7 @@ export const zh: DocCollection = {
           },
           {
             title: "使用设计系统",
-            text: "令牌、调色板、动效与可访问性规则都被写成可执行的约束。",
+            text: "令牌、明暗两套外壳、动效与可访问性规则都被写成可执行的约束。",
           },
         ],
       },
@@ -186,7 +186,7 @@ export const zh: DocCollection = {
       {
         type: "ul",
         items: [
-          "OKLCH 语义令牌，带调色板与主题色轴。",
+          "OKLCH 语义令牌，覆盖明暗两套外壳。",
           "相同的字号阶梯、圆角、材质与动效曲线。",
           "相同的四条设计法则，在营销面与工具面上有不同的落地方式。",
           "i18next 资源，中英文 key 严格对齐。",
@@ -298,7 +298,7 @@ export const zh: DocCollection = {
     blocks: [
       {
         type: "p",
-        text: "Lumo Userscripts 通过原生 `chrome.userScripts` API 注册每个脚本。运行时有两套引擎：页面世界 runner 与隔离的 USER_SCRIPT host。两者都通过带 nonce 的 `MessageChannel` 与扩展通信。同一个管理器还可以选择通过 MCP 暴露脚本，见 [连接智能体](/zh/docs/agent-connections)。",
+        text: "Lumo Userscripts 通过原生 `chrome.userScripts` API 注册每个脚本。运行时有两套引擎：页面世界 runner 与隔离的 USER_SCRIPT host。两者都通过带 nonce 的 `MessageChannel` 与扩展通信。同一个管理器还可以选择通过 MCP 暴露脚本，见 [连接智能体](/docs/agent-connections)。",
       },
       { type: "h2", text: "执行模型" },
       {
@@ -361,7 +361,7 @@ export const zh: DocCollection = {
     slug: "design-system",
     category: "design",
     title: "设计系统",
-    description: "产品与本站共享的令牌、调色板、动效曲线与可访问性规则。",
+    description: "产品与本站共享的令牌、明暗两套外壳、动效曲线与可访问性规则。",
     updated: "2025-11-01",
     blocks: [
       {
@@ -393,16 +393,16 @@ export const zh: DocCollection = {
       {
         type: "code",
         lang: "css",
-        title: "主题色轴",
-        code: ":root[data-accent='emerald'] {\n  --accent-h: 162;\n  --accent-c: 0.135;\n  --accent-l: 0.535;\n}\n\n--color-primary: oklch(var(--accent-l) var(--accent-c) var(--accent-h));",
+        title: "主强调色",
+        code: ":root {\n  --accent-h: 258;\n  --accent-c: 0.17;\n  --accent-l: 0.552;\n}\n\n--color-primary: oklch(var(--accent-l) var(--accent-c) var(--accent-h));",
       },
-      { type: "h2", text: "调色板" },
+      { type: "h2", text: "主题" },
       {
         type: "ul",
         items: [
           "**纸白** —— 温暖中性浅色。长时间阅读不会像纯白那样发冷。",
-          "**石墨** —— 近黑中性。最安静的暗色表面。",
-          "**午夜** —— 冷调深蓝，层级更分明。",
+          "**午夜** —— 冷调深蓝，层级更分明。所有暗色表面都解析到这里。",
+          "主题菜单只切换亮色、暗色与跟随系统；强调色固定。",
           "暗色表面按亮度分层：背景 → 卡片 → 浮层 → hover。边框亮度高于所有表面。",
         ],
       },
@@ -430,7 +430,7 @@ export const zh: DocCollection = {
         type: "callout",
         tone: "tip",
         title: "测试令牌，而不是截图",
-        text: "对比度由测试套件从 OKLCH 计算。一个调色板不能因为在一台显示器上看着还行就上线。",
+        text: "对比度由测试套件从 OKLCH 计算。一套配色不能因为在一台显示器上看着还行就上线。",
       },
     ],
   }),
@@ -446,29 +446,34 @@ export const zh: DocCollection = {
         type: "p",
         text: "Locale 是 URL 的一部分。英文无前缀，中文在 `/zh`，因此每个页面在两种语言下都可分享、可缓存、可索引。",
       },
-      { type: "h2", text: "首次访问" },
+      { type: "h2", text: "语言由 URL 决定" },
       {
         type: "p",
-        text: "`<head>` 中的一小段脚本先读取已存偏好，再读取 `navigator.languages`。中文浏览器进入无前缀 URL 时会在首帧前跳到 `/zh`，英文浏览器留在原地。跳转是单向的：`/zh` URL 永远不会被跳走，同源深链保持当前语言，爬虫直接跳过。",
+        text: "`/zh/...` 是中文，`/...` 是英文，两者都不会被改写。只有 `/` 这个本身不含语言的路径会在首帧前选一次语言：先看已存偏好，再看来源页面，最后看 `navigator.languages`。",
       },
       {
         type: "ul",
         items: [
-          "渲染出的 locale 会被保存，语言菜单在跳转前显式写入。",
-          "跳转保留路径、查询参数与 hash。",
+          "在新标签页打开英文链接就停留在英文，与上次读的语言无关。",
+          "每个渲染出的页面与语言菜单都会写入偏好，因此偏好始终等于你最近读的语言。",
+          "爬虫与自动化浏览器永不跳转。",
           "两种语言都已预渲染；脚本只选择入口，不生成页面。",
         ],
       },
       { type: "h2", text: "路由" },
       {
+        type: "p",
+        text: "链接只写一次、并且不带语言（`/lumo`、`/docs/mcp`）。`LocaleLink`、`LocaleNavLink` 与 `useLocaleNavigate` 会按当前 URL 的语言补前缀，因此调用点不可能漏掉前缀，译文里也不会存语言。",
+      },
+      {
         type: "code",
         lang: "ts",
         title: "Locale 工具",
-        code: "localePath('zh', '/docs/mcp') // '/zh/docs/mcp'\nstripLocale('/zh/docs/mcp')    // '/docs/mcp'\nswitchLocalePath('/lumo', 'zh') // '/zh/lumo'",
+        code: "localePath('zh', '/docs/mcp')      // '/zh/docs/mcp'\nlocalePath('zh', '/zh/docs/mcp')  // '/zh/docs/mcp'（幂等）\nstripLocale('/zh/docs/mcp')        // '/docs/mcp'\nswitchLocaleHref(location, 'en')   // 路径 + 查询 + hash，整体换语言",
       },
       {
         type: "p",
-        text: "路由表按 locale 生成，因此产品页与它的翻译是同一个组件。Locale Provider 从 `useLocation()` 推导当前语言，并选择对应的 i18next 实例。",
+        text: "路由表按 locale 生成，因此产品页与它的翻译是同一个组件。Locale Provider 从 `useLocation()` 读取当前语言，并选择对应的 i18next 实例。",
       },
       { type: "h2", text: "同步预渲染" },
       {
@@ -496,7 +501,8 @@ export const zh: DocCollection = {
         type: "ul",
         items: [
           "每个路由输出自己的 title、description、canonical、Open Graph 与 Twitter 标签。",
-          "`hreflang` 配对两种语言，并为英文页提供 `x-default`。",
+          "`hreflang` 列出同一文档的所有语言，并用 `x-default` 指向默认语言。",
+          "canonical 不带尾斜杠；`drop-trailing-slash` 让资产层与所有链接保持一致。",
           "构建后从预渲染 HTML 生成 sitemap。",
         ],
       },
@@ -896,7 +902,7 @@ export const zh: DocCollection = {
       },
       {
         type: "p",
-        text: "线格式、状态矩阵与限制见 [扩展提供方协议](/zh/docs/agent-protocol)。消费这些工具的循环见 [智能体循环](/zh/docs/agent-loop)。",
+        text: "线格式、状态矩阵与限制见 [扩展提供方协议](/docs/agent-protocol)。消费这些工具的循环见 [智能体循环](/docs/agent-loop)。",
       },
     ],
   }),

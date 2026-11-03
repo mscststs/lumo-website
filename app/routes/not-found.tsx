@@ -1,14 +1,13 @@
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import { ArrowRight, Search } from "lucide-react";
 import { BrandMark } from "@/components/brand/brand-mark";
 import { Aurora } from "@/components/motion/aurora";
 import { Button } from "@/components/ui/button";
 import { useSearch } from "@/components/site/search-provider";
-import { useLocalePath } from "@/lib/i18n/use-path";
 import { translate } from "@/lib/i18n/translate";
 import { pageMeta } from "@/lib/seo";
-import { getLocale } from "@/lib/site-manifest";
+import { getLocale, SITE_ROUTES } from "@/lib/site-manifest";
+import { LocaleLink } from "@/components/site/locale-link";
 
 export function meta({ location }: { location: { pathname: string } }) {
   const locale = getLocale(location.pathname);
@@ -23,7 +22,6 @@ export function meta({ location }: { location: { pathname: string } }) {
 
 export default function NotFoundPage() {
   const { t } = useTranslation();
-  const localize = useLocalePath();
   const { openSearch } = useSearch();
 
   return (
@@ -44,22 +42,22 @@ export default function NotFoundPage() {
         </p>
         <div className="flex flex-col gap-2.5 sm:flex-row">
           <Button asChild size="lg">
-            <Link to={localize("/")}>
+            <LocaleLink to={SITE_ROUTES.home}>
               {t("notFound.home")}
               <ArrowRight className="h-4 w-4" />
-            </Link>
+            </LocaleLink>
           </Button>
           <Button variant="outline" size="lg" onClick={openSearch}>
             <Search className="h-4 w-4" />
             {t("notFound.docs")}
           </Button>
         </div>
-        <Link
-          to={localize("/docs")}
+        <LocaleLink
+          to={SITE_ROUTES.docs}
           className="text-sm font-medium text-primary hover:underline"
         >
           {t("docs.backToDocs")}
-        </Link>
+        </LocaleLink>
       </div>
     </section>
   );

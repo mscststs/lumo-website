@@ -4,7 +4,6 @@ import { MotionConfig } from "motion/react";
 import { Outlet, useLocation } from "react-router";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LocaleProvider } from "@/lib/i18n";
-import { getLocale } from "@/lib/site-manifest";
 import { ThemeProvider } from "@/lib/theme";
 import { CommandPalette } from "./command-palette";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
@@ -26,7 +25,6 @@ function SkipLink() {
 
 export function SiteLayout() {
   const location = useLocation();
-  const locale = getLocale(location.pathname);
 
   useEffect(() => {
     if (!location.hash) return;
@@ -38,7 +36,7 @@ export function SiteLayout() {
   }, [location.hash, location.pathname]);
 
   return (
-    <LocaleProvider locale={locale}>
+    <LocaleProvider>
       <ThemeProvider>
         <SearchProvider>
           <TooltipProvider delayDuration={320}>

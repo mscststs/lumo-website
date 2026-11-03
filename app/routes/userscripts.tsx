@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import {
   ArrowRight,
   Braces,
@@ -12,11 +11,11 @@ import {
   Plus,
   ShieldCheck,
 } from "lucide-react";
-import { BrandMark } from "@/components/brand/brand-mark";
 import { GithubIcon } from "@/components/brand/icons";
 import { AnchorNav } from "@/components/site/anchor-nav";
 import { CrossSell } from "@/components/site/cross-sell";
 import { JsonLd } from "@/components/site/json-ld";
+import { ProductHero } from "@/components/site/product-hero";
 import { SectionHeading } from "@/components/site/section-heading";
 import {
   AgentAccessMock,
@@ -31,17 +30,21 @@ import { FeatureStage } from "@/components/mockups/feature-stage";
 import { GmApiGrid } from "@/components/mockups/gm-api-grid";
 import { InstallFlowMock } from "@/components/mockups/install-flow-mock";
 import { PermissionTable } from "@/components/mockups/permission-table";
-import { Aurora } from "@/components/motion/aurora";
 import { Reveal } from "@/components/motion/reveal";
 import { TiltCard } from "@/components/motion/tilt-card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { useLocale } from "@/lib/i18n";
-import { useLocalePath } from "@/lib/i18n/use-path";
+import { LocaleLink } from "@/components/site/locale-link";
 import { translate } from "@/lib/i18n/translate";
 import { absoluteUrl, pageMeta } from "@/lib/seo";
 import { LINKS, siteOrigin } from "@/lib/site";
-import { getLocale, localePath, type Locale } from "@/lib/site-manifest";
+import {
+  getLocale,
+  isExternalHref,
+  localePath,
+  PRIVACY_PATHS,
+  SITE_ROUTES,
+  type Locale,
+} from "@/lib/site-manifest";
 import { cn } from "@/lib/utils";
 
 export function meta({ location }: { location: { pathname: string } }) {
@@ -119,15 +122,25 @@ function InstallStepCard({
       </div>
       <h3 className="text-sm font-semibold text-foreground">{title}</h3>
       <p className="text-sm leading-6 text-muted-foreground">{detail}</p>
-      <a
-        href={href}
-        target="_blank"
-        rel="noreferrer noopener"
-        className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-primary"
-      >
-        {action}
-        <ExternalLinkIcon className="h-3.5 w-3.5" />
-      </a>
+      {isExternalHref(href) ? (
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-primary"
+        >
+          {action}
+          <ExternalLinkIcon className="h-3.5 w-3.5" />
+        </a>
+      ) : (
+        <LocaleLink
+          to={href}
+          className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-primary"
+        >
+          {action}
+          <ArrowRight className="h-3.5 w-3.5" />
+        </LocaleLink>
+      )}
     </div>
   );
 }
@@ -137,7 +150,6 @@ const POLICY_ICONS = [ShieldCheck, KeyRound, Plus];
 export default function UserscriptsPage() {
   const { t } = useTranslation();
   const locale = useLocale() as Locale;
-  const localize = useLocalePath();
 
   const anchors = [
     { id: "overview", label: t("userscripts.anchors.overview") },
@@ -162,8 +174,8 @@ export default function UserscriptsPage() {
   }) as { title: string; detail: string; action: string }[];
   const stepLinks = [
     LINKS.userscriptsReleases,
-    localize("/docs/getting-started"),
-    localize("/docs/getting-started"),
+    `${SITE_ROUTES.docs}/getting-started`,
+    `${SITE_ROUTES.docs}/getting-started`,
   ];
   const stepIcons = [
     <Download key="download" className="h-4 w-4" />,
@@ -188,83 +200,22 @@ export default function UserscriptsPage() {
         }}
       />
 
-      <section
-        id="overview"
-        className="relative scroll-mt-24 overflow-hidden pb-16 pt-14 sm:pb-20 sm:pt-20"
-      >
-        <Aurora tone="userscripts" />
-        <div className="container-page relative grid grid-cols-1 items-center gap-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-          <Reveal className="flex flex-col items-start gap-5">
-            <div className="flex items-center gap-3">
-              <span className="flex h-12 w-12 items-center justify-center rounded-card border border-border bg-card/80 shadow-card">
-                <BrandMark variant="userscripts" className="h-8 w-8" />
-              </span>
-              <div className="flex flex-col">
-                <p className="text-eyebrow font-semibold uppercase text-muted-foreground">
-                  {t("userscripts.hero.eyebrow")}
-                </p>
-                <p className="text-sm font-semibold text-foreground">
-                  {t("userscripts.productName")}
-                </p>
-              </div>
-            </div>
-            <h1 className="max-w-[15ch] text-balance text-display-lg font-semibold text-foreground">
-              {t("userscripts.hero.title")}
-            </h1>
-            <p className="max-w-[56ch] text-pretty text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
-              {t("userscripts.hero.description")}
-            </p>
-            <div className="flex flex-col items-start gap-2.5 sm:flex-row sm:items-center">
-              <Button asChild size="lg">
-                <a
-                  href={LINKS.userscriptsReleases}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <GithubIcon className="h-4 w-4" />
-                  {t("userscripts.hero.primary")}
-                </a>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link to={localize("/docs/agent-connections")}>
-                  {t("userscripts.hero.secondary")}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-            <div className="mt-1 flex flex-wrap gap-2">
-              {(t("userscripts.hero.chips", { returnObjects: true }) as string[]).map(
-                (chip) => (
-                  <Badge key={chip} variant="outline">
-                    {chip}
-                  </Badge>
-                ),
-              )}
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.1} className="relative">
-            <TiltCard>
-              <UserscriptsDashboardMock className="mx-auto max-w-xl" />
-            </TiltCard>
-            <div className="absolute -bottom-12 right-2 hidden rounded-panel border border-border bg-card/90 p-3 shadow-float backdrop-blur lg:block">
-              <div className="flex items-center gap-2">
-                <span className="flex h-7 w-7 items-center justify-center rounded-control bg-success/15 text-success">
-                  <ShieldCheck className="h-3.5 w-3.5" />
-                </span>
-                <div>
-                  <p className="text-[10px] font-semibold text-foreground">
-                    {t("userscripts.agent.bridge.provider")}
-                  </p>
-                  <p className="font-mono text-[8px] text-muted-foreground">
-                    lumo:mcp
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      <ProductHero
+        variant="userscripts"
+        eyebrow={t("userscripts.hero.eyebrow")}
+        title={t("userscripts.hero.title")}
+        summary={t("userscripts.hero.summary")}
+        primary={{
+          label: t("userscripts.hero.primary"),
+          href: LINKS.userscriptsReleases,
+          icon: <GithubIcon className="h-4 w-4" />,
+        }}
+        secondary={{
+          label: t("userscripts.hero.secondary"),
+          href: `${SITE_ROUTES.docs}/agent-connections`,
+        }}
+        visual={<UserscriptsDashboardMock className="mx-auto w-full max-w-[34rem]" />}
+      />
 
       <AnchorNav items={anchors} ariaLabel={t("userscripts.anchors.overview")} />
 
@@ -279,7 +230,7 @@ export default function UserscriptsPage() {
             t("userscripts.agent.bullets", { returnObjects: true }) as string[]
           }
           ctaLabel={t("userscripts.agent.cta")}
-          ctaHref={localize("/docs/agent-connections")}
+          ctaHref={`${SITE_ROUTES.docs}/agent-connections`}
           visual={<AgentAccessMock />}
         />
 
@@ -331,7 +282,7 @@ export default function UserscriptsPage() {
               }) as string[]
             }
             ctaLabel={t("common.readDocs")}
-            ctaHref={localize("/docs/getting-started")}
+            ctaHref={`${SITE_ROUTES.docs}/getting-started`}
             visual={
               <TiltCard>
                 <InstallFlowMock className="mx-auto max-w-sm" />
@@ -353,7 +304,7 @@ export default function UserscriptsPage() {
             }) as string[]
           }
           ctaLabel={t("common.readDocs")}
-          ctaHref={localize("/docs/userscripts-runtime")}
+          ctaHref={`${SITE_ROUTES.docs}/userscripts-runtime`}
           visual={
             <TiltCard>
               <CodeEditorMock />
@@ -442,13 +393,13 @@ export default function UserscriptsPage() {
             <Globe className="h-4 w-4 text-success" />
             {t("userscripts.installPage.requirement")}
           </span>
-          <Link
-            to={localize("/privacy")}
+          <LocaleLink
+            to={PRIVACY_PATHS.userscripts}
             className="inline-flex items-center gap-1 font-medium text-foreground hover:text-primary"
           >
             {t("common.privacy")}
             <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+          </LocaleLink>
         </div>
       </section>
 
@@ -459,7 +410,7 @@ export default function UserscriptsPage() {
           title={t("userscripts.cross.title")}
           description={t("userscripts.cross.description")}
           cta={t("userscripts.cross.cta")}
-          href={localize("/lumo")}
+          href={SITE_ROUTES.lumo}
         />
       </div>
     </>

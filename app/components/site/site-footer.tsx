@@ -1,33 +1,31 @@
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import { ArrowUpRight } from "lucide-react";
 import { GithubIcon } from "@/components/brand/icons";
 import { BrandMark, Wordmark } from "@/components/brand/brand-mark";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { SITE_VERSION, LINKS } from "@/lib/site";
-import { useLocalePath } from "@/lib/i18n/use-path";
+import { LINKS, SITE_VERSION } from "@/lib/site";
+import { PRIVACY_PATHS, SITE_ROUTES } from "@/lib/site-manifest";
 import { LanguageMenu } from "./language-menu";
+import { LocaleLink } from "./locale-link";
 import { ThemeMenu } from "./theme-menu";
 
 export function SiteFooter() {
   const { t } = useTranslation();
-  const localize = useLocalePath();
   const year = new Date().getFullYear();
 
   const productLinks = [
-    { label: t("nav.productLumoName"), href: localize("/lumo") },
-    { label: t("nav.productUserscriptsName"), href: localize("/userscripts") },
-    { label: t("common.changelog"), href: localize("/changelog") },
+    { label: t("nav.productLumoName"), href: SITE_ROUTES.lumo },
+    { label: t("nav.productUserscriptsName"), href: SITE_ROUTES.userscripts },
   ];
 
   const resourceLinks = [
-    { label: t("common.docs"), href: localize("/docs") },
+    { label: t("common.docs"), href: SITE_ROUTES.docs },
     {
       label: t("footer.architecture"),
-      href: localize("/docs/architecture"),
+      href: `${SITE_ROUTES.docs}/architecture`,
     },
-    { label: t("footer.mcp"), href: localize("/docs/mcp") },
+    { label: t("footer.mcp"), href: `${SITE_ROUTES.docs}/mcp` },
     {
       label: t("footer.releases"),
       href: LINKS.userscriptsReleases,
@@ -36,7 +34,11 @@ export function SiteFooter() {
   ];
 
   const legalLinks = [
-    { label: t("common.privacy"), href: localize("/privacy") },
+    { label: t("footer.lumoPrivacy"), href: PRIVACY_PATHS.lumo },
+    {
+      label: t("footer.userscriptsPrivacy"),
+      href: PRIVACY_PATHS.userscripts,
+    },
     {
       label: t("footer.license"),
       href: LINKS.userscriptsRepo,
@@ -50,14 +52,14 @@ export function SiteFooter() {
       <div className="container-page py-14 lg:py-20">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
           <div className="flex max-w-sm flex-col items-start gap-4">
-            <Link
-              to={localize("/")}
+            <LocaleLink
+              to={SITE_ROUTES.home}
               className="flex items-center gap-2.5 rounded-control"
               aria-label={t("common.brand")}
             >
               <BrandMark className="h-8 w-8" />
               <Wordmark />
-            </Link>
+            </LocaleLink>
             <p className="text-pretty text-sm leading-6 text-muted-foreground">
               {t("footer.statement")}
             </p>
@@ -76,8 +78,8 @@ export function SiteFooter() {
               <ArrowUpRight className="h-3.5 w-3.5" />
             </a>
             <div className="mt-1 flex items-center gap-1">
-              <ThemeMenu />
-              <LanguageMenu />
+              <ThemeMenu modal={false} />
+              <LanguageMenu modal={false} />
             </div>
           </div>
 
@@ -126,12 +128,12 @@ function FooterColumn({
                 <ArrowUpRight className="h-3 w-3 opacity-60" />
               </a>
             ) : (
-              <Link
+              <LocaleLink
                 to={link.href}
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 {link.label}
-              </Link>
+              </LocaleLink>
             )}
           </li>
         ))}

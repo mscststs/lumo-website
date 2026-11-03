@@ -1,6 +1,6 @@
 # Lumo Website — Agent 开发指南
 
-这是 **Lumo 品牌官网**：一个面向最终用户与开发者的产品门面，包含品牌首页、两页产品主页（Lumo / Lumo Userscripts）、技术文档、版本动态与隐私说明。
+这是 **Lumo 品牌官网**：一个面向最终用户与开发者的产品门面，包含品牌首页、两页产品主页（Lumo / Lumo Userscripts）、技术文档，以及两个产品各自的隐私政策页。
 
 技术栈与两个产品仓库保持一致：**Vite + React 19 + TypeScript + Tailwind CSS 4 + shadcn/ui（Radix）+ Motion + i18next**。构建采用 **React Router 8 framework mode**，`ssr: false` + 全量预渲染，产物是纯静态 HTML，由 **Cloudflare Worker**（仅资产 + 源站改写，无 SSR）托管。
 
@@ -31,7 +31,7 @@
 
 1. **i18n 国际化**：所有可见文案必须来自 i18n 资源或 locale 内容资源，禁止在组件中硬编码可见文案。语言切换保持当前页面语义。
 2. **响应式设计**：所有页面在 360 / 390 / 768 / 1024 / 1440 宽度下不得出现横向溢出；按钮、标签、图标不得互相挤压；长文本必须 `min-w-0` + `truncate` / `line-clamp`。
-3. **多主题**：亮色 / 暗色 / 跟随系统；至少两套暗色调色板；主题色轴可切换；首帧无闪白。字体大小通过 `<html>` rem 缩放全局生效。
+3. **多主题**：亮色 / 暗色 / 跟随系统；暗色固定 Midnight（不暴露调色板与主题色切换）；首帧无闪白。字体大小通过 `<html>` rem 缩放全局生效。
 4. **静态可读**：核心内容必须在预渲染 HTML 中；不得依赖客户端 fetch 才能看到正文。
 5. **性能克制**：路由级代码分割；Shiki、命令面板等重依赖动态加载；动效优先 CSS/transform/opacity。
 
@@ -75,7 +75,7 @@
 
 完整规范见 [`docs/DESIGN.md`](docs/DESIGN.md)。
 
-- **颜色**：OKLCH；Paper / Graphite / Midnight；azure / violet / emerald / amber / rose。
+- **颜色**：OKLCH；亮色 Paper、暗色 Midnight；固定 azure 主题色。
 - **字体**：Inter Variable + 系统中文字体栈；JetBrains Mono。
 - **形状**：控件 10px、卡片 16px、舞台 24px、浮层 20px。
 - **材质**：surface / panel / card / float 四档；暗色用顶部高光。
@@ -94,6 +94,8 @@
 
 4. 你必须先根据用户的意图进行分析、总结，并查到关键的模块、功能和流程，然后再根据分析结果给出解决方案。**用户明确授权「先写 spec，再全面实施」时，spec 即确认。**
 
+5. 除非用户明确要求，否则不要截图、读图来验证或核查页面改动与视觉效果。正确性以类型检查、测试、构建与代码审查为准；需要视觉核对时先向用户确认，由用户自行判断。
+
 ## 输出
 
 你的执行过程、分析与思考，必须使用 **简体中文** 来输出，除非是专用的名词。
@@ -108,7 +110,7 @@
 
 4. 实施时注意模块变更、上下游参数变化，同步修改调用链上的所有依赖，确保功能完整。
 
-5. 实施完毕后充分测试：`npm run typecheck && npm run test && npm run build`，并做响应式与主题的手工/截图验收。
+5. 实施完毕后充分测试：`npm run typecheck && npm run test && npm run build`。响应式与主题的视觉验收按「规范 5」处理——仅当用户明确要求时才做截图、读图核查。
 
 ---
 
@@ -118,9 +120,9 @@
 app/
   routes/        路由模块（React Router route modules）
   components/    ui / brand / site / motion / mockups / docs / 页面局部
-  content/       双语文档内容、changelog 数据
+  content/       双语文档内容、产品隐私政策（privacy/）
   lib/           i18n / theme / seo / routing / utils
-  styles/        globals.css（令牌、palette、动画、基础层）
+  styles/        globals.css（令牌、主题块、动画、基础层）
 public/          品牌 SVG、_headers、_redirects、robots.txt（404.html 由构建生成）
 docs/            SPEC.md、DESIGN.md
 ```
@@ -129,5 +131,6 @@ docs/            SPEC.md、DESIGN.md
 - 图标只用 `lucide-react`；品牌标记使用 `public/brand/*.svg`。
 - 动效统一使用 `motion` 与 CSS 令牌；禁止引入第二套动画库。
 - 文档内容使用结构化 `DocBlock[]`，不写 MDX；这样搜索、TOC、双语校验可以共用一套模型。
-- 新增主题 / 主题色必须同步 `lib/theme/registry.ts`、`globals.css` 与测试。
-- 新增语言必须同步 `lib/i18n/resources`、`lib/routing.ts`、`react-router.config.ts` 的预渲染路径。
+- 新增模式必须同步 `lib/theme/registry.ts`、`globals.css`、i18n 与测试。
+- **站内链接只写不带语言的形式**（`/lumo`、`/docs/mcp`），由 `components/site/locale-link.tsx` 的 `LocaleLink` / `LocaleNavLink` / `useLocaleNavigate` 按当前 URL 补前缀；语言切换用 `switchLocaleHref`（保留 query 与 hash）。任何地方都不要手写 `/zh` 前缀。
+- 新增语言必须同步 `lib/i18n/resources`、`lib/site-manifest.ts`（`LOCALES` / `LOCALE_META`）、`react-router.config.ts` 的预渲染路径，以及 `scripts/build-sitemap.mjs` 的 locale 表。

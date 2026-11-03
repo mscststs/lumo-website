@@ -12,7 +12,8 @@ Built with **Vite 8 + React Router 8 (framework mode) + React 19 + Tailwind CSS 
 - **`/lumo`** — product page for the AI browser sidebar: the agent loop, DevTools via CDP, built-in and external MCP, an interactive split-view demo, BYOK model endpoints, privacy and install paths.
 - **`/userscripts`** — product page for the userscript manager: the agent endpoint, approval flow, install, editor, runtime and permissions.
 - **`/docs`** — twelve bilingual articles with sidebar navigation, search (⌘K), TOC, Shiki code blocks and pager.
-- **`/changelog`**, **`/privacy`**, **404**.
+- **`/lumo/privacy`**, **`/userscripts/privacy`** — each product's `PRIVACY.md`, rendered as a bilingual document page.
+- **404** — localized, pre-rendered.
 - **Chinese** at the same paths under `/zh` (e.g. `/zh/lumo`, `/zh/docs/mcp`).
 
 Product visuals are code, not screenshots: every mockup in `app/components/mockups/` reproduces the real extension surfaces with the shared design tokens.
@@ -72,7 +73,7 @@ app/
     site-manifest.ts       # locales, paths, doc slugs
     site.ts                # links, canonical origin, version
     site-origin.ts         # placeholder origin + edge rewrite helpers
-  styles/globals.css       # OKLCH tokens, palettes, motion, prose, Shiki
+  styles/globals.css       # OKLCH tokens, theme, motion, prose, Shiki
 public/
   brand/                   # logo marks + OG image
   _headers, _redirects   # no SPA rewrite; 404.html is generated after build
@@ -119,12 +120,13 @@ Set `VITE_SITE_URL` only to pin a single canonical origin (for example when the 
 
 ### Theme
 
-Three axes: `mode` (light/dark/system), `palette` (paper/graphite/midnight), `accent` (azure/violet/emerald/amber/rose).
+One axis: `mode` (light/dark/system). Light renders Paper; dark always renders
+Midnight, at a fixed azure accent.
 
 - `app/lib/theme/registry.ts` is the single registry.
-- An inline head script applies the stored theme before first paint.
-- `app/components/site/theme-menu.tsx` exposes all three axes.
-- `tests/theme.test.ts` checks palette/CSS consistency and OKLCH contrast.
+- An inline head script applies the stored mode before first paint.
+- `app/components/site/theme-menu.tsx` exposes only the mode switch.
+- `tests/theme.test.ts` checks registry/CSS consistency and OKLCH contrast.
 
 ### Design system
 
@@ -213,7 +215,7 @@ The suite covers:
 - English/Chinese key and placeholder parity.
 - Docs registry integrity, block-shape parity, search and adjacency.
 - Locale path helpers.
-- Theme registry, CSS/palette consistency and OKLCH contrast.
+- Theme registry, CSS token consistency and OKLCH contrast.
 - Render smoke tests for brand, section heading and docs sidebar.
 
 For visual QA, `npm run preview` and check 360 / 390 / 768 / 1024 / 1440 in both themes.

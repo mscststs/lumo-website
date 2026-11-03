@@ -1,29 +1,29 @@
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router";
+import { useParams } from "react-router";
 import {
   ArrowLeft,
   ArrowRight,
   CalendarDays,
   ChevronDown,
   Clock,
-  Pencil,
 } from "lucide-react";
 import { getAdjacentDocs, getDoc, getDocHeadings } from "@/content/docs";
 import { DocBlocks } from "@/components/docs/doc-blocks";
 import { DocsToc } from "@/components/docs/docs-toc";
 import { JsonLd } from "@/components/site/json-ld";
+import { LocaleLink } from "@/components/site/locale-link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/lib/i18n";
-import { useLocalePath } from "@/lib/i18n/use-path";
 import { translate } from "@/lib/i18n/translate";
 import { formatDate } from "@/lib/format";
 import { absoluteUrl, pageMeta } from "@/lib/seo";
-import { DOCS_EDIT_BASE, siteOrigin } from "@/lib/site";
+import { siteOrigin } from "@/lib/site";
 import {
   docPath,
   getLocale,
   localePath,
+  SITE_ROUTES,
   type Locale,
 } from "@/lib/site-manifest";
 
@@ -48,7 +48,6 @@ export function meta({
 
 function NotFoundDoc() {
   const { t } = useTranslation();
-  const localize = useLocalePath();
   return (
     <div className="flex flex-col items-start gap-4 py-16">
       <p className="font-mono text-xs text-muted-foreground">404</p>
@@ -59,7 +58,7 @@ function NotFoundDoc() {
         {t("docs.notFoundDescription")}
       </p>
       <Button asChild>
-        <Link to={localize("/docs")}>{t("docs.backToDocs")}</Link>
+        <LocaleLink to={SITE_ROUTES.docs}>{t("docs.backToDocs")}</LocaleLink>
       </Button>
     </div>
   );
@@ -68,7 +67,6 @@ function NotFoundDoc() {
 export default function DocsArticlePage() {
   const { t } = useTranslation();
   const locale = useLocale() as Locale;
-  const localize = useLocalePath();
   const params = useParams();
   const article = params.slug ? getDoc(locale, params.slug) : undefined;
 
@@ -76,7 +74,6 @@ export default function DocsArticlePage() {
 
   const headings = getDocHeadings(article);
   const { previous, next } = getAdjacentDocs(locale, article.slug);
-  const editUrl = `${DOCS_EDIT_BASE}/app/content/docs/${locale}.ts`;
 
   return (
     <>
@@ -100,9 +97,9 @@ export default function DocsArticlePage() {
             aria-label={t("docs.breadcrumb")}
             className="flex items-center gap-1.5 text-xs text-muted-foreground"
           >
-            <Link to={localize("/docs")} className="hover:text-foreground">
+            <LocaleLink to={SITE_ROUTES.docs} className="hover:text-foreground">
               {t("docs.breadcrumb")}
-            </Link>
+            </LocaleLink>
             <span>/</span>
             <span>{t(`docs.categories.${article.category}`)}</span>
           </nav>
@@ -130,15 +127,6 @@ export default function DocsArticlePage() {
               <Clock className="h-3.5 w-3.5" />
               {t("docs.minRead", { minutes: article.readingMinutes })}
             </span>
-            <a
-              href={editUrl}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
-            >
-              <Pencil className="h-3.5 w-3.5" />
-              {t("docs.editPage")}
-            </a>
           </div>
         </header>
 
@@ -149,7 +137,7 @@ export default function DocsArticlePage() {
               <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-180" />
             </summary>
             <div className="mt-3 border-t border-border pt-3">
-              <DocsToc article={article} />
+              <DocsToc blocks={article.blocks} />
             </div>
           </details>
         ) : null}
@@ -160,8 +148,8 @@ export default function DocsArticlePage() {
 
         <nav className="mt-14 grid grid-cols-1 gap-3 border-t border-border pt-8 sm:grid-cols-2">
           {previous ? (
-            <Link
-              to={docPath(locale, previous.slug)}
+            <LocaleLink
+              to={`${SITE_ROUTES.docs}/${previous.slug}`}
               className="group flex flex-col gap-1 rounded-card border border-border bg-card p-4 shadow-surface transition-colors hover:border-primary/25"
             >
               <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
@@ -171,13 +159,13 @@ export default function DocsArticlePage() {
               <span className="text-sm font-semibold text-foreground group-hover:text-primary">
                 {previous.title}
               </span>
-            </Link>
+            </LocaleLink>
           ) : (
             <span />
           )}
           {next ? (
-            <Link
-              to={docPath(locale, next.slug)}
+            <LocaleLink
+              to={`${SITE_ROUTES.docs}/${next.slug}`}
               className="group flex flex-col items-end gap-1 rounded-card border border-border bg-card p-4 text-right shadow-surface transition-colors hover:border-primary/25 sm:col-start-2"
             >
               <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
@@ -187,7 +175,7 @@ export default function DocsArticlePage() {
               <span className="text-sm font-semibold text-foreground group-hover:text-primary">
                 {next.title}
               </span>
-            </Link>
+            </LocaleLink>
           ) : null}
         </nav>
       </article>

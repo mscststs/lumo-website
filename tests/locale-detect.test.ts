@@ -4,6 +4,8 @@ import {
   isBotUserAgent,
   localeFromLanguageTag,
   localeHref,
+  LOCALE_PRELOAD_SCRIPT,
+  LOCALE_STORAGE_KEY,
   normalizeLocalePreference,
   resolveLocaleRedirect,
 } from "@/lib/i18n/detect";
@@ -41,7 +43,7 @@ describe("locale detection", () => {
   });
 });
 
-describe("first-visit routing", () => {
+describe("entry-point routing", () => {
   it("sends a Chinese browser from the English root to /zh", () => {
     expect(
       resolveLocaleRedirect({
@@ -64,29 +66,31 @@ describe("first-visit routing", () => {
     ).toBeNull();
   });
 
-  it("never redirects away from an explicit /zh URL", () => {
-    expect(
-      resolveLocaleRedirect({
-        pathname: "/zh/docs/mcp",
-        preference: "en",
-        languages: ["en-US"],
-        userAgent: CHROME_UA,
-      }),
-    ).toBeNull();
+  it("never redirects away from a language-specific URL", () => {
+    for (const pathname of ["/zh", "/zh/docs/mcp", "/zh/lumo"]) {
+      expect(
+        resolveLocaleRedirect({
+          pathname,
+          preference: "en",
+          languages: ["en-US"],
+          userAgent: CHROME_UA,
+        }),
+      ).toBeNull();
+    }
   });
 
-  it("honours a stored preference over the browser language", () => {
+  it("honours a stored preference at the root", () => {
     expect(
       resolveLocaleRedirect({
-        pathname: "/lumo",
+        pathname: "/",
         preference: "zh",
         languages: ["en-US"],
         userAgent: CHROME_UA,
       }),
-    ).toBe("/zh/lumo");
+    ).toBe("/zh");
     expect(
       resolveLocaleRedirect({
-        pathname: "/lumo",
+        pathname: "/",
         preference: "en",
         languages: ["zh-CN"],
         userAgent: CHROME_UA,
@@ -94,28 +98,60 @@ describe("first-visit routing", () => {
     ).toBeNull();
   });
 
-  it("leaves same-site deep links in the language being read", () => {
+  it("keeps the language of the linking page when storage is unavailable", () => {
     expect(
       resolveLocaleRedirect({
-        pathname: "/docs/mcp",
+        pathname: "/",
         preference: null,
+        referrerLocale: "zh",
+        languages: ["en-US"],
+        userAgent: CHROME_UA,
+      }),
+    ).toBe("/zh");
+    expect(
+      resolveLocaleRedirect({
+        pathname: "/",
+        preference: null,
+        referrerLocale: "en",
         languages: ["zh-CN"],
-        internalNavigation: true,
         userAgent: CHROME_UA,
       }),
     ).toBeNull();
   });
 
-  it("routes a direct deep link by browser language", () => {
+  it("preserves the query and hash of the root entry", () => {
+    expect(
+      resolveLocaleRedirect({
+        pathname: "/",
+        search: "?ref=launch",
+        hash: "#install",
+        preference: "zh",
+        languages: ["en-US"],
+        userAgent: CHROME_UA,
+      }),
+    ).toBe("/zh?ref=launch#install");
+  });
+
+  it("never rewrites a deep link, whatever the preference says", () => {
+    // The URL owns the language: an English link opened in a new tab must stay
+    // English even for a visitor who reads Chinese.
     expect(
       resolveLocaleRedirect({
         pathname: "/docs/mcp",
         search: "?q=tools",
-        preference: null,
+        preference: "zh",
         languages: ["zh-CN"],
         userAgent: CHROME_UA,
       }),
-    ).toBe("/zh/docs/mcp?q=tools");
+    ).toBeNull();
+    expect(
+      resolveLocaleRedirect({
+        pathname: "/lumo",
+        preference: "zh",
+        languages: ["zh-CN"],
+        userAgent: CHROME_UA,
+      }),
+    ).toBeNull();
   });
 
   it("never redirects crawlers", () => {
@@ -130,5 +166,112 @@ describe("first-visit routing", () => {
         userAgent: bot,
       }),
     ).toBeNull();
+  });
+});
+
+/**
+ * Execute the shipped inline script against a fake window. The script and
+ * `resolveLocaleRedirect` must agree, otherwise pre-render and hydration would
+ * disagree about the entry point.
+ */
+function runPreloadScript({
+  pathname,
+  search = "",
+  hash = "",
+  preference = null,
+  languages = ["en-US"],
+  userAgent = CHROME_UA,
+  referrer = "",
+  webdriver = false,
+}: {
+  pathname: string;
+  search?: string;
+  hash?: string;
+  preference?: string | null;
+  languages?: string[];
+  userAgent?: string;
+  referrer?: string;
+  webdriver?: boolean;
+}): string | null {
+  const replaced: string[] = [];
+  const origin = "https://lumo.example";
+  const fakeWindow = {
+    location: {
+      pathname,
+      search,
+      hash,
+      origin,
+      replace: (url: string) => replaced.push(url),
+    },
+  };
+  const fakeNavigator = { userAgent, languages, webdriver };
+  const fakeStorage = {
+    getItem: (key: string) => (key === LOCALE_STORAGE_KEY ? preference : null),
+  };
+
+  new Function(
+    "window",
+    "document",
+    "navigator",
+    "localStorage",
+    LOCALE_PRELOAD_SCRIPT,
+  )(fakeWindow, { referrer }, fakeNavigator, fakeStorage);
+
+  return replaced[0] ?? null;
+}
+
+describe("inline boot script", () => {
+  it("routes a Chinese browser from the root to /zh", () => {
+    expect(runPreloadScript({ pathname: "/", languages: ["zh-CN"] })).toBe("/zh");
+  });
+
+  it("keeps a stored English choice", () => {
+    expect(
+      runPreloadScript({ pathname: "/", preference: "en", languages: ["zh-CN"] }),
+    ).toBeNull();
+  });
+
+  it("preserves the query and hash of the root entry", () => {
+    expect(
+      runPreloadScript({
+        pathname: "/",
+        search: "?ref=launch",
+        hash: "#install",
+        languages: ["zh-CN"],
+      }),
+    ).toBe("/zh?ref=launch#install");
+  });
+
+  it("never rewrites a deep link, even with a Chinese preference", () => {
+    expect(
+      runPreloadScript({ pathname: "/docs/mcp", preference: "zh", languages: ["zh-CN"] }),
+    ).toBeNull();
+    expect(
+      runPreloadScript({ pathname: "/lumo", preference: "zh", languages: ["zh-CN"] }),
+    ).toBeNull();
+  });
+
+  it("follows the linking page when no choice is stored", () => {
+    expect(
+      runPreloadScript({
+        pathname: "/",
+        languages: ["en-US"],
+        referrer: "https://lumo.example/zh/docs/mcp",
+      }),
+    ).toBe("/zh");
+    expect(
+      runPreloadScript({
+        pathname: "/",
+        languages: ["zh-CN"],
+        referrer: "https://lumo.example/docs/mcp",
+      }),
+    ).toBeNull();
+  });
+
+  it("skips crawlers and automated browsers", () => {
+    const bot =
+      "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+    expect(runPreloadScript({ pathname: "/", languages: ["zh-CN"], userAgent: bot })).toBeNull();
+    expect(runPreloadScript({ pathname: "/", languages: ["zh-CN"], webdriver: true })).toBeNull();
   });
 });

@@ -35,7 +35,7 @@ describe("core render paths", () => {
   it("renders the docs sidebar with the active document group", () => {
     render(
       <MemoryRouter initialEntries={["/docs/mcp"]}>
-        <LocaleProvider locale="en">
+        <LocaleProvider>
           <DocsSidebar />
         </LocaleProvider>
       </MemoryRouter>,
