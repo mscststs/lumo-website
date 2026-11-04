@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  DOC_SLUGS,
+  DOC_PRODUCTS,
   docPath,
+  docRoute,
+  docSlugs,
   getLocale,
   hasLocalePrefix,
   isDocsPath,
@@ -10,6 +12,7 @@ import {
   localePath,
   LOCALES,
   localePrefix,
+  parseDocPath,
   productPath,
   SITE_ROUTES,
   stripLocale,
@@ -66,7 +69,9 @@ describe("locale-aware paths", () => {
   it("round-trips every route and doc for every locale", () => {
     const paths = [
       ...Object.values(SITE_ROUTES),
-      ...DOC_SLUGS.map((slug) => `/docs/${slug}`),
+      ...DOC_PRODUCTS.flatMap((product) =>
+        docSlugs(product).map((slug) => docRoute(product, slug)),
+      ),
     ];
     for (const locale of LOCALES) {
       for (const path of paths) {
@@ -92,12 +97,29 @@ describe("locale-aware paths", () => {
     ).toBe("/zh/lumo");
   });
 
-  it("builds docs and product paths", () => {
-    expect(docPath("en", "index")).toBe("/docs");
-    expect(docPath("zh", "mcp")).toBe("/zh/docs/mcp");
+  it("builds product-scoped docs paths", () => {
+    expect(docPath("en", "lumo", "overview")).toBe("/docs/lumo");
+    expect(docPath("zh", "lumo", "mcp")).toBe("/zh/docs/lumo/mcp");
+    expect(docPath("en", "userscripts", "agent-endpoint")).toBe(
+      "/docs/userscripts/agent-endpoint",
+    );
     expect(productPath("zh", "userscripts")).toBe("/zh/userscripts");
     expect(isDocsPath("/zh/docs")).toBe(true);
     expect(isDocsPath("/zh/lumo")).toBe(false);
+  });
+
+  it("parses a docs URL into its product and article", () => {
+    expect(parseDocPath("/docs")).toBeUndefined();
+    expect(parseDocPath("/docs/lumo")).toEqual({
+      product: "lumo",
+      slug: "overview",
+    });
+    expect(parseDocPath("/zh/docs/userscripts/agent-endpoint")).toEqual({
+      product: "userscripts",
+      slug: "agent-endpoint",
+    });
+    expect(parseDocPath("/docs/unknown")).toBeUndefined();
+    expect(parseDocPath("/docs/lumo/not-real")).toBeUndefined();
   });
 
   it("separates internal targets from external ones", () => {

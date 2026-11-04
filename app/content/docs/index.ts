@@ -1,7 +1,11 @@
 import {
-  DOC_CATEGORIES,
-  DOC_SLUGS,
-  type DocCategory,
+  DOC_CATALOG,
+  DOC_PRODUCTS,
+  docSlugs,
+  isDocProduct,
+  isDocSlug,
+  type DocProduct,
+  type DocSection,
   type DocSlug,
   type Locale,
 } from "@/lib/site-manifest";
@@ -11,38 +15,56 @@ import {
   getHeadings,
   type DocArticle,
   type DocBlock,
+  type DocCollection,
   type DocHeading,
 } from "./types";
 
-export const DOC_COLLECTIONS: Record<Locale, Record<DocSlug, DocArticle>> = {
+export const DOC_COLLECTIONS: Record<Locale, DocCollection> = {
   en,
   zh,
 };
 
-export function getDoc(locale: Locale, slug: string): DocArticle | undefined {
-  if (!DOC_SLUGS.includes(slug as DocSlug)) return undefined;
-  return DOC_COLLECTIONS[locale][slug as DocSlug];
+function collectionFor(locale: Locale, product: DocProduct) {
+  return DOC_COLLECTIONS[locale][product] as Record<string, DocArticle>;
 }
 
-export function getDocs(locale: Locale): DocArticle[] {
-  return DOC_SLUGS.map((slug) => DOC_COLLECTIONS[locale][slug]);
-}
-
-export function getDocsByCategory(
+export function getDoc(
   locale: Locale,
-): { category: DocCategory; articles: DocArticle[] }[] {
-  const docs = getDocs(locale);
-  return DOC_CATEGORIES.map((category) => ({
-    category,
-    articles: docs.filter((doc) => doc.category === category),
-  })).filter((group) => group.articles.length > 0);
+  product: DocProduct,
+  slug: string,
+): DocArticle | undefined {
+  if (!isDocSlug(product, slug)) return undefined;
+  return collectionFor(locale, product)[slug];
+}
+
+export function getDocs(locale: Locale, product: DocProduct): DocArticle[] {
+  const collection = collectionFor(locale, product);
+  return docSlugs(product)
+    .map((slug) => collection[slug])
+    .filter((article): article is DocArticle => Boolean(article));
+}
+
+export function getDocsBySection(
+  locale: Locale,
+  product: DocProduct,
+): { section: DocSection; articles: DocArticle[] }[] {
+  const collection = collectionFor(locale, product);
+  return DOC_CATALOG[product]
+    .map((group) => ({
+      section: group.section,
+      articles: group.slugs
+        .map((slug) => collection[slug])
+        .filter((article): article is DocArticle => Boolean(article)),
+    }))
+    .filter((group) => group.articles.length > 0);
 }
 
 export function getAdjacentDocs(
   locale: Locale,
+  product: DocProduct,
   slug: string,
 ): { previous?: DocArticle; next?: DocArticle } {
-  const docs = getDocs(locale);
+  const docs = getDocs(locale, product);
   const index = docs.findIndex((doc) => doc.slug === slug);
   if (index < 0) return {};
   return {
@@ -83,6 +105,12 @@ function blockText(block: DocBlock): string {
         .join(" ");
     case "table":
       return [...block.head, ...block.rows.flat()].map(stripInline).join(" ");
+    case "mock":
+      return block.caption ?? "";
+    case "cards":
+      return block.items
+        .map((item) => `${item.title} ${stripInline(item.text)}`)
+        .join(" ");
     case "code":
       return block.title ?? "";
     default:
@@ -95,11 +123,16 @@ export function articlePlainText(article: DocArticle): string {
 }
 
 export interface DocSearchResult {
+  product: DocProduct;
+  section: DocSection;
   slug: DocSlug;
   title: string;
   description: string;
-  category: DocCategory;
   heading?: string;
+}
+
+function allDocs(locale: Locale): DocArticle[] {
+  return DOC_PRODUCTS.flatMap((product) => getDocs(locale, product));
 }
 
 export function searchDocs(
@@ -108,11 +141,11 @@ export function searchDocs(
   limit = 10,
 ): DocSearchResult[] {
   const needle = query.trim().toLowerCase();
-  if (!needle) return getDocs(locale).slice(0, limit).map(toResult);
+  if (!needle) return allDocs(locale).slice(0, limit).map(toResult);
 
   const scored: { score: number; result: DocSearchResult }[] = [];
 
-  for (const article of getDocs(locale)) {
+  for (const article of allDocs(locale)) {
     const title = article.title.toLowerCase();
     const description = article.description.toLowerCase();
     const body = articlePlainText(article).toLowerCase();
@@ -144,14 +177,24 @@ export function searchDocs(
 
 function toResult(article: DocArticle): DocSearchResult {
   return {
+    product: article.product,
+    section: article.section,
     slug: article.slug,
     title: article.title,
     description: article.description,
-    category: article.category,
   };
 }
 
 /** Everything the command palette needs, computed once per locale. */
 export function getAllSearchResults(locale: Locale): DocSearchResult[] {
-  return getDocs(locale).map(toResult);
+  return allDocs(locale).map(toResult);
+}
+
+export function getDocCount(locale: Locale, product: DocProduct): number {
+  return getDocs(locale, product).length;
+}
+
+/** Guard for route params that arrive as plain strings. */
+export function resolveDocProduct(value: string | undefined): DocProduct | undefined {
+  return isDocProduct(value) ? value : undefined;
 }

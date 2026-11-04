@@ -1,10 +1,14 @@
 import {
   AlertTriangle,
+  ArrowRight,
   Info,
   Lightbulb,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { CodeBlock } from "./code-block";
+import { DocMock } from "./doc-mocks";
 import { InlineText } from "./inline-text";
+import { LocaleLink } from "@/components/site/locale-link";
 import { slugifyHeading, type CalloutTone, type DocBlock } from "@/content/docs/types";
 import { cn } from "@/lib/utils";
 
@@ -53,6 +57,7 @@ function Heading({
 }
 
 export function DocBlocks({ blocks }: { blocks: DocBlock[] }) {
+  const { t } = useTranslation();
   return (
     <div className="prose-lumo">
       {blocks.map((block, index) => {
@@ -220,6 +225,36 @@ export function DocBlocks({ blocks }: { blocks: DocBlock[] }) {
                   </footer>
                 ) : null}
               </blockquote>
+            );
+          case "mock":
+            return (
+              <DocMock key={index} id={block.id} caption={block.caption} />
+            );
+          case "cards":
+            return (
+              <div
+                key={index}
+                className="my-6 grid grid-cols-1 gap-3 not-prose sm:grid-cols-2"
+              >
+                {block.items.map((item) => (
+                  <LocaleLink
+                    key={item.href}
+                    to={item.href}
+                    className="group flex h-full flex-col gap-1.5 rounded-card border border-border bg-card p-4 shadow-surface transition-colors hover:border-primary/25"
+                  >
+                    <span className="text-sm font-semibold text-foreground">
+                      {item.title}
+                    </span>
+                    <span className="text-sm leading-6 text-muted-foreground">
+                      <InlineText text={item.text} />
+                    </span>
+                    <span className="mt-auto inline-flex items-center gap-1 pt-1 text-xs font-medium text-primary">
+                      {item.cta ?? t("common.readDocs")}
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                    </span>
+                  </LocaleLink>
+                ))}
+              </div>
             );
           default:
             return null;

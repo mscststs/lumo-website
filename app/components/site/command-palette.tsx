@@ -2,19 +2,14 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
 import {
+  ArrowUpRight,
   Braces,
   FileText,
   Home,
   Languages,
-  LayoutGrid,
-  Layers,
-  Palette,
-  Rocket,
   ShieldCheck,
   Sparkles,
-  Wrench,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import { GithubIcon } from "@/components/brand/icons";
 import {
   Command,
@@ -42,18 +37,9 @@ import {
   PRIVACY_PATHS,
   SITE_ROUTES,
   switchLocaleHref,
-  type DocCategory,
 } from "@/lib/site-manifest";
 import { getAllSearchResults, searchDocs } from "@/content/docs";
 import { LINKS } from "@/lib/site";
-
-const CATEGORY_ICON: Record<DocCategory, LucideIcon> = {
-  start: Rocket,
-  platform: Layers,
-  products: LayoutGrid,
-  engineering: Wrench,
-  design: Palette,
-};
 
 export function CommandPalette() {
   const { t } = useTranslation();
@@ -141,13 +127,43 @@ export function CommandPalette() {
           run: () => run(switchLocaleHref(location, otherLocale)),
         },
         {
-          key: "github",
-          label: "GitHub",
-          keywords: "github source repository code",
+          key: "lumo-store",
+          label: t("nav.installLumo"),
+          keywords: "chrome web store install download lumo",
+          icon: ArrowUpRight,
+          run: () => {
+            setOpen(false);
+            window.open(LINKS.lumoStore, "_blank", "noopener,noreferrer");
+          },
+        },
+        {
+          key: "userscripts-store",
+          label: t("nav.installUserscripts"),
+          keywords: "chrome web store install download userscripts",
+          icon: ArrowUpRight,
+          run: () => {
+            setOpen(false);
+            window.open(LINKS.userscriptsStore, "_blank", "noopener,noreferrer");
+          },
+        },
+        {
+          key: "lumo-github",
+          label: t("footer.lumoRepo"),
+          keywords: "github source repository code lumo",
           icon: GithubIcon,
           run: () => {
             setOpen(false);
-            window.open(LINKS.githubOrg, "_blank", "noopener,noreferrer");
+            window.open(LINKS.lumoRepo, "_blank", "noopener,noreferrer");
+          },
+        },
+        {
+          key: "userscripts-github",
+          label: t("footer.userscriptsRepo"),
+          keywords: "github source repository code userscripts",
+          icon: GithubIcon,
+          run: () => {
+            setOpen(false);
+            window.open(LINKS.userscriptsRepo, "_blank", "noopener,noreferrer");
           },
         },
         {
@@ -223,18 +239,24 @@ export function CommandPalette() {
             {filteredDocs.length > 0 ? (
               <CommandGroup heading={t("docs.title")}>
                 {filteredDocs.map((doc) => {
-                  const Icon = CATEGORY_ICON[doc.category];
+                  const Icon = doc.product === "lumo" ? Sparkles : Braces;
+                  const productLabel =
+                    doc.product === "lumo"
+                      ? t("nav.productLumoName")
+                      : t("nav.productUserscriptsName");
                   return (
                     <CommandItem
-                      key={doc.slug}
-                      value={`doc ${doc.slug} ${doc.title}`}
-                      onSelect={() => run(docPath(locale, doc.slug))}
+                      key={`${doc.product}-${doc.slug}`}
+                      value={`doc ${doc.product} ${doc.slug} ${doc.title}`}
+                      onSelect={() =>
+                        run(docPath(locale, doc.product, doc.slug))
+                      }
                     >
                       <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
                       <div className="flex min-w-0 flex-col">
                         <span className="truncate">{doc.title}</span>
                         <span className="truncate text-xs text-muted-foreground">
-                          {doc.heading ?? doc.description}
+                          {productLabel} · {doc.heading ?? doc.description}
                         </span>
                       </div>
                     </CommandItem>
@@ -260,7 +282,7 @@ export function CommandPalette() {
                     >
                       <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
                       <span>{action.label}</span>
-                      {action.key === "github" ? (
+                      {action.key.endsWith("-github") ? (
                         <CommandShortcut>↗</CommandShortcut>
                       ) : null}
                     </CommandItem>

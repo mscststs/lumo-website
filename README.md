@@ -11,10 +11,10 @@ Built with **Vite 8 + React Router 8 (framework mode) + React 19 + Tailwind CSS 
 - **Home** — brand narrative, both product entries, the four design laws, stack and docs teaser.
 - **`/lumo`** — product page for the AI browser sidebar: the agent loop, DevTools via CDP, built-in and external MCP, an interactive split-view demo, BYOK model endpoints, privacy and install paths.
 - **`/userscripts`** — product page for the userscript manager: the agent endpoint, approval flow, install, editor, runtime and permissions.
-- **`/docs`** — twelve bilingual articles with sidebar navigation, search (⌘K), TOC, Shiki code blocks and pager.
+- **`/docs`** — product-scoped user documentation for Lumo and Lumo Userscripts: product switcher, sidebar, search (⌘K), TOC, Shiki code blocks, step-by-step UI mocks and pager.
 - **`/lumo/privacy`**, **`/userscripts/privacy`** — each product's `PRIVACY.md`, rendered as a bilingual document page.
 - **404** — localized, pre-rendered.
-- **Chinese** at the same paths under `/zh` (e.g. `/zh/lumo`, `/zh/docs/mcp`).
+- **Chinese** at the same paths under `/zh` (e.g. `/zh/lumo`, `/zh/docs/lumo/mcp`).
 
 Product visuals are code, not screenshots: every mockup in `app/components/mockups/` reproduces the real extension surfaces with the shared design tokens.
 
@@ -64,7 +64,7 @@ app/
     mockups/               # product visual reproductions
     docs/                  # sidebar, TOC, code block, content renderer
   content/
-    docs/{en,zh}.ts        # structured DocBlock collections
+    docs/{en,zh}/          # structured DocBlock collections per product
     changelog.ts
   lib/
     i18n/                  # resources, synchronous locale instances
@@ -115,7 +115,7 @@ Set `VITE_SITE_URL` only to pin a single canonical origin (for example when the 
 - The rendered locale is stored, so a later root visit keeps the choice; the language menu writes it explicitly.
 - `LocaleProvider` selects a synchronous i18next instance per locale, so Chinese routes contain Chinese HTML at build time.
 - UI copy: `app/lib/i18n/resources/{en,zh}.ts`.
-- Long-form docs: `app/content/docs/{en,zh}.ts` using the same `DocBlock` model.
+- Long-form docs: `app/content/docs/{en,zh}/{lumo,userscripts}.ts` using the same `DocBlock` model.
 - Tests enforce key parity, placeholder parity and docs block-shape parity.
 
 ### Theme
@@ -195,7 +195,7 @@ trailing-slash redirects, 404 handling, response headers) matches production.
 ## Content editing
 
 - **UI copy** → `app/lib/i18n/resources/en.ts` and `zh.ts` (same key tree).
-- **Docs article** → `app/content/docs/en.ts` and `zh.ts` (same slug and block types). Use `defineArticle`; reading time is computed.
+- **Docs article** → `app/content/docs/en/{lumo,userscripts}.ts` and `zh/{lumo,userscripts}.ts` (same product-scoped slug and block types). Use `defineArticle`; reading time is computed.
 - **Changelog** → `app/content/changelog.ts`.
 - **Product links / site URL / version** → `app/lib/site.ts`.
 - **New doc slug** → add to `DOC_SLUGS` in `app/lib/site-manifest.ts`; route generation, sitemap and sidebar pick it up.

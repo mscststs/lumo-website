@@ -34,8 +34,13 @@ function localeTree(locale: string): RouteConfigEntry {
             file: "routes/docs-index.tsx",
           },
           {
+            id: `docs-product-${locale}`,
+            path: ":product",
+            file: "routes/docs-article.tsx",
+          },
+          {
             id: `docs-article-${locale}`,
-            path: ":slug",
+            path: ":product/:slug",
             file: "routes/docs-article.tsx",
           },
         ],

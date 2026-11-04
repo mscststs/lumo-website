@@ -1,8 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { ArrowUpRight } from "lucide-react";
-import { GithubIcon } from "@/components/brand/icons";
 import { BrandMark, Wordmark } from "@/components/brand/brand-mark";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { LINKS, SITE_VERSION } from "@/lib/site";
 import { PRIVACY_PATHS, SITE_ROUTES } from "@/lib/site-manifest";
@@ -19,16 +17,15 @@ export function SiteFooter() {
     { label: t("nav.productUserscriptsName"), href: SITE_ROUTES.userscripts },
   ];
 
-  const resourceLinks = [
-    { label: t("common.docs"), href: SITE_ROUTES.docs },
+  const sourceLinks = [
     {
-      label: t("footer.architecture"),
-      href: `${SITE_ROUTES.docs}/architecture`,
+      label: t("footer.lumoRepo"),
+      href: LINKS.lumoRepo,
+      external: true,
     },
-    { label: t("footer.mcp"), href: `${SITE_ROUTES.docs}/mcp` },
     {
-      label: t("footer.releases"),
-      href: LINKS.userscriptsReleases,
+      label: t("footer.userscriptsRepo"),
+      href: LINKS.userscriptsRepo,
       external: true,
     },
   ];
@@ -39,12 +36,6 @@ export function SiteFooter() {
       label: t("footer.userscriptsPrivacy"),
       href: PRIVACY_PATHS.userscripts,
     },
-    {
-      label: t("footer.license"),
-      href: LINKS.userscriptsRepo,
-      external: true,
-    },
-    { label: t("footer.github"), href: LINKS.githubOrg, external: true },
   ];
 
   return (
@@ -60,31 +51,14 @@ export function SiteFooter() {
               <BrandMark className="h-8 w-8" />
               <Wordmark />
             </LocaleLink>
-            <p className="text-pretty text-sm leading-6 text-muted-foreground">
-              {t("footer.statement")}
-            </p>
-            <Badge variant="outline" className="gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-success" />
-              {t("common.builtInTheOpen")}
-            </Badge>
-            <a
-              href={LINKS.githubOrg}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors hover:text-primary"
-            >
-              <GithubIcon className="h-4 w-4" />
-              GitHub
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </a>
-            <div className="mt-1 flex items-center gap-1">
+            <div className="flex items-center gap-1">
               <ThemeMenu modal={false} />
               <LanguageMenu modal={false} />
             </div>
           </div>
 
           <FooterColumn title={t("footer.products")} links={productLinks} />
-          <FooterColumn title={t("footer.resources")} links={resourceLinks} />
+          <FooterColumn title={t("footer.source")} links={sourceLinks} />
           <FooterColumn title={t("footer.legal")} links={legalLinks} />
         </div>
 

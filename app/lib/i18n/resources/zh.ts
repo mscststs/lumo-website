@@ -26,7 +26,6 @@ export const zh: Translation = {
     readDocs: "阅读文档",
     source: "源码",
     releaseNotes: "发布说明",
-    builtInTheOpen: "公开构建",
     copyright: "© {{year}} Lumo。保留所有权利。",
     externalLink: "在新标签页打开",
     menu: "菜单",
@@ -59,20 +58,13 @@ export const zh: Translation = {
     languageAria: "切换语言",
   },
   footer: {
-    statement:
-      "为你已经在用的浏览器打造精确工具。本地优先、尊重工艺、默认安静。",
     products: "产品",
-    resources: "资源",
-    legal: "法务",
-    documentation: "文档",
-    architecture: "架构",
-    mcp: "MCP 与工具",
-    releases: "发布",
-    github: "GitHub",
-    privacy: "隐私",
+    source: "源码",
+    legal: "隐私政策",
+    lumoRepo: "Lumo GitHub",
+    userscriptsRepo: "Userscripts GitHub",
     lumoPrivacy: "Lumo 隐私",
     userscriptsPrivacy: "Userscripts 隐私",
-    license: "许可",
     builtWith: "使用 Vite、React 与 Tailwind 构建，由 Cloudflare Workers 提供静态资产。",
     siteVersion: "站点 {{version}}",
   },
@@ -171,7 +163,7 @@ export const zh: Translation = {
         description: "描述改动，批准写入，留下审计。",
         bullets: [
           "运行端口上的标准 MCP",
-          "默认只读，写入需单独开启",
+          "读写默认开启，写入可随时关闭",
           "原生 chrome.userScripts",
         ],
       },
@@ -244,7 +236,7 @@ export const zh: Translation = {
     agentDialogDescription:
       "Lumo 请求连接用户脚本端点。批准后会把它的扩展 ID 加入允许列表。",
     agentDialogGrants:
-      "只读工具立即生效。写入需要你单独开启，并且每次写入都会审计。",
+      "允许后将启用智能体访问，并把该扩展加入允许列表。写入默认开启，可随时关闭，每次写入都会审计。",
     later: "稍后",
     approve: "批准",
     settingsGeneral: "通用",
@@ -437,9 +429,9 @@ export const zh: Translation = {
     },
     split: {
       eyebrow: "工作区",
-      title: "一段对话，或者三段。",
+      title: "并排运行多个对话。",
       description:
-        "并排运行独立对话。每个面板保留自己的模型、历史与工具调用，分隔条可拖动。",
+        "最多三栏，每栏是独立会话：各自的模型、上下文与工具调用。拖动分隔条调整宽度。",
       one: "单栏",
       two: "二栏",
       three: "三栏",
@@ -519,27 +511,29 @@ export const zh: Translation = {
       ],
     },
     install: {
-      eyebrow: "安装",
-      title: "三条路径。",
-      description: "商店版最稳，Actions 最新，或直接从源码构建。",
-      steps: [
-        {
-          title: "Chrome 应用商店",
-          detail: "稳定、自动更新，可能落后于 main。",
-          action: "打开 Chrome 应用商店",
-        },
+      title: "安装 Lumo",
+      description:
+        "商店版本自动更新；需要最新改动时，可从 GitHub 获取或自行构建。",
+      store: {
+        label: "添加到 Chrome",
+        tagline: "Chrome 扩展",
+      },
+      facts: [
+        { label: "平台", value: "Chromium · MV3" },
+        { label: "许可", value: "MIT" },
+      ],
+      channelsTitle: "其他渠道",
+      channels: [
         {
           title: "GitHub Actions",
-          detail: "下载最新产物，解压后加载已解压扩展。",
-          action: "打开 Actions",
+          detail: "下载最新构建产物，加载已解压扩展。",
         },
         {
           title: "从源码构建",
-          detail: "npm install、npm run build，加载 .output/chrome-mv3。",
-          action: "查看源码",
+          detail: "克隆仓库并构建 Chrome MV3 扩展。",
         },
       ],
-      requirement: "支持 MV3 的 Chromium 浏览器。Firefox 可从源码构建。",
+      privacy: "隐私政策",
     },
     cross: {
       eyebrow: "同样来自 Lumo",
@@ -556,7 +550,7 @@ export const zh: Translation = {
       title: "用一句话\n得到的脚本。",
       summary:
         "说清你要的改动，智能体写好脚本、装进浏览器即生效。",
-      primary: "从 GitHub 获取",
+      primary: "添加到 Chrome",
       secondary: "阅读智能体文档",
       mock: {
         scripts: [
@@ -625,57 +619,66 @@ export const zh: Translation = {
       description:
         "Lumo 通过 MCP 连接，请求一次批准，然后在读懂页面的同一段对话里创建、编辑并启用脚本。",
       bullets: [
-        "默认只读，写入需单独开启",
-        "复核模式让新脚本保持禁用",
+        "批准一次，读写即生效",
+        "写入默认开启，复核按需开启",
         "每次写入都有审计",
       ],
       cta: "阅读连接指南",
-      protocolEyebrow: "智能体协议",
-      bridge: {
-        probe: "L0 探测：已安装、已开启、已授权？",
-        probeReply: "无状态返回服务与状态",
-        approval: "你批准调用方一次",
-        port: "L1 会话：运行端口上的 MCP",
-        tools: "智能体调用工具面",
-        host: "MCP 客户端",
-        provider: "MCP 提供方",
-        invariantAuth: "只认 sender.id",
-        invariantPolicy: "每次调用复核策略",
-        invariantAudit: "写入审计",
-      },
-      tableTitle: "工具面",
-      read: "只读",
-      write: "写入",
-      tableFootnote: "只读工具需要授权；写入需要单独开关，并记录审计。",
-      tools: [
-        { name: "list", detail: "脚本库，或某个 URL 上运行的脚本。", access: "read" },
-        { name: "get", detail: "元数据与分页源码。", access: "read" },
-        { name: "diagnostics", detail: "运行时可用性、注册与错误。", access: "read" },
-        { name: "set_enabled", detail: "启用或禁用脚本。", access: "write" },
-        { name: "create", detail: "校验元数据并保存新脚本。", access: "write" },
-        { name: "edit", detail: "原子锚点编辑。", access: "write" },
-        { name: "update", detail: "替换源码或元数据覆盖。", access: "write" },
-        { name: "install", detail: "从 URL 安装及其依赖。", access: "write" },
-        { name: "delete", detail: "移入回收站。", access: "write" },
-      ],
-      policy: {
-        title: "读、写、复核。",
-        description:
-          "探测决定提供方是否可用；三个独立开关决定智能体能做什么。",
-        items: [
-          {
-            title: "端点",
-            detail: "默认关闭。",
-          },
-          {
-            title: "写入",
-            detail: "第二个开关。",
-          },
-          {
-            title: "复核",
-            detail: "新脚本保持禁用。",
-          },
-        ],
+      protocolEyebrow: "智能体调用",
+      sceneTitle: "一句话，脚本就位。",
+      sceneDescription:
+        "Lumo 通过 MCP 发现扩展，调用 userscripts_create 写入脚本；保存的那一刻，脚本已经在你正在看的站点上运行。",
+      scene: {
+        user: "把这个仓库页做成夜间模式，存成用户脚本。",
+        assistantLead: "先看看这个地址上已经有哪些脚本，再写一个新的。",
+        listSummary: "url: https://github.com/vercel/next.js",
+        createSummary: "code: // ==UserScript== // @name GitHub Night Shift, enabled: true",
+        createInput: `{
+  "code": "// ==UserScript==\\n// @name        GitHub Night Shift\\n// @namespace   northwind\\n// @version     1.0.0\\n// @match       *://*.github.com/*\\n// ==/UserScript==\\n\\ndocument.documentElement.dataset.theme = 'dark';",
+  "enabled": true
+}`,
+        createOutput: `{
+  "ok": true,
+  "reviewRequired": false,
+  "script": {
+    "name": "GitHub Night Shift",
+    "namespace": "northwind",
+    "version": "1.0.0",
+    "enabled": true,
+    "matches": ["*://*.github.com/*"]
+  }
+}`,
+        assistantDone:
+          "已创建 GitHub Night Shift 并立即启用；重新打开 github.com 就会生效。",
+        page: {
+          repo: "vercel / next.js",
+          url: "github.com/vercel/next.js",
+          visibility: "Public",
+          tabCode: "Code",
+          tabIssues: "Issues",
+          tabPulls: "Pull requests",
+          tabActions: "Actions",
+          branch: "canary",
+          goToFile: "Go to file",
+          codeButton: "Code",
+          stars: "128k",
+          forks: "27k",
+          files: [
+            { name: "app", meta: "fix: edge runtime warning", time: "2h" },
+            { name: "packages", meta: "feat: turbopack cache", time: "5h" },
+            { name: "README.md", meta: "docs: clarify caching", time: "1d" },
+            { name: "package.json", meta: "chore: bump deps", time: "2d" },
+          ],
+          readmeTitle: "README.md",
+          readmeBody:
+            "Next.js is a React framework for building full-stack web applications, from a weekend project to a production app.",
+          readmeCode: "npx create-next-app@latest",
+          commitMeta: "northwind committed 2h ago",
+          aboutTitle: "About",
+          aboutBody: "The React framework for the web.",
+          topics: ["typescript", "react", "nextjs"],
+          license: "MIT license",
+        },
       },
     },
     install: {
@@ -801,27 +804,29 @@ export const zh: Translation = {
       ],
     },
     installPage: {
-      eyebrow: "安装",
-      title: "Chrome 138+ 与一个开关。",
-      description: "Chrome 要求你为扩展允许一次用户脚本。",
-      steps: [
+      title: "安装 Lumo Userscripts",
+      description:
+        "安装后需在扩展卡片允许一次用户脚本，脚本才会开始运行。",
+      store: {
+        label: "添加到 Chrome",
+        tagline: "Chrome 扩展",
+      },
+      facts: [
+        { label: "平台", value: "Chrome 138+" },
+        { label: "许可", value: "MIT" },
+      ],
+      channelsTitle: "其他渠道",
+      channels: [
         {
-          title: "打开发布页",
-          detail: "下载压缩包或未打包构建。",
-          action: "打开 GitHub Releases",
+          title: "GitHub Releases",
+          detail: "下载压缩包，加载已解压扩展。",
         },
         {
-          title: "加载已解压扩展",
-          detail: "启用开发者模式，然后加载已解压的扩展程序。",
-          action: "阅读文档",
-        },
-        {
-          title: "允许用户脚本",
-          detail: "在扩展卡片上启用「允许用户脚本」。",
-          action: "阅读文档",
+          title: "从源码构建",
+          detail: "克隆仓库并构建 Chrome MV3 扩展。",
         },
       ],
-      requirement: "Chrome 138+。仅在从源码构建时需要 Node 22+。",
+      privacy: "隐私政策",
     },
     cross: {
       eyebrow: "同样来自 Lumo",
@@ -833,36 +838,32 @@ export const zh: Translation = {
   },
 
   docs: {
-    title: "技术文档",
+    title: "用户文档",
     description:
-      "Lumo 系统：架构、智能体循环、MCP 与扩展提供方、用户脚本运行时、设计令牌、国际化与部署。",
+      "Lumo 与 Lumo Userscripts 的安装、配置与使用说明。选择产品，查看各自的指南、必做配置与常见问题。",
     search: "搜索文档",
     searchPlaceholder: "搜索文档…",
-    searchEmpty: "没有匹配的文档。试试产品名或某个令牌。",
+    searchEmpty: "没有匹配的文档。试试功能名或设置项。",
     searchHint: "输入搜索，↑↓ 移动，↵ 打开。",
-    categories: {
-      start: "从这里开始",
-      platform: "平台",
-      products: "产品",
-      engineering: "工程",
-      design: "设计",
+    sections: {
+      start: "开始使用",
+      faq: "常见问题",
+      features: "功能指南",
     },
-    categoryDescriptions: {
-      start: "Lumo 是什么，以及如何跑起来。",
-      platform: "智能体循环、MCP 与共享架构。",
-      products: "Lumo、Lumo Userscripts，以及两者之间的智能体连接。",
-      engineering: "扩展提供方协议、国际化、部署与维护。",
-      design: "令牌、明暗两套外壳、动效与可访问性。",
+    productSwitcher: "选择产品",
+    chooseProduct: "选择产品",
+    productShort: {
+      lumo: "Lumo",
+      userscripts: "Userscripts",
     },
+    requiredReading: "先读这些",
+    articleCount: "{{count}} 篇",
+    faqShort: "常见问题",
     sidebar: "文档",
     toc: "本页目录",
     breadcrumb: "文档",
     allDocs: "全部文档",
-    featured: "精选",
-    latest: "最近更新",
-    articles: "文章",
     statsBilingual: "中文 + English",
-    statsSearch: "⌘K 搜索",
     staticPreRendered: "静态预渲染",
     minRead: "约 {{minutes}} 分钟",
     updated: "更新于 {{date}}",
@@ -871,12 +872,74 @@ export const zh: Translation = {
     previous: "上一篇",
     next: "下一篇",
     notFound: "这个页面不存在。",
-    notFoundDescription: "slug 可能已经变化。请从文档首页重新开始。",
+    notFoundDescription: "页面可能已经移动。请从文档首页重新开始。",
     backToDocs: "返回文档",
-    readingProgress: "阅读进度",
-    tableOfContents: "目录",
     noToc: "本页没有分节。",
-    related: "相关",
+    mocks: {
+      chrome: {
+        pageTitle: "扩展程序",
+        search: "搜索扩展程序",
+        developerMode: "开发者模式",
+        enabled: "已启用",
+        cardHint: "在你配置的站点上运行用户脚本。",
+        extensionId: "扩展 ID",
+        copyId: "复制 ID",
+        details: "详情",
+        allowUserScripts: "允许用户脚本",
+        allowUserScriptsHint: "允许此扩展运行用户脚本。",
+        stepCopyId: "复制 ID",
+        stepAllow: "打开开关",
+        stepLumoId: "Lumo 的 ID",
+      },
+      models: {
+        dialogTitle: "添加提供方",
+        name: "名称",
+        nameValue: "Anthropic · 生产",
+        protocol: "协议",
+        baseUrl: "Base URL",
+        baseUrlValue: "https://api.anthropic.com",
+        apiKey: "API 密钥",
+        apiKeyValue: "sk-ant-••••••••••••",
+        model: "模型 ID",
+        modelValue: "claude-sonnet-4-5",
+        defaultModel: "默认",
+        cancel: "取消",
+        save: "保存",
+        stepAdd: "添加提供方",
+        stepKey: "粘贴密钥",
+        stepModel: "添加模型",
+      },
+      mcp: {
+        connected: "已连接",
+        toolCount: "{{count}} 个工具",
+        stepAdd: "添加扩展",
+      },
+      extensionDialog: {
+        title: "添加扩展服务",
+        idLabel: "扩展 ID",
+        idValue: "abcdefghijklmnopabcdefghijklmnop",
+        hint: "从提供方设置或 chrome://extensions 复制 32 位扩展 ID。",
+        cancel: "取消",
+        add: "添加",
+        stepPaste: "粘贴 ID",
+        stepAdd: "添加",
+      },
+      userscriptsAgent: {
+        identity: "身份",
+        copy: "复制",
+        allowedHint: "只有这些扩展可以连接。",
+        stepCopy: "复制 ID",
+        stepAllow: "开启端点",
+        stepWrites: "设置写入权限",
+      },
+      userscriptsGeneral: {
+        scriptInjection: "启用脚本注入",
+        scriptInjectionHint: "关闭后暂停所有用户脚本。",
+        defaultRunAt: "默认运行时机",
+        defaultInjectInto: "默认注入环境",
+        stepKeepOn: "保持开启",
+      },
+    },
   },
   privacy: {
     eyebrow: "隐私",
@@ -914,9 +977,9 @@ export const zh: Translation = {
         "通过标准 MCP 端点创建、编辑与管理用户脚本，原生 MV3 注册、CodeMirror 6 与真实 GM API。",
     },
     docs: {
-      title: "技术文档 — Lumo",
+      title: "用户文档 — Lumo",
       description:
-        "智能体循环、MCP、扩展提供方协议、用户脚本运行时、设计令牌、国际化与 Cloudflare 部署。",
+        "安装与配置 Lumo 和 Lumo Userscripts：模型、MCP 工具、扩展服务、用户脚本、权限、备份与常见问题。",
     },
     privacy: {
       lumo: {

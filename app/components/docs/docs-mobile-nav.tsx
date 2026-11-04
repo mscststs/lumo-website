@@ -11,9 +11,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useSearch } from "@/components/site/search-provider";
+import type { DocProduct } from "@/lib/site-manifest";
 import { DocsSidebar } from "./docs-sidebar";
 
-export function DocsMobileNav() {
+export function DocsMobileNav({ product }: { product: DocProduct }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const { openSearch } = useSearch();
@@ -27,7 +28,9 @@ export function DocsMobileNav() {
         >
           <span className="inline-flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
-            {t("docs.sidebar")}
+            {product === "lumo"
+              ? t("nav.productLumoName")
+              : t("nav.productUserscriptsName")}
           </span>
           <ChevronDown className="h-4 w-4 text-muted-foreground" />
         </Button>
@@ -48,7 +51,7 @@ export function DocsMobileNav() {
           </Button>
         </SheetHeader>
         <SheetBody className="px-3 py-4">
-          <DocsSidebar onNavigate={() => setOpen(false)} />
+          <DocsSidebar product={product} onNavigate={() => setOpen(false)} />
         </SheetBody>
       </SheetContent>
     </Sheet>

@@ -20,7 +20,7 @@ export interface PageSeo {
 
 /**
  * Canonical URLs never carry a trailing slash: `drop-trailing-slash` in
- * `wrangler.toml` serves `/docs/mcp` from `docs/mcp/index.html` and redirects
+ * `wrangler.toml` serves `/docs/lumo/mcp` from `docs/lumo/mcp/index.html` and redirects
  * the slash form away, so the canonical, the sitemap and every in-app link
  * describe exactly one URL.
  */

@@ -319,7 +319,9 @@ Mockup 是装饰性内容：根节点 `aria-hidden="true"`，周围有真实标�
 
 ### 6.7 Docs
 
-- 侧栏：分组导航，选中项 `bg-accent` + 左侧小圆点；移动端进 Sheet。
+- 侧栏：顶部产品分段控件（Lumo / Userscripts），下方只显示当前产品的分组导航；选中项 `bg-accent` + 左侧小圆点；移动端进 Sheet。
+- 产品切换进入该产品概览，不保留另一产品的文章列表；`/docs` 只做产品选择与必读入口。
+- `mock` block 在正文中渲染界面复刻：固定设计画布、编号步骤标记落在真实控件位置，图注说明“看哪一步”。
 - 正文：`prose-lumo`，H2 24px / H3 18px；链接 primary；行内 code 用 `muted` + border。
 - TOC：右侧 sticky，scroll spy；移动端折叠为 `<details>`。
 - 代码块：Shiki 双主题，复制按钮，行号由 CSS 计数器绘制。
@@ -371,12 +373,12 @@ Mockup 是装饰性内容：根节点 `aria-hidden="true"`，周围有真实标�
 ## 9. 国际化与文案
 
 - 路径级 locale：英文无前缀，中文 `/zh`；`hreflang` 与 `x-default` 完整。
-- UI 文案在 `app/lib/i18n/resources/{en,zh}.ts`；长文档在 `app/content/docs/{en,zh}.ts`。
+- UI 文案在 `app/lib/i18n/resources/{en,zh}.ts`；长文档在 `app/content/docs/{en,zh}/{lumo,userscripts}.ts`。
 - 测试保证两套 key 树完全一致、插值占位符一致。
 - 文案只描述**状态与结果**：`Local-first`、`3 active`、`Metadata valid`。
 - 不写操作指令（「请点击这里」「在此输入」）。
 - 枚举值本地化，技术标识保持原文。
-- 语言切换保持当前文档：`/lumo` ↔ `/zh/lumo`，`/docs/mcp` ↔ `/zh/docs/mcp`。
+- 语言切换保持当前文档：`/lumo` ↔ `/zh/lumo`，`/docs/lumo/mcp` ↔ `/zh/docs/lumo/mcp`。
 
 ---
 
@@ -414,13 +416,17 @@ Install stage → Editor stage → Runtime (facts + GM API + code) → Control (
 Install requirements → Cross-sell Lumo → Footer
 ```
 
-### 10.4 Docs `/docs` / `/docs/:slug`
+### 10.4 Docs `/docs` / `/docs/:product` / `/docs/:product/:slug`
 
 ```
-Sidebar (grouped) | Content | TOC
-Docs index: hero + search + categories + all articles
-Article: breadcrumb → title → meta → mobile TOC → blocks → pager
+Docs index: hero + search + two product cards (required reading)
+Product docs: product switcher + grouped sidebar | Content | TOC
+Article: breadcrumb → title → meta → mobile TOC → blocks (incl. mock) → pager
 ```
+
+- 文档是用户文档：每个产品有自己的分组、文章顺序与 TOC；切换产品进入该产品概览。
+- 阅读顺序固定为「开始使用（安装 + 必做配置）→ 常见问题 → 功能指南」。
+- 配置类文章通过 `mock` block 引用界面复刻，编号提示落在真实控件位置。
 
 ### 10.5 产品隐私政策 / 404
 

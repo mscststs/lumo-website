@@ -73,8 +73,9 @@ Lumo 不把浏览器变成另一个操作系统，而是把「理解」和「控
 | `/` | `/zh` | 首页 | 品牌入口、双产品 Tab 舞台 |
 | `/lumo` | `/zh/lumo` | Lumo 产品主页 | Hero 拼接、能力舞台、MCP、模型、隐私、安装 |
 | `/userscripts` | `/zh/userscripts` | Userscripts 产品主页 | Hero 拼接、安装流、编辑器、GM API、权限、外观 |
-| `/docs` | `/zh/docs` | 文档首页 | 搜索、分类、精选文章 |
-| `/docs/:slug` | `/zh/docs/:slug` | 文档正文 | 侧栏、TOC、代码高亮、上一篇/下一篇 |
+| `/docs` | `/zh/docs` | 文档首页 | 产品选择、搜索、各产品必读 |
+| `/docs/:product` | `/zh/docs/:product` | 产品文档首页 | 该产品概览、侧栏、TOC |
+| `/docs/:product/:slug` | `/zh/docs/:product/:slug` | 产品文档正文 | 侧栏、TOC、代码高亮、上一篇/下一篇 |
 | `/lumo/privacy` | `/zh/lumo/privacy` | Lumo 隐私政策 | 直接渲染产品仓库的 PRIVACY.md |
 | `/userscripts/privacy` | `/zh/userscripts/privacy` | Userscripts 隐私政策 | 直接渲染产品仓库的 PRIVACY.md |
 | `*` | `*` | 404 | 品牌化错误页 |
@@ -168,10 +169,16 @@ Lumo 不把浏览器变成另一个操作系统，而是把「理解」和「控
 
 ### 5.4 文档 `/docs`
 
-- **首页**：搜索框（⌘K）、5 个分类卡、全部文章列表、最近更新。
-- **正文页**：左侧分组导航（可折叠）、正文（标题/段落/列表/步骤/提示/表格/代码）、右侧 TOC（scroll spy）、阅读进度、复制代码、上一篇/下一篇、移动端目录 Sheet。
-- **搜索**：客户端索引标题、描述、H2/H3；⌘K 打开；支持键盘上下/回车。
-- **文章**：`introduction`、`getting-started`、`architecture`、`mcp`、`agent-loop`、`userscripts-runtime`、`agent-connections`、`design-system`、`i18n`、`deployment`、`agent-protocol`、`faq`。
+- **定位**：用户文档，只说明怎么使用与配置；不再承载架构、设计系统、部署等工程说明。
+- **首页**：搜索框（⌘K）与两个产品入口卡；每张卡列出该产品的必读文章（安装、必做配置、FAQ）。
+- **产品文档首页**：`/docs/lumo` 与 `/docs/userscripts`，渲染该产品的 `overview` 文章；侧栏只显示当前产品的分组与文章。
+- **正文页**：左侧产品切换 + 分组导航、正文（标题/段落/列表/步骤/提示/表格/代码/界面 mock）、右侧 TOC（scroll spy）、上一篇/下一篇、移动端目录 Sheet。
+- **阅读顺序**：总体介绍 → 安装 → 必做配置（Lumo 模型 / Userscripts 允许用户脚本）→ 常见问题 → 子功能指南。
+- **产品切换**：`DocsSidebar` 顶部的分段控件；切换产品进入该产品概览，不混排两个产品的文章。
+- **搜索**：客户端索引标题、描述、H2/H3 与产品；⌘K 打开；结果标注产品并按产品作用域跳转。
+- **Mock**：文档内容通过 `mock` block 引用界面复刻（`chrome://extensions`、Lumo 模型/MCP 设置、Userscripts 通用/智能体设置），用于逐步提示配置位置。
+- **Lumo 文章**：`overview`、`install`、`models`、`faq`、`chat`、`mcp`、`extension-services`、`webmcp`、`settings`、`data`、`troubleshooting`。
+- **Userscripts 文章**：`overview`、`install`、`enable-userscripts`、`faq`、`install-scripts`、`editor`、`gm-api`、`permissions`、`updates-backup`、`agent-endpoint`、`diagnostics`、`settings`。
 
 ### 5.5 产品隐私政策 `/lumo/privacy`、`/userscripts/privacy`
 
@@ -239,9 +246,9 @@ app/
     home.tsx
     lumo.tsx
     userscripts.tsx
-    docs-layout.tsx
-    docs-index.tsx
-    docs-article.tsx
+    docs-layout.tsx        # 产品作用域侧栏 / TOC
+    docs-index.tsx         # 产品选择
+    docs-article.tsx       # /docs/:product 与 /docs/:product/:slug
     lumo-privacy.tsx       # 产品隐私政策（每个产品一个 route module）
     userscripts-privacy.tsx
     not-found.tsx
@@ -251,12 +258,12 @@ app/
     site/                  # Header / Footer / CommandPalette / ThemeMenu / LocaleLink
     motion/                # Reveal / Parallax / Aurora / ...
     mockups/               # 产品视觉复刻
-    docs/                  # DocsSidebar / Toc / Blocks / Search
+    docs/                  # DocsSidebar / Toc / Blocks / DocMock
     privacy/               # 产品隐私政策页面（复用 DocBlocks + Toc）
     home/ lumo/ userscripts/
   content/
-    docs/en.ts             # 英文文档内容
-    docs/zh.ts             # 中文文档内容
+    docs/en/               # 英文文档（lumo / userscripts）
+    docs/zh/               # 中文文档（lumo / userscripts）
     privacy/{en,zh}.ts     # 产品隐私政策（与上游 PRIVACY.md 同步）
   lib/
     i18n/                  # 初始化、locale 解析、资源
@@ -285,7 +292,7 @@ wrangler.toml
 - 爬虫（UA/`navigator.webdriver`）永不重定向；内联脚本与 `resolveLocaleRedirect` 由同一组测试用例约束。
 - 渲染出的 locale 会写入偏好，语言菜单在跳转前显式写入。
 - `LocaleProvider` 从 `useLocation()` 推导 locale（无 `locale` prop），同步 `i18n.changeLanguage` 与 `<html lang>`；因此门户（下拉、Sheet）里的链接也不会错语言。
-- **链接只写一次、不带语言**：`/lumo`、`/docs/mcp`。`LocaleLink` / `LocaleNavLink` / `useLocaleNavigate`（`components/site/locale-link.tsx`）按当前 URL 补前缀；`localePath` 幂等，已带前缀的显式目标保持原样（语言菜单、跨语言链接）。
+- **链接只写一次、不带语言**：`/lumo`、`/docs/lumo/mcp`。`LocaleLink` / `LocaleNavLink` / `useLocaleNavigate`（`components/site/locale-link.tsx`）按当前 URL 补前缀；`localePath` 幂等，已带前缀的显式目标保持原样（语言菜单、跨语言链接）。
 - 文档正文里的内链同样不带语言前缀；测试会扫描内容与关键组件，发现 `"/zh/` 字面量即失败。
 - 语言切换保持当前文档语义并保留 query 与 hash（`switchLocaleHref`）。
 - `hreflang`、`og:locale`、`canonical` 由 `seo.ts` 统一生成；`hreflang` 列出全部 locale 并附 `x-default`。
@@ -317,7 +324,7 @@ wrangler.toml
 ### 7.8 Cloudflare Workers（静态资产 + 源站改写）
 
 - `wrangler.toml`：`main = "./src/worker.ts"` + `[assets] directory = "./build/client"`、`binding = "ASSETS"`、`html_handling = "drop-trailing-slash"`、`not_found_handling = "404-page"`、`run_worker_first = true`。
-- **尾斜杠唯一形态**：`/docs/mcp` 由 `docs/mcp/index.html` 直接响应，`/docs/mcp/` 307 到无斜杠形式；canonical、sitemap、站内链接三者一致，硬加载不再多一跳。
+- **尾斜杠唯一形态**：`/docs/lumo/mcp` 由 `docs/lumo/mcp/index.html` 直接响应，`/docs/lumo/mcp/` 307 到无斜杠形式；canonical、sitemap、站内链接三者一致，硬加载不再多一跳。
 - `src/worker.ts` 不渲染任何东西：取资产后，把构建占位源 `SITE_ORIGIN_PLACEHOLDER`（`https://site.invalid`）整篇替换为请求域源；只处理 `text/html`、`application/xml`、`text/xml`、`text/plain`，其余直接透传。
 - 因此**无需任何构建变量**：`*.workers.dev`、预览域名、自定义域名都会得到正确的 canonical / hreflang / OG / JSON-LD / `sitemap.xml` / `robots.txt`。浏览器内 `siteOrigin()` 返回 `window.location.origin`，客户端导航与静态 HTML 一致。
 - 每个已知路由都有预渲染 HTML，无需任何运行时重写。

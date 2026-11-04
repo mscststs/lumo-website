@@ -15,13 +15,13 @@ import { localePath, hasLocalePrefix, type Locale } from "@/lib/site-manifest";
  * Locale-aware navigation primitives.
  *
  * Every internal link is written in its locale-agnostic form (`/lumo`,
- * `/docs/mcp`) and prefixed here, at the edge, with the locale of the current
+ * `/docs/lumo/mcp`) and prefixed here, at the edge, with the locale of the current
  * URL. Three properties follow from that single rule:
  *
  *  1. A page cannot link into the wrong language: there is no call site that
  *     could forget a prefix, because no call site stores one.
  *  2. Content stays translatable: docs text, route data and CTA objects carry
- *     `/docs/agent-loop`, not `/zh/docs/agent-loop`, so moving a page or adding
+ *     `/docs/lumo/chat`, not `/zh/docs/lumo/chat`, so moving a page or adding
  *     a locale never edits prose.
  *  3. It is idempotent: a path that already carries a prefix is normalized
  *     instead of being prefixed twice.

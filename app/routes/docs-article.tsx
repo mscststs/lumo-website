@@ -10,6 +10,7 @@ import {
 import { getAdjacentDocs, getDoc, getDocHeadings } from "@/content/docs";
 import { DocBlocks } from "@/components/docs/doc-blocks";
 import { DocsToc } from "@/components/docs/docs-toc";
+import { BrandMark } from "@/components/brand/brand-mark";
 import { JsonLd } from "@/components/site/json-ld";
 import { LocaleLink } from "@/components/site/locale-link";
 import { Badge } from "@/components/ui/badge";
@@ -21,26 +22,51 @@ import { absoluteUrl, pageMeta } from "@/lib/seo";
 import { siteOrigin } from "@/lib/site";
 import {
   docPath,
+  docRoute,
   getLocale,
+  isDocProduct,
   localePath,
   SITE_ROUTES,
+  type DocProduct,
   type Locale,
 } from "@/lib/site-manifest";
+
+interface DocsParams {
+  product?: string;
+  slug?: string;
+}
+
+function resolveParams(params: DocsParams): {
+  product?: DocProduct;
+  slug: string;
+} {
+  return {
+    product: isDocProduct(params.product) ? params.product : undefined,
+    slug: params.slug ?? "overview",
+  };
+}
 
 export function meta({
   location,
   params,
 }: {
   location: { pathname: string };
-  params: { slug?: string };
+  params: DocsParams;
 }) {
   const locale = getLocale(location.pathname);
-  const article = params.slug ? getDoc(locale, params.slug) : undefined;
+  const { product, slug } = resolveParams(params);
+  const article = product ? getDoc(locale, product, slug) : undefined;
   return pageMeta({
     locale,
-    path: localePath(locale, `/docs/${params.slug ?? ""}`),
-    title: article ? `${article.title} — Lumo` : translate(locale, "seo.notFound.title"),
-    description: article?.description ?? translate(locale, "seo.notFound.description"),
+    path:
+      product && article
+        ? docPath(locale, product, article.slug)
+        : localePath(locale, SITE_ROUTES.docs),
+    title: article
+      ? `${article.title} — Lumo`
+      : translate(locale, "seo.notFound.title"),
+    description:
+      article?.description ?? translate(locale, "seo.notFound.description"),
     type: "article",
     noIndex: !article,
   });
@@ -68,12 +94,17 @@ export default function DocsArticlePage() {
   const { t } = useTranslation();
   const locale = useLocale() as Locale;
   const params = useParams();
-  const article = params.slug ? getDoc(locale, params.slug) : undefined;
+  const { product, slug } = resolveParams(params);
+  const article = product ? getDoc(locale, product, slug) : undefined;
 
-  if (!article) return <NotFoundDoc />;
+  if (!product || !article) return <NotFoundDoc />;
 
   const headings = getDocHeadings(article);
-  const { previous, next } = getAdjacentDocs(locale, article.slug);
+  const { previous, next } = getAdjacentDocs(locale, product, article.slug);
+  const productName =
+    product === "lumo"
+      ? t("nav.productLumoName")
+      : t("nav.productUserscriptsName");
 
   return (
     <>
@@ -85,7 +116,7 @@ export default function DocsArticlePage() {
           description: article.description,
           dateModified: article.updated,
           inLanguage: locale === "zh" ? "zh-CN" : "en",
-          url: absoluteUrl(docPath(locale, article.slug)),
+          url: absoluteUrl(docPath(locale, product, article.slug)),
           author: { "@type": "Organization", name: "Lumo", url: siteOrigin() },
           publisher: { "@type": "Organization", name: "Lumo", url: siteOrigin() },
         }}
@@ -95,23 +126,33 @@ export default function DocsArticlePage() {
         <header className="flex flex-col gap-4 border-b border-border pb-8">
           <nav
             aria-label={t("docs.breadcrumb")}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground"
+            className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground"
           >
             <LocaleLink to={SITE_ROUTES.docs} className="hover:text-foreground">
               {t("docs.breadcrumb")}
             </LocaleLink>
             <span>/</span>
-            <span>{t(`docs.categories.${article.category}`)}</span>
+            <LocaleLink
+              to={`${SITE_ROUTES.docs}/${product}`}
+              className="inline-flex items-center gap-1.5 hover:text-foreground"
+            >
+              <BrandMark variant={product} className="h-3.5 w-3.5" />
+              {productName}
+            </LocaleLink>
+            <span>/</span>
+            <span>{t(`docs.sections.${article.section}`)}</span>
           </nav>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="accent">{t(`docs.categories.${article.category}`)}</Badge>
+            <Badge variant="accent">
+              {t(`docs.sections.${article.section}`)}
+            </Badge>
             <span className="text-[11px] text-muted-foreground">
               {t("docs.minRead", { minutes: article.readingMinutes })}
             </span>
           </div>
 
-          <h1 className="max-w-[24ch] text-balance text-display-sm font-semibold text-foreground">
+          <h1 className="max-w-[26ch] text-balance text-display-sm font-semibold text-foreground">
             {article.title}
           </h1>
           <p className="max-w-[62ch] text-pretty text-base leading-7 text-muted-foreground">
@@ -149,7 +190,7 @@ export default function DocsArticlePage() {
         <nav className="mt-14 grid grid-cols-1 gap-3 border-t border-border pt-8 sm:grid-cols-2">
           {previous ? (
             <LocaleLink
-              to={`${SITE_ROUTES.docs}/${previous.slug}`}
+              to={docRoute(product, previous.slug)}
               className="group flex flex-col gap-1 rounded-card border border-border bg-card p-4 shadow-surface transition-colors hover:border-primary/25"
             >
               <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
@@ -165,7 +206,7 @@ export default function DocsArticlePage() {
           )}
           {next ? (
             <LocaleLink
-              to={`${SITE_ROUTES.docs}/${next.slug}`}
+              to={docRoute(product, next.slug)}
               className="group flex flex-col items-end gap-1 rounded-card border border-border bg-card p-4 text-right shadow-surface transition-colors hover:border-primary/25 sm:col-start-2"
             >
               <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">

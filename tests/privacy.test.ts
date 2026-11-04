@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 import { PRIVACY_COLLECTIONS, getPrivacyDoc } from "@/content/privacy";
 import { getHeadings, type DocBlock } from "@/content/docs/types";
 import {
-  DOC_SLUGS,
+  DOC_PRODUCTS,
+  docSlugs,
   LOCALES,
   PRIVACY_PATHS,
   privacyPath,
   PRODUCTS,
+  type DocProduct,
   type ProductId,
 } from "@/lib/site-manifest";
 
@@ -87,10 +89,15 @@ describe("product privacy policies", () => {
         expect(text).not.toMatch(/\]\(\/zh\//);
         for (const match of text.matchAll(/\]\((\/[^)]+)\)/g)) {
           const href = match[1] ?? "";
-          // Internal links are site routes; product policies link to docs only.
-          expect(href).toMatch(/^\/docs\//);
-          const slug = href.replace(/^\/docs\//, "");
-          expect(DOC_SLUGS).toContain(slug);
+          // Product policies link to docs or to the other product page.
+          if (!href.startsWith("/docs/")) continue;
+          const [hrefProduct, slug] = href
+            .replace(/^\/docs\//, "")
+            .split("/");
+          expect(DOC_PRODUCTS).toContain(hrefProduct);
+          if (slug) {
+            expect(docSlugs(hrefProduct as DocProduct)).toContain(slug);
+          }
         }
       }
     }

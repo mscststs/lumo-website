@@ -1,9 +1,14 @@
 import type { Config } from "@react-router/dev/config";
-import { DOC_SLUGS, LOCALES } from "./app/lib/site-manifest";
+import {
+  DOC_PRODUCTS,
+  docPath,
+  docSlugs,
+  LOCALES,
+} from "./app/lib/site-manifest";
 
 const docPaths = LOCALES.flatMap((locale) =>
-  DOC_SLUGS.map((slug) =>
-    locale === "en" ? `/docs/${slug}` : `/${locale}/docs/${slug}`,
+  DOC_PRODUCTS.flatMap((product) =>
+    docSlugs(product).map((slug) => docPath(locale, product, slug)),
   ),
 );
 

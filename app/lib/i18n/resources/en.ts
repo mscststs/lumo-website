@@ -20,7 +20,6 @@ export const en = {
     readDocs: "Read documentation",
     source: "Source",
     releaseNotes: "Release notes",
-    builtInTheOpen: "Built in the open",
     copyright: "© {{year}} Lumo. All rights reserved.",
     externalLink: "Opens in a new tab",
     menu: "Menu",
@@ -53,20 +52,13 @@ export const en = {
     languageAria: "Change language",
   },
   footer: {
-    statement:
-      "Precision tools for the browser you already use. Local-first, craft-driven and calm by default.",
     products: "Products",
-    resources: "Resources",
-    legal: "Legal",
-    documentation: "Documentation",
-    architecture: "Architecture",
-    mcp: "MCP and tools",
-    releases: "Releases",
-    github: "GitHub",
-    privacy: "Privacy",
+    source: "Source",
+    legal: "Privacy",
+    lumoRepo: "Lumo GitHub",
+    userscriptsRepo: "Userscripts GitHub",
     lumoPrivacy: "Lumo privacy",
     userscriptsPrivacy: "Userscripts privacy",
-    license: "License",
     builtWith: "Built with Vite, React and Tailwind. Served from Cloudflare Workers.",
     siteVersion: "Site {{version}}",
   },
@@ -168,7 +160,7 @@ export const en = {
           "Describe the change, approve the write, keep the audit.",
         bullets: [
           "Standard MCP over a runtime port",
-          "Read-only until you allow writes",
+          "Reads and writes on by default",
           "Native chrome.userScripts",
         ],
       },
@@ -242,7 +234,7 @@ export const en = {
     agentDialogDescription:
       "Lumo wants to connect to the userscript endpoint. Approving adds its extension ID to the allowlist.",
     agentDialogGrants:
-      "Read tools are granted immediately. Writes stay off until you enable them, and every write is audited.",
+      "Approving enables agent access and adds this extension to the allowlist. Writes are on by default, can be switched off, and every write is audited.",
     later: "Later",
     approve: "Approve",
     settingsGeneral: "General",
@@ -437,9 +429,9 @@ export const en = {
     },
     split: {
       eyebrow: "Workspace",
-      title: "One conversation, or three.",
+      title: "Run conversations side by side.",
       description:
-        "Run independent conversations side by side. Each pane keeps its own model, history and tool calls; drag the dividers to resize.",
+        "Up to three panes, each an independent conversation with its own model, context and tool calls. Drag the dividers to resize.",
       one: "Single",
       two: "Dual",
       three: "Triple",
@@ -520,27 +512,29 @@ export const en = {
       ],
     },
     install: {
-      eyebrow: "Install",
-      title: "Three ways in.",
-      description: "Store for stability, an Actions build for the newest fixes, or source.",
-      steps: [
-        {
-          title: "Chrome Web Store",
-          detail: "Stable and auto-updating; can lag behind main.",
-          action: "Open Chrome Web Store",
-        },
+      title: "Install Lumo",
+      description:
+        "Store builds update automatically; use GitHub or build from source for the newest changes.",
+      store: {
+        label: "Add to Chrome",
+        tagline: "Chrome extension",
+      },
+      facts: [
+        { label: "Platform", value: "Chromium · MV3" },
+        { label: "License", value: "MIT" },
+      ],
+      channelsTitle: "Other channels",
+      channels: [
         {
           title: "GitHub Actions",
-          detail: "Download the latest artifact, unzip, load unpacked.",
-          action: "Open Actions",
+          detail: "Download the latest build artifact and load it unpacked.",
         },
         {
           title: "Build from source",
-          detail: "npm install, npm run build, load .output/chrome-mv3.",
-          action: "View source",
+          detail: "Clone the repository and build the Chrome MV3 extension.",
         },
       ],
-      requirement: "Chromium browser with MV3 support. Firefox build from source.",
+      privacy: "Privacy policy",
     },
     cross: {
       eyebrow: "Also from Lumo",
@@ -557,7 +551,7 @@ export const en = {
       title: "Scripts you\ncan ask for.",
       summary:
         "Describe the change you want. The agent writes the script, installs it, and it runs on the next reload.",
-      primary: "Get from GitHub",
+      primary: "Add to Chrome",
       secondary: "Read the agent docs",
       mock: {
         scripts: [
@@ -626,58 +620,66 @@ export const en = {
       description:
         "Lumo connects over MCP, asks once for approval, then creates, edits and enables scripts inside the same conversation that read the page.",
       bullets: [
-        "Read-only until you allow writes",
-        "Review mode keeps new scripts disabled",
+        "One approval, then reads and writes",
+        "Writes on by default; review optional",
         "Every write is audited",
       ],
       cta: "Read the connection guide",
-      protocolEyebrow: "Agent protocol",
-      bridge: {
-        probe: "L0 probe: installed, enabled, authorized?",
-        probeReply: "Stateless service + status",
-        approval: "You approve the caller once",
-        port: "L1 session: MCP over a runtime port",
-        tools: "The agent calls the tool surface",
-        host: "MCP client",
-        provider: "MCP provider",
-        invariantAuth: "Authorized by sender.id",
-        invariantPolicy: "Policy re-checked per call",
-        invariantAudit: "Writes audited",
-      },
-      tableTitle: "The tool surface",
-      read: "read",
-      write: "write",
-      tableFootnote:
-        "Read tools need authorization. Writes need a separate switch and are audited.",
-      tools: [
-        { name: "list", detail: "The library, or the scripts that run on a URL.", access: "read" },
-        { name: "get", detail: "Metadata and paged source code.", access: "read" },
-        { name: "diagnostics", detail: "Runtime availability, registrations and errors.", access: "read" },
-        { name: "set_enabled", detail: "Enable or disable a script.", access: "write" },
-        { name: "create", detail: "Validate metadata and save a new script.", access: "write" },
-        { name: "edit", detail: "Atomic anchored edits.", access: "write" },
-        { name: "update", detail: "Replace the source or metadata overrides.", access: "write" },
-        { name: "install", detail: "Install from a URL with its dependencies.", access: "write" },
-        { name: "delete", detail: "Move a script to the recycle bin.", access: "write" },
-      ],
-      policy: {
-        title: "Read, write, review.",
-        description:
-          "A probe decides whether the provider is usable; three independent switches decide what the agent may do.",
-        items: [
-          {
-            title: "Endpoint",
-            detail: "Off by default.",
-          },
-          {
-            title: "Writes",
-            detail: "A second switch.",
-          },
-          {
-            title: "Review",
-            detail: "New scripts stay disabled.",
-          },
-        ],
+      protocolEyebrow: "Agent calls",
+      sceneTitle: "One sentence, one script.",
+      sceneDescription:
+        "Lumo discovers the extension over MCP and calls userscripts_create. By the time it is saved, the script is already running on the page you are looking at.",
+      scene: {
+        user: "Turn this repository page into night mode and save it as a userscript.",
+        assistantLead: "Checking what already runs on this URL, then writing a new one.",
+        listSummary: "url: https://github.com/vercel/next.js",
+        createSummary: "code: // ==UserScript== // @name GitHub Night Shift, enabled: true",
+        createInput: `{
+  "code": "// ==UserScript==\\n// @name        GitHub Night Shift\\n// @namespace   northwind\\n// @version     1.0.0\\n// @match       *://*.github.com/*\\n// ==/UserScript==\\n\\ndocument.documentElement.dataset.theme = 'dark';",
+  "enabled": true
+}`,
+        createOutput: `{
+  "ok": true,
+  "reviewRequired": false,
+  "script": {
+    "name": "GitHub Night Shift",
+    "namespace": "northwind",
+    "version": "1.0.0",
+    "enabled": true,
+    "matches": ["*://*.github.com/*"]
+  }
+}`,
+        assistantDone:
+          "GitHub Night Shift is created and enabled. Reload github.com and it is already applied.",
+        page: {
+          repo: "vercel / next.js",
+          url: "github.com/vercel/next.js",
+          visibility: "Public",
+          tabCode: "Code",
+          tabIssues: "Issues",
+          tabPulls: "Pull requests",
+          tabActions: "Actions",
+          branch: "canary",
+          goToFile: "Go to file",
+          codeButton: "Code",
+          stars: "128k",
+          forks: "27k",
+          files: [
+            { name: "app", meta: "fix: edge runtime warning", time: "2h" },
+            { name: "packages", meta: "feat: turbopack cache", time: "5h" },
+            { name: "README.md", meta: "docs: clarify caching", time: "1d" },
+            { name: "package.json", meta: "chore: bump deps", time: "2d" },
+          ],
+          readmeTitle: "README.md",
+          readmeBody:
+            "Next.js is a React framework for building full-stack web applications, from a weekend project to a production app.",
+          readmeCode: "npx create-next-app@latest",
+          commitMeta: "northwind committed 2h ago",
+          aboutTitle: "About",
+          aboutBody: "The React framework for the web.",
+          topics: ["typescript", "react", "nextjs"],
+          license: "MIT license",
+        },
       },
     },
     install: {
@@ -804,28 +806,29 @@ export const en = {
       ],
     },
     installPage: {
-      eyebrow: "Install",
-      title: "Chrome 138+ and one switch.",
+      title: "Install Lumo Userscripts",
       description:
-        "Chrome requires you to allow user scripts for the extension once.",
-      steps: [
+        "After installing, allow user scripts on the extension card once.",
+      store: {
+        label: "Add to Chrome",
+        tagline: "Chrome extension",
+      },
+      facts: [
+        { label: "Platform", value: "Chrome 138+" },
+        { label: "License", value: "MIT" },
+      ],
+      channelsTitle: "Other channels",
+      channels: [
         {
-          title: "Open the releases",
-          detail: "Download the archive or unpacked build.",
-          action: "Open GitHub Releases",
+          title: "GitHub Releases",
+          detail: "Download the archive and load it unpacked.",
         },
         {
-          title: "Load unpacked",
-          detail: "Enable Developer mode, then Load unpacked.",
-          action: "Read the docs",
-        },
-        {
-          title: "Allow user scripts",
-          detail: "Enable Allow User Scripts on the extension card.",
-          action: "Read the docs",
+          title: "Build from source",
+          detail: "Clone the repository and build the Chrome MV3 extension.",
         },
       ],
-      requirement: "Chrome 138+. Node 22+ only when building from source.",
+      privacy: "Privacy policy",
     },
     cross: {
       eyebrow: "Also from Lumo",
@@ -837,36 +840,32 @@ export const en = {
   },
 
   docs: {
-    title: "Documentation",
+    title: "User documentation",
     description:
-      "The Lumo system: architecture, the agent loop, MCP and extension providers, userscript runtime, design tokens, internationalization and deployment.",
+      "How to install, configure and use Lumo and Lumo Userscripts. Choose a product to see its own guide, setup steps and FAQ.",
     search: "Search documentation",
     searchPlaceholder: "Search docs…",
-    searchEmpty: "No matching docs. Try a product name or a token.",
+    searchEmpty: "No matching docs. Try a feature name or a setting.",
     searchHint: "Type to search, ↑↓ to move, ↵ to open.",
-    categories: {
-      start: "Start here",
-      platform: "Platform",
-      products: "Products",
-      engineering: "Engineering",
-      design: "Design",
+    sections: {
+      start: "Get started",
+      faq: "FAQ",
+      features: "Guides",
     },
-    categoryDescriptions: {
-      start: "What Lumo is, and how to get it running.",
-      platform: "The agent loop, MCP and the shared architecture.",
-      products: "Lumo, Lumo Userscripts and the agent connection between them.",
-      engineering: "The extension-provider protocol, i18n, deployment and maintenance.",
-      design: "Tokens, light and dark shells, motion and accessibility.",
+    productSwitcher: "Choose a product",
+    chooseProduct: "Choose a product",
+    productShort: {
+      lumo: "Lumo",
+      userscripts: "Userscripts",
     },
+    requiredReading: "Read first",
+    articleCount: "{{count}} articles",
+    faqShort: "FAQ",
     sidebar: "Documentation",
     toc: "On this page",
     breadcrumb: "Docs",
     allDocs: "All documentation",
-    featured: "Featured",
-    latest: "Recently updated",
-    articles: "Articles",
     statsBilingual: "English + 中文",
-    statsSearch: "⌘K search",
     staticPreRendered: "static pre-rendered",
     minRead: "{{minutes}} min read",
     updated: "Updated {{date}}",
@@ -875,12 +874,75 @@ export const en = {
     previous: "Previous",
     next: "Next",
     notFound: "This page does not exist.",
-    notFoundDescription: "The slug may have changed. Start from the documentation index.",
+    notFoundDescription:
+      "The page may have moved. Start from the documentation index.",
     backToDocs: "Back to docs",
-    readingProgress: "Reading progress",
-    tableOfContents: "Contents",
     noToc: "This page has no sections.",
-    related: "Related",
+    mocks: {
+      chrome: {
+        pageTitle: "Extensions",
+        search: "Search extensions",
+        developerMode: "Developer mode",
+        enabled: "Enabled",
+        cardHint: "Runs userscripts on the sites you configure.",
+        extensionId: "ID",
+        copyId: "Copy ID",
+        details: "Details",
+        allowUserScripts: "Allow user scripts",
+        allowUserScriptsHint: "Let this extension run userscripts.",
+        stepCopyId: "Copy the ID",
+        stepAllow: "Turn this on",
+        stepLumoId: "Lumo's ID",
+      },
+      models: {
+        dialogTitle: "Add provider",
+        name: "Name",
+        nameValue: "Anthropic · Production",
+        protocol: "Protocol",
+        baseUrl: "Base URL",
+        baseUrlValue: "https://api.anthropic.com",
+        apiKey: "API key",
+        apiKeyValue: "sk-ant-••••••••••••",
+        model: "Model ID",
+        modelValue: "claude-sonnet-4-5",
+        defaultModel: "default",
+        cancel: "Cancel",
+        save: "Save",
+        stepAdd: "Add provider",
+        stepKey: "Paste the key",
+        stepModel: "Add a model",
+      },
+      mcp: {
+        connected: "Connected",
+        toolCount: "{{count}} tools",
+        stepAdd: "Add extension",
+      },
+      extensionDialog: {
+        title: "Add extension service",
+        idLabel: "Extension ID",
+        idValue: "abcdefghijklmnopabcdefghijklmnop",
+        hint: "Copy the 32-character ID from the provider's settings or chrome://extensions.",
+        cancel: "Cancel",
+        add: "Add",
+        stepPaste: "Paste the ID",
+        stepAdd: "Add",
+      },
+      userscriptsAgent: {
+        identity: "Identity",
+        copy: "Copy",
+        allowedHint: "Only these extensions can connect.",
+        stepCopy: "Copy the ID",
+        stepAllow: "Enable endpoint",
+        stepWrites: "Set write access",
+      },
+      userscriptsGeneral: {
+        scriptInjection: "Enable script injection",
+        scriptInjectionHint: "Turning it off pauses every userscript.",
+        defaultRunAt: "Default run timing",
+        defaultInjectInto: "Default injection world",
+        stepKeepOn: "Keep this on",
+      },
+    },
   },
   privacy: {
     eyebrow: "Privacy",
@@ -919,9 +981,9 @@ export const en = {
         "Create, edit and manage userscripts with a standard MCP endpoint, native MV3 registration, CodeMirror 6 and real GM APIs.",
     },
     docs: {
-      title: "Documentation — Lumo",
+      title: "User documentation — Lumo",
       description:
-        "Agent loop, MCP, extension-provider protocol, userscript runtime, design tokens, i18n and Cloudflare deployment.",
+        "Install and configure Lumo and Lumo Userscripts: models, MCP tools, extension services, userscripts, permissions, backups and FAQ.",
     },
     privacy: {
       lumo: {

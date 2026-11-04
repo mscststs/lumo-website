@@ -40,10 +40,11 @@ export const LINKS = {
   lumoRepo: "https://github.com/mscststs/lumo",
   lumoActions: "https://github.com/mscststs/lumo/actions/workflows/build.yml",
   lumoPrivacy: "https://github.com/mscststs/lumo/blob/main/PRIVACY.md",
+  userscriptsStore:
+    "https://chromewebstore.google.com/detail/cifapeigdoopgjmliljlbboidgncpdeg",
   userscriptsRepo: "https://github.com/mscststs/lumo-userscript-manager",
   userscriptsReleases:
     "https://github.com/mscststs/lumo-userscript-manager/releases",
   userscriptsPrivacy:
     "https://github.com/mscststs/lumo-userscript-manager/blob/main/PRIVACY.md",
-  githubOrg: "https://github.com/mscststs",
 } as const;

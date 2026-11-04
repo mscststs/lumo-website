@@ -495,7 +495,7 @@ export function AgentSettingsMock({ className }: { className?: string }) {
           <SettingRow
             label={t("mockUi.agentReview")}
             description={t("mockUi.agentReviewHint")}
-            control={<SettingSwitch on />}
+            control={<SettingSwitch on={false} />}
           />
         </SettingsGroup>
 

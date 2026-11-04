@@ -1,20 +1,16 @@
-import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ArrowRight,
+  ArrowUpRight,
   Bug,
   Check,
-  Download,
-  ExternalLink as ExternalLinkIcon,
-  Globe,
-  ShieldCheck,
-  Terminal,
 } from "lucide-react";
 import { AnchorNav } from "@/components/site/anchor-nav";
 import { CrossSell } from "@/components/site/cross-sell";
 import { JsonLd } from "@/components/site/json-ld";
 import { ProductHero } from "@/components/site/product-hero";
 import { SectionHeading } from "@/components/site/section-heading";
+import { InstallPanel, type InstallFact } from "@/components/site/install-panel";
 import { AgentLoopDiagram } from "@/components/mockups/agent-loop-diagram";
 import { FeatureStage } from "@/components/mockups/feature-stage";
 import { LumoProviderMock } from "@/components/mockups/lumo-settings-mock";
@@ -25,7 +21,6 @@ import { SidebarChatMock } from "@/components/mockups/sidebar-chat-mock";
 import { SplitViewShowcase } from "@/components/mockups/split-view-showcase";
 import { Reveal } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
-import { GithubIcon } from "@/components/brand/icons";
 import { useLocale } from "@/lib/i18n";
 import { LocaleLink } from "@/components/site/locale-link";
 import { translate } from "@/lib/i18n/translate";
@@ -33,7 +28,6 @@ import { absoluteUrl, pageMeta } from "@/lib/seo";
 import { LINKS, siteOrigin } from "@/lib/site";
 import {
   getLocale,
-  isExternalHref,
   localePath,
   PRIVACY_PATHS,
   SITE_ROUTES,
@@ -48,58 +42,6 @@ export function meta({ location }: { location: { pathname: string } }) {
     title: translate(locale, "seo.lumo.title"),
     description: translate(locale, "seo.lumo.description"),
   });
-}
-
-function InstallCard({
-  index,
-  title,
-  detail,
-  action,
-  href,
-  icon,
-}: {
-  index: number;
-  title: string;
-  detail: string;
-  action: string;
-  href: string;
-  icon: ReactNode;
-}) {
-  return (
-    <div className="flex h-full flex-col gap-4 rounded-card border border-border bg-card p-5 shadow-surface">
-      <div className="flex items-center justify-between">
-        <span className="flex h-9 w-9 items-center justify-center rounded-control border border-border bg-muted/50 text-primary">
-          {icon}
-        </span>
-        <span className="font-mono text-[10px] text-muted-foreground">
-          0{index + 1}
-        </span>
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        <p className="text-sm leading-6 text-muted-foreground">{detail}</p>
-      </div>
-      {isExternalHref(href) ? (
-        <a
-          href={href}
-          target="_blank"
-          rel="noreferrer noopener"
-          className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-primary"
-        >
-          {action}
-          <ExternalLinkIcon className="h-3.5 w-3.5" />
-        </a>
-      ) : (
-        <LocaleLink
-          to={href}
-          className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-primary"
-        >
-          {action}
-          <ArrowRight className="h-3.5 w-3.5" />
-        </LocaleLink>
-      )}
-    </div>
-  );
 }
 
 export default function LumoPage() {
@@ -119,15 +61,10 @@ export default function LumoPage() {
   const grid = t("lumo.grid.items", {
     returnObjects: true,
   }) as { title: string; detail: string }[];
-  const installSteps = t("lumo.install.steps", {
+  const installChannels = t("lumo.install.channels", {
     returnObjects: true,
-  }) as { title: string; detail: string; action: string }[];
-  const installHrefs = [LINKS.lumoStore, LINKS.lumoActions, LINKS.lumoRepo];
-  const installIcons = [
-    <Globe key="chrome" className="h-4 w-4" />,
-    <GithubIcon key="github" className="h-4 w-4" />,
-    <Terminal key="terminal" className="h-4 w-4" />,
-  ];
+  }) as { title: string; detail: string }[];
+  const installChannelHrefs = [LINKS.lumoActions, LINKS.lumoRepo];
 
   return (
     <>
@@ -154,11 +91,11 @@ export default function LumoPage() {
         primary={{
           label: t("lumo.hero.primary"),
           href: LINKS.lumoStore,
-          icon: <Download className="h-4 w-4" />,
+          icon: <ArrowUpRight className="h-4 w-4" />,
         }}
         secondary={{
           label: t("lumo.hero.secondary"),
-          href: `${SITE_ROUTES.docs}/agent-loop`,
+          href: `${SITE_ROUTES.docs}/lumo/chat`,
         }}
         visual={
           <SidebarChatMock
@@ -179,7 +116,7 @@ export default function LumoPage() {
           description={t("lumo.agent.description")}
           bullets={t("lumo.agent.bullets", { returnObjects: true }) as string[]}
           ctaLabel={t("lumo.agent.cta")}
-          ctaHref={`${SITE_ROUTES.docs}/agent-loop`}
+          ctaHref={`${SITE_ROUTES.docs}/lumo/chat`}
           visual={<AgentLoopDiagram />}
         />
 
@@ -190,7 +127,7 @@ export default function LumoPage() {
             description={t("lumo.tools.description")}
             action={
               <Button asChild variant="outline" size="sm">
-                <LocaleLink to={`${SITE_ROUTES.docs}/mcp`}>
+                <LocaleLink to={`${SITE_ROUTES.docs}/lumo/mcp`}>
                   {t("common.readDocs")}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </LocaleLink>
@@ -248,7 +185,7 @@ export default function LumoPage() {
               t("lumo.providers.bullets", { returnObjects: true }) as string[]
             }
             ctaLabel={t("lumo.providers.cta")}
-            ctaHref={`${SITE_ROUTES.docs}/agent-loop`}
+            ctaHref={`${SITE_ROUTES.docs}/lumo/models`}
             visual={<LumoProviderMock />}
           />
           <section className="container-page">
@@ -300,37 +237,26 @@ export default function LumoPage() {
 
       <section id="install" className="container-page scroll-mt-24 py-16 sm:py-24">
         <SectionHeading
-          eyebrow={t("lumo.install.eyebrow")}
           title={t("lumo.install.title")}
           description={t("lumo.install.description")}
         />
-        <div className="mt-10 grid grid-cols-1 gap-3 md:grid-cols-3">
-          {installSteps.map((step, index) => (
-            <Reveal key={step.title} delay={index * 0.06}>
-              <InstallCard
-                index={index}
-                title={step.title}
-                detail={step.detail}
-                action={step.action}
-                href={installHrefs[index] ?? LINKS.lumoRepo}
-                icon={installIcons[index]}
-              />
-            </Reveal>
-          ))}
-        </div>
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-success" />
-            {t("lumo.install.requirement")}
-          </span>
-          <LocaleLink
-            to={PRIVACY_PATHS.lumo}
-            className="inline-flex items-center gap-1 font-medium text-foreground hover:text-primary"
-          >
-            {t("common.privacy")}
-            <ArrowRight className="h-3.5 w-3.5" />
-          </LocaleLink>
-        </div>
+        <InstallPanel
+          className="mt-10"
+          brand="lumo"
+          name={t("lumo.productName")}
+          store={{
+            href: LINKS.lumoStore,
+            label: t("lumo.install.store.label"),
+            tagline: t("lumo.install.store.tagline"),
+          }}
+          facts={t("lumo.install.facts", { returnObjects: true }) as InstallFact[]}
+          channelsTitle={t("lumo.install.channelsTitle")}
+          channels={installChannels.map((channel, index) => ({
+            ...channel,
+            href: installChannelHrefs[index] ?? LINKS.lumoRepo,
+          }))}
+          privacy={{ href: PRIVACY_PATHS.lumo, label: t("lumo.install.privacy") }}
+        />
       </section>
 
       <div className="pb-16 sm:pb-24">

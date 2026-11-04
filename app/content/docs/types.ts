@@ -1,6 +1,34 @@
-import type { DocCategory, DocSlug } from "@/lib/site-manifest";
+import type {
+  DocProduct,
+  DocSection,
+  DocSlug,
+  LumoDocSlug,
+  UserscriptsDocSlug,
+} from "@/lib/site-manifest";
 
 export type CalloutTone = "note" | "tip" | "warning";
+
+/**
+ * Mockups are content, not decoration: an article names the screen it needs and
+ * the renderer decides how that screen is drawn. Keeping the id in the block
+ * model (instead of embedding JSX in copy) keeps content serialisable for
+ * search, tests and translation parity.
+ */
+export const DOC_MOCK_IDS = [
+  "lumo-chat",
+  "lumo-models",
+  "lumo-mcp",
+  "lumo-extension-dialog",
+  "chrome-extensions",
+  "userscripts-dashboard",
+  "userscripts-install",
+  "userscripts-editor",
+  "userscripts-agent",
+  "userscripts-general",
+  "agent-approval",
+] as const;
+
+export type DocMockId = (typeof DOC_MOCK_IDS)[number];
 
 export type DocBlock =
   | { type: "p"; text: string }
@@ -13,11 +41,17 @@ export type DocBlock =
   | { type: "table"; head: string[]; rows: string[][] }
   | { type: "steps"; items: { title: string; text: string }[] }
   | { type: "kv"; items: { k: string; v: string }[] }
-  | { type: "quote"; text: string; cite?: string };
+  | { type: "quote"; text: string; cite?: string }
+  | { type: "mock"; id: DocMockId; caption?: string }
+  | {
+      type: "cards";
+      items: { title: string; text: string; href: string; cta?: string }[];
+    };
 
 export interface DocArticle {
+  product: DocProduct;
   slug: DocSlug;
-  category: DocCategory;
+  section: DocSection;
   title: string;
   description: string;
   updated: string;
@@ -25,7 +59,10 @@ export interface DocArticle {
   blocks: DocBlock[];
 }
 
-export type DocCollection = Record<DocSlug, DocArticle>;
+export type DocCollection = {
+  lumo: Record<LumoDocSlug, DocArticle>;
+  userscripts: Record<UserscriptsDocSlug, DocArticle>;
+};
 
 export interface DocHeading {
   id: string;
@@ -74,6 +111,12 @@ function blockText(block: DocBlock): string {
       return block.items.map((item) => `${item.title} ${item.text}`).join(" ");
     case "table":
       return [...block.head, ...block.rows.flat()].join(" ");
+    case "mock":
+      return block.caption ?? "";
+    case "cards":
+      return block.items
+        .map((item) => `${item.title} ${item.text} ${item.cta ?? ""}`)
+        .join(" ");
     case "code":
       return "";
     default:

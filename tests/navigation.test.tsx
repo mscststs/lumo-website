@@ -12,7 +12,12 @@ import { SearchProvider } from "@/components/site/search-provider";
 import { getDocs } from "@/content/docs";
 import { LocaleProvider } from "@/lib/i18n";
 import { getI18n } from "@/lib/i18n/translate";
-import { DOC_SLUGS, LOCALES } from "@/lib/site-manifest";
+import {
+  DOC_PRODUCTS,
+  docSlugs,
+  LOCALES,
+  type DocProduct,
+} from "@/lib/site-manifest";
 import { ThemeProvider } from "@/lib/theme";
 
 /** Every internal href rendered by the app, in document order. */
@@ -55,7 +60,7 @@ describe("locale-aware navigation", () => {
     });
 
     it(`prefixes every footer link with the URL locale (${locale})`, () => {
-      const { container } = renderAt(`${prefix}/docs/mcp`, <SiteFooter />);
+      const { container } = renderAt(`${prefix}/docs/lumo/mcp`, <SiteFooter />);
       for (const href of internalHrefs(container)) {
         if (locale === "zh") {
           expect(href).toMatch(/^\/zh(\/|$)/);
@@ -66,9 +71,12 @@ describe("locale-aware navigation", () => {
     });
 
     it(`prefixes every docs sidebar link with the URL locale (${locale})`, () => {
-      const { container } = renderAt(`${prefix}/docs/mcp`, <DocsSidebar />);
+      const { container } = renderAt(
+        `${prefix}/docs/lumo/mcp`,
+        <DocsSidebar product="lumo" />,
+      );
       const hrefs = internalHrefs(container);
-      expect(hrefs.some((href) => href.endsWith("/docs/mcp"))).toBe(true);
+      expect(hrefs.some((href) => href.endsWith("/docs/lumo/mcp"))).toBe(true);
       for (const href of hrefs) {
         if (locale === "zh") {
           expect(href).toMatch(/^\/zh(\/|$)/);
@@ -81,43 +89,72 @@ describe("locale-aware navigation", () => {
 
   it("resolves a locale-agnostic markdown link to the active locale", () => {
     const { container, unmount } = renderAt(
-      "/zh/docs/mcp",
-      <InlineText text="See [the agent loop](/docs/agent-loop)." />,
+      "/zh/docs/lumo/mcp",
+      <InlineText text="See [the agent loop](/docs/lumo/chat)." />,
     );
-    expect(screen.getByRole("link").getAttribute("href")).toBe("/zh/docs/agent-loop");
+    expect(screen.getByRole("link").getAttribute("href")).toBe(
+      "/zh/docs/lumo/chat",
+    );
     unmount();
 
-    renderAt("/docs/mcp", <InlineText text="See [the agent loop](/docs/agent-loop)." />);
-    expect(screen.getByRole("link").getAttribute("href")).toBe("/docs/agent-loop");
+    renderAt(
+      "/docs/lumo/mcp",
+      <InlineText text="See [the agent loop](/docs/lumo/chat)." />,
+    );
+    expect(screen.getByRole("link").getAttribute("href")).toBe(
+      "/docs/lumo/chat",
+    );
     void container;
   });
 
   it("keeps an explicitly localized target intact", () => {
     renderAt(
-      "/docs/mcp",
-      <InlineText text="Read [the Chinese page](/zh/docs/mcp)." />,
+      "/docs/lumo/mcp",
+      <InlineText text="Read [the Chinese page](/zh/docs/lumo/mcp)." />,
     );
-    expect(screen.getByRole("link").getAttribute("href")).toBe("/zh/docs/mcp");
+    expect(screen.getByRole("link").getAttribute("href")).toBe(
+      "/zh/docs/lumo/mcp",
+    );
   });
 });
 
 describe("content link hygiene", () => {
   it("never stores a locale prefix inside translated content", () => {
     for (const locale of LOCALES) {
-      for (const article of getDocs(locale)) {
-        expect(JSON.stringify(article), article.slug).not.toMatch(/\]\(\/zh\//);
+      for (const product of DOC_PRODUCTS) {
+        for (const article of getDocs(locale, product)) {
+          expect(JSON.stringify(article), `${product}/${article.slug}`).not.toMatch(
+            /\]\(\/zh\//,
+          );
+        }
       }
     }
   });
 
   it("only links to documents that exist", () => {
     for (const locale of LOCALES) {
-      for (const article of getDocs(locale)) {
-        for (const match of JSON.stringify(article).matchAll(/\]\((\/[^)]+)\)/g)) {
-          const href = match[1] ?? "";
-          expect(href.startsWith("/docs/"), `${article.slug} → ${href}`).toBe(true);
-          const slug = href.replace(/^\/docs\//, "");
-          expect(DOC_SLUGS, `${article.slug} → ${href}`).toContain(slug);
+      for (const product of DOC_PRODUCTS) {
+        for (const article of getDocs(locale, product)) {
+          for (const match of JSON.stringify(article).matchAll(
+            /\]\((\/[^)]+)\)/g,
+          )) {
+            const href = match[1] ?? "";
+            // Privacy pages are valid internal targets too; only docs links
+            // need to resolve to a product-scoped article.
+            if (!href.startsWith("/docs/")) continue;
+            const [hrefProduct, slug] = href
+              .replace(/^\/docs\//, "")
+              .split("/");
+            expect(DOC_PRODUCTS, `${product}/${article.slug} → ${href}`).toContain(
+              hrefProduct,
+            );
+            if (slug) {
+              expect(
+                docSlugs(hrefProduct as DocProduct),
+                `${product}/${article.slug} → ${href}`,
+              ).toContain(slug);
+            }
+          }
         }
       }
     }

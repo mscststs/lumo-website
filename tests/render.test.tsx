@@ -34,16 +34,16 @@ describe("core render paths", () => {
 
   it("renders the docs sidebar with the active document group", () => {
     render(
-      <MemoryRouter initialEntries={["/docs/mcp"]}>
+      <MemoryRouter initialEntries={["/docs/lumo/mcp"]}>
         <LocaleProvider>
-          <DocsSidebar />
+          <DocsSidebar product="lumo" />
         </LocaleProvider>
       </MemoryRouter>,
     );
-    expect(screen.getByRole("link", { name: "MCP and browser tools" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "MCP and tools" })).toHaveAttribute(
       "aria-current",
       "page",
     );
-    expect(screen.getByText("Start here")).toBeInTheDocument();
+    expect(screen.getByText("Get started")).toBeInTheDocument();
   });
 });
