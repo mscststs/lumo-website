@@ -7,7 +7,6 @@ export const userscriptsDocs = {
     section: "start",
     title: "Lumo Userscripts overview",
     description: "Run, edit and manage userscripts through native chrome.userScripts, and expose them to an agent.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -91,7 +90,6 @@ export const userscriptsDocs = {
     section: "start",
     title: "Install and update",
     description: "Install Lumo Userscripts and understand the difference between store and unpacked builds.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -170,7 +168,6 @@ export const userscriptsDocs = {
     section: "start",
     title: "Enable user scripts (required)",
     description: "Turn on Chrome's “Allow user scripts” and confirm the manager is not pausing injection.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -274,7 +271,6 @@ export const userscriptsDocs = {
     section: "faq",
     title: "FAQ",
     description: "Common questions about scripts not running, updates, permissions, data and agent connections.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -372,7 +368,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "Install scripts",
     description: "Install from a URL, a file or the clipboard, and confirm permissions on the install page.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -477,7 +472,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "Editor and metadata",
     description: "Edit scripts with CodeMirror 6, validate metadata, and manage values and resources.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -557,7 +551,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "GM API",
     description: "Value storage, cross-origin requests, cookies, downloads, notifications, styles and menu commands.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -625,7 +618,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "Scope and permissions",
     description: "How @match, @include, @exclude, run timing and injection worlds determine script behavior.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -690,7 +682,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "Updates and backups",
     description: "Automatic update checks, permission-aware upgrades, the recycle bin and JSON / ZIP backups.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -779,7 +770,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "Connect Lumo (agent endpoint)",
     description: "Enable the MCP endpoint, copy the extension ID, and configure the allowlist and write access.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -911,7 +901,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "Logs and diagnostics",
     description: "Inspect runtime health, script registration, logs and per-page controls.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -993,7 +982,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "Settings reference",
     description: "General, updates, data, agent and appearance settings.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",

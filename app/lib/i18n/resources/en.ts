@@ -867,8 +867,6 @@ export const en = {
     allDocs: "All documentation",
     statsBilingual: "English + 中文",
     staticPreRendered: "static pre-rendered",
-    minRead: "{{minutes}} min read",
-    updated: "Updated {{date}}",
     copyCode: "Copy code",
     copiedCode: "Copied",
     previous: "Previous",

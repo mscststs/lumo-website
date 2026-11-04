@@ -45,8 +45,6 @@ describe("docs registry", () => {
           expect(DOC_SECTIONS).toContain(doc.section);
           expect(doc.title.length).toBeGreaterThan(1);
           expect(doc.description.length).toBeGreaterThan(10);
-          expect(doc.updated).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-          expect(doc.readingMinutes).toBeGreaterThan(0);
           expect(doc.blocks.length).toBeGreaterThan(0);
         }
       }

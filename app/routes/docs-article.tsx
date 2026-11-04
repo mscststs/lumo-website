@@ -1,12 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
-import {
-  ArrowLeft,
-  ArrowRight,
-  CalendarDays,
-  ChevronDown,
-  Clock,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown } from "lucide-react";
 import { getAdjacentDocs, getDoc, getDocHeadings } from "@/content/docs";
 import { DocBlocks } from "@/components/docs/doc-blocks";
 import { DocsToc } from "@/components/docs/docs-toc";
@@ -17,7 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/lib/i18n";
 import { translate } from "@/lib/i18n/translate";
-import { formatDate } from "@/lib/format";
 import { absoluteUrl, pageMeta } from "@/lib/seo";
 import { siteOrigin } from "@/lib/site";
 import {
@@ -114,7 +107,6 @@ export default function DocsArticlePage() {
           "@type": "TechArticle",
           headline: article.title,
           description: article.description,
-          dateModified: article.updated,
           inLanguage: locale === "zh" ? "zh-CN" : "en",
           url: absoluteUrl(docPath(locale, product, article.slug)),
           author: { "@type": "Organization", name: "Lumo", url: siteOrigin() },
@@ -147,9 +139,6 @@ export default function DocsArticlePage() {
             <Badge variant="accent">
               {t(`docs.sections.${article.section}`)}
             </Badge>
-            <span className="text-[11px] text-muted-foreground">
-              {t("docs.minRead", { minutes: article.readingMinutes })}
-            </span>
           </div>
 
           <h1 className="max-w-[26ch] text-balance text-display-sm font-semibold text-foreground">
@@ -158,17 +147,6 @@ export default function DocsArticlePage() {
           <p className="max-w-[62ch] text-pretty text-base leading-7 text-muted-foreground">
             {article.description}
           </p>
-
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5">
-              <CalendarDays className="h-3.5 w-3.5" />
-              {t("docs.updated", { date: formatDate(article.updated, locale) })}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5" />
-              {t("docs.minRead", { minutes: article.readingMinutes })}
-            </span>
-          </div>
         </header>
 
         {headings.length > 0 ? (

@@ -7,7 +7,6 @@ export const userscriptsDocs = {
     section: "start",
     title: "Lumo Userscripts 概览",
     description: "用原生 chrome.userScripts 运行、编辑和管理用户脚本，并把它开放给智能体。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -91,7 +90,6 @@ export const userscriptsDocs = {
     section: "start",
     title: "安装与更新",
     description: "安装 Lumo Userscripts，并知道商店版本与未打包版本的区别。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -170,7 +168,6 @@ export const userscriptsDocs = {
     section: "start",
     title: "开启用户脚本（必做）",
     description: "打开 Chrome 的“允许用户脚本”，并确认管理器没有暂停脚本注入。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -274,7 +271,6 @@ export const userscriptsDocs = {
     section: "faq",
     title: "常见问题",
     description: "脚本不运行、更新、权限、数据与智能体连接的高频问题。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -372,7 +368,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "安装脚本",
     description: "从 URL、文件或剪贴板安装脚本，并在安装页确认权限。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -477,7 +472,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "编辑器与元数据",
     description: "用 CodeMirror 6 编辑脚本，校验元数据，并管理值与资源。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -557,7 +551,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "GM API",
     description: "值存储、跨域请求、Cookie、下载、通知、样式与菜单命令。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -625,7 +618,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "运行范围与权限",
     description: "@match、@include、@exclude、运行时机与注入环境如何决定脚本行为。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -690,7 +682,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "更新与备份",
     description: "自动检查更新、权限感知升级、回收站与 JSON / ZIP 备份。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -779,7 +770,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "连接 Lumo（智能体端点）",
     description: "开启 MCP 端点、复制扩展 ID、配置允许列表与写入权限。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -911,7 +901,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "日志与诊断",
     description: "查看运行时健康、脚本注册状态、日志与本页控制。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -993,7 +982,6 @@ export const userscriptsDocs = {
     section: "features",
     title: "设置项说明",
     description: "通用、更新、数据、智能体与外观设置。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",

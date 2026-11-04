@@ -7,7 +7,6 @@ export const lumoDocs = {
     section: "start",
     title: "Lumo overview",
     description: "A browser agent that reads the page, calls tools and works through multi-step tasks in your sidebar.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -98,7 +97,6 @@ export const lumoDocs = {
     section: "start",
     title: "Install and update",
     description: "Install Lumo from the store, the latest build or source, and complete the first launch.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -189,7 +187,6 @@ export const lumoDocs = {
     section: "start",
     title: "Configure a model (required)",
     description: "Add a provider, save the key and choose a default model so the sidebar can work.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -345,7 +342,6 @@ export const lumoDocs = {
     section: "faq",
     title: "FAQ",
     description: "Common questions about installation, models, page reading, tool calls and data storage.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -438,7 +434,6 @@ export const lumoDocs = {
     section: "features",
     title: "Chat and page context",
     description: "Send messages, attach pages, paste long text and control the agent's run.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -539,7 +534,6 @@ export const lumoDocs = {
     section: "features",
     title: "MCP and tools",
     description: "How built-in browser tools, remote MCP servers and extension providers share one tool list.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -655,7 +649,6 @@ export const lumoDocs = {
     section: "features",
     title: "Connect extension services (Lumo Userscripts)",
     description: "From copying the extension ID to approving the connection, bring the Userscripts library into Lumo.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -839,7 +832,6 @@ export const lumoDocs = {
     section: "features",
     title: "Tools from pages (WebMCP)",
     description: "Pages that declare WebMCP tools join Lumo's tool list per tab.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -902,7 +894,6 @@ export const lumoDocs = {
     section: "features",
     title: "Settings reference",
     description: "Models, OCR, MCP, files, appearance, system prompt, commands and debug.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -958,7 +949,6 @@ export const lumoDocs = {
     section: "features",
     title: "Data and privacy",
     description: "What Lumo stores locally, what it sends to your model provider, and how to clear it.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -1043,7 +1033,6 @@ export const lumoDocs = {
     section: "features",
     title: "Troubleshooting",
     description: "Locate problems across models, tools, pages and extensions.",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",

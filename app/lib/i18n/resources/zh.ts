@@ -865,8 +865,6 @@ export const zh: Translation = {
     allDocs: "全部文档",
     statsBilingual: "中文 + English",
     staticPreRendered: "静态预渲染",
-    minRead: "约 {{minutes}} 分钟",
-    updated: "更新于 {{date}}",
     copyCode: "复制代码",
     copiedCode: "已复制",
     previous: "上一篇",

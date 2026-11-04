@@ -7,7 +7,6 @@ export const lumoDocs = {
     section: "start",
     title: "Lumo 概览",
     description: "一个在侧边栏里读页面、调用工具、执行多步任务的浏览器智能体。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -98,7 +97,6 @@ export const lumoDocs = {
     section: "start",
     title: "安装与更新",
     description: "从商店、最新构建或源码安装 Lumo，并完成第一次启动。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -189,7 +187,6 @@ export const lumoDocs = {
     section: "start",
     title: "配置模型（必做）",
     description: "添加模型提供方、保存密钥、选择默认模型，让侧边栏真正开始工作。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -345,7 +342,6 @@ export const lumoDocs = {
     section: "faq",
     title: "常见问题",
     description: "安装、模型、页面读取、工具调用与数据存储的高频问题。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -438,7 +434,6 @@ export const lumoDocs = {
     section: "features",
     title: "对话与页面上下文",
     description: "发送消息、附加页面、粘贴长文本，并控制智能体的执行。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -539,7 +534,6 @@ export const lumoDocs = {
     section: "features",
     title: "MCP 与工具",
     description: "内置浏览器工具、远程 MCP 服务与扩展提供方如何进入同一张工具列表。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -655,7 +649,6 @@ export const lumoDocs = {
     section: "features",
     title: "连接扩展服务（Lumo Userscripts）",
     description: "从复制扩展 ID 到批准连接，把 Userscripts 的脚本库接入 Lumo。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -839,7 +832,6 @@ export const lumoDocs = {
     section: "features",
     title: "页面提供的工具（WebMCP）",
     description: "声明了 WebMCP 工具的页面，会以按标签页的方式加入 Lumo 的工具列表。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -902,7 +894,6 @@ export const lumoDocs = {
     section: "features",
     title: "设置项说明",
     description: "模型、OCR、MCP、文件、界面、系统提示词、命令与调试。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -958,7 +949,6 @@ export const lumoDocs = {
     section: "features",
     title: "数据与隐私",
     description: "Lumo 在本地保存什么、向模型服务商发送什么，以及如何清除数据。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",
@@ -1043,7 +1033,6 @@ export const lumoDocs = {
     section: "features",
     title: "故障排查",
     description: "按模型、工具、页面与扩展四类定位问题。",
-    updated: "2026-11-04",
     blocks: [
       {
         type: "p",

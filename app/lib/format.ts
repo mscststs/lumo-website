@@ -19,10 +19,3 @@ export function formatDate(isoDate: string, locale: Locale): string {
 export function formatNumber(value: number, locale: Locale): string {
   return new Intl.NumberFormat(LOCALE_TAG[locale]).format(value);
 }
-
-export function readingMinutes(text: string): number {
-  const words = text.trim().split(/\s+/u).filter(Boolean).length;
-  const cjk = (text.match(/[\u3400-\u9fff]/gu) ?? []).length;
-  const estimated = words / 220 + cjk / 420;
-  return Math.max(1, Math.round(estimated));
-}

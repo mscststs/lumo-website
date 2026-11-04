@@ -54,8 +54,6 @@ export interface DocArticle {
   section: DocSection;
   title: string;
   description: string;
-  updated: string;
-  readingMinutes: number;
   blocks: DocBlock[];
 }
 
@@ -92,51 +90,7 @@ export function getHeadings(source: { blocks: DocBlock[] }): DocHeading[] {
     }));
 }
 
-function blockText(block: DocBlock): string {
-  switch (block.type) {
-    case "p":
-    case "h2":
-    case "h3":
-      return block.text;
-    case "ul":
-    case "ol":
-      return block.items.join(" ");
-    case "quote":
-      return block.text;
-    case "callout":
-      return `${block.title ?? ""} ${block.text}`;
-    case "kv":
-      return block.items.map((item) => `${item.k} ${item.v}`).join(" ");
-    case "steps":
-      return block.items.map((item) => `${item.title} ${item.text}`).join(" ");
-    case "table":
-      return [...block.head, ...block.rows.flat()].join(" ");
-    case "mock":
-      return block.caption ?? "";
-    case "cards":
-      return block.items
-        .map((item) => `${item.title} ${item.text} ${item.cta ?? ""}`)
-        .join(" ");
-    case "code":
-      return "";
-    default:
-      return "";
-  }
-}
-
-export function estimateReadingMinutes(blocks: DocBlock[]): number {
-  const text = blocks.map(blockText).join(" ");
-  const words = text.trim().split(/\s+/u).filter(Boolean).length;
-  const cjk = (text.match(/[\u3400-\u9fff]/gu) ?? []).length;
-  return Math.max(1, Math.round(words / 220 + cjk / 420));
-}
-
-/** Computes reading time once at module load and keeps article data terse. */
-export function defineArticle(
-  input: Omit<DocArticle, "readingMinutes"> & { readingMinutes?: number },
-): DocArticle {
-  return {
-    ...input,
-    readingMinutes: input.readingMinutes ?? estimateReadingMinutes(input.blocks),
-  };
+/** Identity helper that keeps article definitions explicit and typed. */
+export function defineArticle(article: DocArticle): DocArticle {
+  return article;
 }

@@ -54,10 +54,10 @@ describe("i18n resources", () => {
   });
 
   it("translates through the locale-specific instance", () => {
-    expect(getI18n("zh").t("docs.minRead", { minutes: 3 })).toContain("3");
-    expect(translate("en", "docs.updated", { date: "Nov 1, 2025" })).toContain(
-      "Nov 1, 2025",
-    );
+    expect(getI18n("zh").t("docs.articleCount", { count: 3 })).toContain("3");
+    expect(
+      translate("en", "privacy.updated", { date: "Nov 1, 2025" }),
+    ).toContain("Nov 1, 2025");
     expect(translate("zh", "home.hero.title")).not.toBe("home.hero.title");
   });
 });
