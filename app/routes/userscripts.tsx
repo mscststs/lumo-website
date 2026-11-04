@@ -81,7 +81,7 @@ export default function UserscriptsPage() {
         }}
         secondary={{
           label: t("userscripts.hero.secondary"),
-          href: `${SITE_ROUTES.docs}/userscripts/agent-endpoint`,
+          href: `${SITE_ROUTES.docs}/userscripts`,
         }}
         visual={<UserscriptsDashboardMock className="mx-auto w-full max-w-[34rem]" />}
       />

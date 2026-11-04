@@ -267,7 +267,7 @@ export const en = {
       summary:
         "Reads the page, calls tools and takes screenshots — every step visible, always interruptible.",
       primary: "Add to Chrome",
-      secondary: "Read the agent docs",
+      secondary: "Read the docs",
       mock: {
         model: "Claude Sonnet 4.5",
         user: "Open the pricing page, find the plan with SSO, and screenshot the comparison table.",
@@ -552,7 +552,7 @@ export const en = {
       summary:
         "Describe the change you want. The agent writes the script, installs it, and it runs on the next reload.",
       primary: "Add to Chrome",
-      secondary: "Read the agent docs",
+      secondary: "Read the docs",
       mock: {
         scripts: [
           {

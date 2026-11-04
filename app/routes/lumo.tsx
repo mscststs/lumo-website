@@ -95,7 +95,7 @@ export default function LumoPage() {
         }}
         secondary={{
           label: t("lumo.hero.secondary"),
-          href: `${SITE_ROUTES.docs}/lumo/chat`,
+          href: `${SITE_ROUTES.docs}/lumo`,
         }}
         visual={
           <SidebarChatMock

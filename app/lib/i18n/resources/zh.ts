@@ -268,7 +268,7 @@ export const zh: Translation = {
       summary:
         "在侧边栏里读页面、调用工具、截图表——每一步都看得见，也随时都能停。",
       primary: "添加到 Chrome",
-      secondary: "阅读智能体文档",
+      secondary: "阅读文档",
       mock: {
         model: "Claude Sonnet 4.5",
         user: "打开定价页，找出带 SSO 的套餐，并截一张对比表。",
@@ -551,7 +551,7 @@ export const zh: Translation = {
       summary:
         "说清你要的改动，智能体写好脚本、装进浏览器即生效。",
       primary: "添加到 Chrome",
-      secondary: "阅读智能体文档",
+      secondary: "阅读文档",
       mock: {
         scripts: [
           {
