@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { ArrowUpRight } from "lucide-react";
 import { BrandMark, Wordmark } from "@/components/brand/brand-mark";
 import { Separator } from "@/components/ui/separator";
-import { LINKS, SITE_VERSION } from "@/lib/site";
+import { LINKS } from "@/lib/site";
 import { PRIVACY_PATHS, SITE_ROUTES } from "@/lib/site-manifest";
 import { LanguageMenu } from "./language-menu";
 import { LocaleLink } from "./locale-link";
@@ -64,13 +64,9 @@ export function SiteFooter() {
 
         <Separator className="my-8" />
 
-        <div className="flex flex-col gap-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>{t("common.copyright", { year })}</p>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-            <p>{t("footer.builtWith")}</p>
-            <p className="font-mono text-2xs">{t("footer.siteVersion", { version: SITE_VERSION })}</p>
-          </div>
-        </div>
+        <p className="text-xs text-muted-foreground">
+          {t("common.copyright", { year })}
+        </p>
       </div>
     </footer>
   );

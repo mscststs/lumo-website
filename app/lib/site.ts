@@ -32,8 +32,6 @@ export function ogImageUrl(): string {
   return `${siteOrigin()}/brand/og.png`;
 }
 
-export const SITE_VERSION = "0.2.0";
-
 export const LINKS = {
   lumoStore:
     "https://chromewebstore.google.com/detail/lumo/cgfnadidpooocnkalljpdmelmaponefa",

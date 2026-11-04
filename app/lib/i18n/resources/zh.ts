@@ -65,8 +65,6 @@ export const zh: Translation = {
     userscriptsRepo: "Userscripts GitHub",
     lumoPrivacy: "Lumo 隐私",
     userscriptsPrivacy: "Userscripts 隐私",
-    builtWith: "使用 Vite、React 与 Tailwind 构建，由 Cloudflare Workers 提供静态资产。",
-    siteVersion: "站点 {{version}}",
   },
   theme: {
     title: "外观",

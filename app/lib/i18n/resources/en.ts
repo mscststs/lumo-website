@@ -59,8 +59,6 @@ export const en = {
     userscriptsRepo: "Userscripts GitHub",
     lumoPrivacy: "Lumo privacy",
     userscriptsPrivacy: "Userscripts privacy",
-    builtWith: "Built with Vite, React and Tailwind. Served from Cloudflare Workers.",
-    siteVersion: "Site {{version}}",
   },
   theme: {
     title: "Appearance",
