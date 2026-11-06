@@ -38,10 +38,14 @@ export function SiteFooter() {
     },
   ];
 
+  const resourceLinks = [
+    { label: t("footer.posters"), href: SITE_ROUTES.posters },
+  ];
+
   return (
     <footer className="border-t border-border bg-muted/20">
       <div className="container-page py-14 lg:py-20">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]">
           <div className="flex max-w-sm flex-col items-start gap-4">
             <LocaleLink
               to={SITE_ROUTES.home}
@@ -59,6 +63,7 @@ export function SiteFooter() {
 
           <FooterColumn title={t("footer.products")} links={productLinks} />
           <FooterColumn title={t("footer.source")} links={sourceLinks} />
+          <FooterColumn title={t("footer.resources")} links={resourceLinks} />
           <FooterColumn title={t("footer.legal")} links={legalLinks} />
         </div>
 

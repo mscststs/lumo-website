@@ -160,6 +160,7 @@ export const SITE_ROUTES = {
   home: "/",
   lumo: "/lumo",
   userscripts: "/userscripts",
+  posters: "/posters",
   docs: "/docs",
   notFound: "/404",
 } as const;

@@ -73,6 +73,7 @@ Lumo 不把浏览器变成另一个操作系统，而是把「理解」和「控
 | `/` | `/zh` | 首页 | 品牌入口、双产品 Tab 舞台 |
 | `/lumo` | `/zh/lumo` | Lumo 产品主页 | Hero 拼接、能力舞台、MCP、模型、隐私、安装 |
 | `/userscripts` | `/zh/userscripts` | Userscripts 产品主页 | Hero 拼接、安装流、编辑器、GM API、权限、外观 |
+| `/posters` | `/zh/posters` | 海报 | 双产品 Tab，各 5 张固定 1280 × 800 海报；仅页脚资源入口 |
 | `/docs` | `/zh/docs` | 文档首页 | 产品选择、搜索、各产品必读 |
 | `/docs/:product` | `/zh/docs/:product` | 产品文档首页 | 该产品概览、侧栏、TOC |
 | `/docs/:product/:slug` | `/zh/docs/:product/:slug` | 产品文档正文 | 侧栏、TOC、代码高亮、上一篇/下一篇 |
@@ -90,7 +91,7 @@ Lumo 不把浏览器变成另一个操作系统，而是把「理解」和「控
 
 ### 3.3 页脚
 
-四列：品牌陈述 + 产品 + 资源 + 法务/社交。法务列直接指向两个产品的隐私政策（不再有站点级隐私页）。底部为版权、构建标记、主题/语言快捷入口。
+五列：品牌陈述 + 产品 + 源码 + 资源 + 法务/社交。资源列只放海报入口；海报不出现在 Header、移动端菜单或命令面板中。法务列直接指向两个产品的隐私政策（不再有站点级隐私页）。底部为版权、构建标记、主题/语言快捷入口。
 
 ---
 
@@ -167,7 +168,18 @@ Lumo 不把浏览器变成另一个操作系统，而是把「理解」和「控
 8. **安装步骤**：Chrome 138+ / Allow User Scripts。
 9. **交叉推荐**：Lumo 卡片。
 
-### 5.4 文档 `/docs`
+### 5.4 海报 `/posters`
+
+- **入口**：只出现在页脚「资源 / Resources」列；Header、移动端菜单、命令面板不提供入口。
+- **结构**：双产品 Tab（Lumo / Lumo Userscripts）；每个产品 5 张海报，顺序固定，预渲染 HTML 同时保留两个 Tab 的全部海报（非激活面板 `data-[state=inactive]:hidden`）。
+- **画布**：每张海报固定 `1280 × 800`，外层 `MockScaler` 只做整体 `transform: scale()`；内部全部使用像素尺寸，任何视口下都不会触发换行、折叠或溢出。
+- **内容**：纯色或品牌渐变背景、角落产品标记、大标题 + 产品界面/框架图 + 可选副标题；界面部分复用 `components/mockups` 的产品复刻，不伪造第二套视觉。
+- **维护**：每张海报一个独立组件（`components/posters/poster-<product>-<id>.tsx`），`poster-catalog.ts` 管顺序与 i18n 标签，`poster-registry.tsx` 只做 id → 组件映射。
+- **HTML-in-Canvas（Chrome 157+）**：检测到 `canvas.content === "drawable"` 时，每张海报改由 `<canvas content="drawable">` 承载，画布网格为 `1280 × 800 × devicePixelRatio`，`drawElementImage()` 把 DOM 快照按设备像素绘制；海报名称旁出现「Download PNG / 下载 PNG」按钮。文件名固定为 `<product>-<name>-<index>-<locale>.png`（例如 `lumo-agent-loop-02-en.png`、`lumo-userscripts-智能体端点-03-zh.png`）。不支持时退回普通 DOM，不显示下载按钮；服务端预渲染永远输出 fallback，避免宣称未验证的能力。
+- **Lumo 五张**：品牌 + 侧边栏截图、智能体循环、工具面、三栏分屏、模型/密钥/本地优先。
+- **Userscripts 五张**：品牌 + Scripts 窗口、CodeMirror 编辑器、智能体端点桥接、安装与权限控制、版本/备份/诊断生命周期。
+
+### 5.5 文档 `/docs`
 
 - **定位**：用户文档，只说明怎么使用与配置；不再承载架构、设计系统、部署等工程说明。
 - **首页**：搜索框（⌘K）与两个产品入口卡；每张卡列出该产品的必读文章（安装、必做配置、FAQ）。
@@ -180,7 +192,7 @@ Lumo 不把浏览器变成另一个操作系统，而是把「理解」和「控
 - **Lumo 文章**：`overview`、`install`、`models`、`faq`、`chat`、`mcp`、`extension-services`、`webmcp`、`settings`、`data`、`troubleshooting`。
 - **Userscripts 文章**：`overview`、`install`、`enable-userscripts`、`faq`、`install-scripts`、`editor`、`gm-api`、`permissions`、`updates-backup`、`agent-endpoint`、`diagnostics`、`settings`。
 
-### 5.5 产品隐私政策 `/lumo/privacy`、`/userscripts/privacy`
+### 5.6 产品隐私政策 `/lumo/privacy`、`/userscripts/privacy`
 
 - 每个产品一页，直接展示该产品仓库 `PRIVACY.md` 的中英双语版本，不做站点级汇总页。
 - 正文使用文档的 `DocBlock` 模型与排版（标题、段落、列表、提示块、右栏 TOC、锚点），因此法律文本与技术文档共享一套阅读体验。
@@ -246,6 +258,7 @@ app/
     home.tsx
     lumo.tsx
     userscripts.tsx
+    posters.tsx           # 双产品海报画廊（固定 1280 × 800）
     docs-layout.tsx        # 产品作用域侧栏 / TOC
     docs-index.tsx         # 产品选择
     docs-article.tsx       # /docs/:product 与 /docs/:product/:slug
@@ -258,6 +271,7 @@ app/
     site/                  # Header / Footer / CommandPalette / ThemeMenu / LocaleLink
     motion/                # Reveal / Parallax / Aurora / ...
     mockups/               # 产品视觉复刻
+    posters/               # 每张海报一个组件 + catalog/registry + 共用框
     docs/                  # DocsSidebar / Toc / Blocks / DocMock
     privacy/               # 产品隐私政策页面（复用 DocBlocks + Toc）
     home/ lumo/ userscripts/

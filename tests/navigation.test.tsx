@@ -169,6 +169,7 @@ describe("content link hygiene", () => {
       "app/routes/home.tsx",
       "app/routes/lumo.tsx",
       "app/routes/userscripts.tsx",
+      "app/routes/posters.tsx",
       "app/routes/docs-index.tsx",
       "app/routes/docs-article.tsx",
       "app/routes/lumo-privacy.tsx",

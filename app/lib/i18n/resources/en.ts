@@ -59,6 +59,8 @@ export const en = {
     userscriptsRepo: "Userscripts GitHub",
     lumoPrivacy: "Lumo privacy",
     userscriptsPrivacy: "Userscripts privacy",
+    resources: "Resources",
+    posters: "Posters",
   },
   theme: {
     title: "Appearance",
@@ -837,6 +839,122 @@ export const en = {
     },
   },
 
+  posters: {
+    eyebrow: "Brand assets",
+    title: "Posters, drawn by the products themselves.",
+    description:
+      "Ten fixed 1280 × 800 layouts for Lumo and Lumo Userscripts. Every interface inside a poster is the same component used on the product pages, so the artwork cannot drift from the product.",
+    note: "Fixed canvas · scales as one object",
+    ratio: "1280 × 800",
+    itemIndex: "Poster {{index}} / {{total}}",
+    tabsLabel: "Poster products",
+    download: "Download PNG",
+    preparing: "Preparing PNG…",
+    downloading: "Rendering…",
+    downloadFailed: "Try again",
+    lumo: {
+      tagline: "A quieter, more capable web.",
+      items: {
+        hero: {
+          label: "Identity",
+          eyebrow: "Lumo for Chrome",
+          title: "An agent that\nacts inside\nthe page.",
+          subtitle:
+            "Reads the page, calls tools and takes screenshots — every step visible, always interruptible.",
+          chips: ["MCP tools", "Bring your own model", "Local-first"],
+        },
+        loop: {
+          label: "Agent loop",
+          eyebrow: "Agent loop",
+          title: "Plan. Call tools.\nCheck. Repeat.",
+          subtitle:
+            "One turn can run as many steps as the task needs, with the whole tool chain visible.",
+        },
+        tools: {
+          label: "Tool surface",
+          eyebrow: "Tool surface",
+          title: "The browser\nis the tool.",
+          subtitle:
+            "Browser core, page interaction, network, DevTools and files — plus remote MCP, extension providers and WebMCP.",
+          foot: "chrome.debugger · CDP 1.3",
+        },
+        split: {
+          label: "Split view",
+          eyebrow: "Workspace",
+          title: "Three panes.\nOne page.",
+          subtitle:
+            "Independent conversations with their own model, context and tool calls. Drag a divider to resize.",
+          footnote: "Up to three panes · each keeps its own model and context",
+          runtime: "chrome.sidePanel",
+        },
+        local: {
+          label: "Models & privacy",
+          eyebrow: "Your model, your machine",
+          title: "Your model.\nYour key.\nYour device.",
+          subtitle:
+            "No account, no relay, no telemetry. Keys stay local and requests go straight to the provider.",
+          byok: "BYOK",
+          note: "No account. No relay. No telemetry.",
+        },
+      },
+    },
+    userscripts: {
+      tagline: "Scripts you can ask for.",
+      items: {
+        hero: {
+          label: "Identity",
+          eyebrow: "Lumo Userscripts",
+          title: "Scripts you\ncan ask for.",
+          subtitle:
+            "Describe the change. The agent writes the script, installs it, and it runs on the next reload.",
+          chips: ["Native chrome.userScripts", "CodeMirror 6", "Real GM APIs"],
+        },
+        editor: {
+          label: "Editor",
+          eyebrow: "Editor",
+          title: "A real editor,\nnot a textarea.",
+          subtitle:
+            "CodeMirror 6, metadata validation, values and resources — the same script the agent can edit.",
+          chips: ["CodeMirror 6", "Metadata validation", "Values & resources"],
+        },
+        agent: {
+          label: "Agent endpoint",
+          eyebrow: "Agent endpoint",
+          title: "An extension\nagents can operate.",
+          subtitle:
+            "Lumo discovers the endpoint, asks once for approval, then creates, edits and enables scripts over standard MCP.",
+          host: "Host extension",
+          provider: "Provider extension",
+          runtime: "chrome.runtime.Port",
+          probe: "L0 · probe",
+          port: "L1 · MCP",
+          mcp: "L1 · MCP",
+          tools: "Tools",
+          allowlistDetail: "32-character IDs only",
+          writesDetail: "Every write is audited",
+          auditDetail: "Recent calls, in place",
+        },
+        control: {
+          label: "Control",
+          eyebrow: "Control",
+          title: "Nothing runs\nwithout your say.",
+          subtitle:
+            "Permissions are visible before install. Updates wait for approval. Logs and the recycle bin are one click away.",
+        },
+        lifecycle: {
+          label: "Lifecycle",
+          eyebrow: "Lifecycle",
+          title: "Versioned.\nBacked up.\nObservable.",
+          subtitle:
+            "Every script keeps its history, every install can be restored, and every registration is diagnosable.",
+          healthy: "Registration healthy",
+          version: "v1.4.2 → v1.5.0",
+          logLine: "registered · 8 matches",
+          storage: "IndexedDB · chrome.storage",
+        },
+      },
+    },
+  },
   docs: {
     title: "User documentation",
     description:
@@ -990,6 +1108,11 @@ export const en = {
         description:
           "What Lumo Userscripts stores locally, how scripts run, and what it never collects.",
       },
+    },
+    posters: {
+      title: "Posters — Lumo",
+      description:
+        "Ten 1280 × 800 poster layouts for Lumo and Lumo Userscripts, rendered from the products' own interface components.",
     },
     notFound: {
       title: "Page not found — Lumo",

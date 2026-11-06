@@ -65,6 +65,8 @@ export const zh: Translation = {
     userscriptsRepo: "Userscripts GitHub",
     lumoPrivacy: "Lumo 隐私",
     userscriptsPrivacy: "Userscripts 隐私",
+    resources: "资源",
+    posters: "海报",
   },
   theme: {
     title: "外观",
@@ -835,6 +837,122 @@ export const zh: Translation = {
     },
   },
 
+  posters: {
+    eyebrow: "品牌资源",
+    title: "海报，由产品自己绘制。",
+    description:
+      "为 Lumo 与 Lumo Userscripts 准备的十张固定 1280 × 800 版面。海报里的每个界面都复用产品页的同一个组件，所以画面不会与产品脱节。",
+    note: "固定画布 · 整体等比缩放",
+    ratio: "1280 × 800",
+    itemIndex: "海报 {{index}} / {{total}}",
+    tabsLabel: "海报产品",
+    download: "下载 PNG",
+    preparing: "正在准备…",
+    downloading: "正在生成…",
+    downloadFailed: "重试下载",
+    lumo: {
+      tagline: "更安静，也更能干的浏览器。",
+      items: {
+        hero: {
+          label: "品牌",
+          eyebrow: "Lumo for Chrome",
+          title: "一个会在页面里\n动手的智能体。",
+          subtitle:
+            "读取页面、调用工具、截取屏幕——每一步都可见，随时可以停下。",
+          chips: ["MCP 工具", "自带模型", "本地优先"],
+        },
+        loop: {
+          label: "智能体循环",
+          eyebrow: "智能体循环",
+          title: "计划。调用工具。\n检查。重复。",
+          subtitle:
+            "一次对话可以跑完任务需要的所有步骤，整条工具链始终可见。",
+        },
+        tools: {
+          label: "工具面",
+          eyebrow: "工具面",
+          title: "浏览器\n就是工具。",
+          subtitle:
+            "浏览器核心、页面交互、网络、DevTools 与文件，再接入远程 MCP、扩展服务与 WebMCP。",
+          foot: "chrome.debugger · CDP 1.3",
+        },
+        split: {
+          label: "分屏",
+          eyebrow: "工作区",
+          title: "三块面板。\n同一个页面。",
+          subtitle:
+            "各自独立的对话、模型、上下文与工具调用。拖动分隔线即可调整宽度。",
+          footnote: "最多三块面板 · 每块保留自己的模型与上下文",
+          runtime: "chrome.sidePanel",
+        },
+        local: {
+          label: "模型与隐私",
+          eyebrow: "你的模型，你的机器",
+          title: "你的模型。\n你的密钥。\n你的设备。",
+          subtitle:
+            "没有账号，没有中转，没有遥测。密钥留在本地，请求直达服务商。",
+          byok: "BYOK",
+          note: "没有账号。没有中转。没有遥测。",
+        },
+      },
+    },
+    userscripts: {
+      tagline: "想要什么脚本，直接说。",
+      items: {
+        hero: {
+          label: "品牌",
+          eyebrow: "Lumo Userscripts",
+          title: "想要什么脚本，\n直接说。",
+          subtitle:
+            "描述你想要的改动。智能体写好脚本、完成安装，刷新页面就已生效。",
+          chips: ["原生 chrome.userScripts", "CodeMirror 6", "真实 GM API"],
+        },
+        editor: {
+          label: "编辑器",
+          eyebrow: "编辑器",
+          title: "真正的编辑器，\n不是文本框。",
+          subtitle:
+            "CodeMirror 6、元数据校验、值与资源，同一个脚本也能交给智能体修改。",
+          chips: ["CodeMirror 6", "元数据校验", "值与资源"],
+        },
+        agent: {
+          label: "智能体端点",
+          eyebrow: "智能体端点",
+          title: "一个智能体\n能操作的扩展。",
+          subtitle:
+            "Lumo 发现端点，请求一次授权，然后通过标准 MCP 创建、编辑与启停脚本。",
+          host: "宿主扩展",
+          provider: "提供方扩展",
+          runtime: "chrome.runtime.Port",
+          probe: "L0 · 探测",
+          port: "L1 · MCP",
+          mcp: "L1 · MCP",
+          tools: "工具",
+          allowlistDetail: "只接受 32 位扩展 ID",
+          writesDetail: "每次写入都有审计",
+          auditDetail: "近期调用，就地可查",
+        },
+        control: {
+          label: "控制",
+          eyebrow: "控制",
+          title: "没有你的许可，\n什么都不会运行。",
+          subtitle:
+            "安装前先看权限，更新等待批准，日志与回收站都只有一步之遥。",
+        },
+        lifecycle: {
+          label: "生命周期",
+          eyebrow: "生命周期",
+          title: "有版本。\n有备份。\n可观测。",
+          subtitle:
+            "每个脚本都保留历史，每次安装都能恢复，每次注册都可诊断。",
+          healthy: "注册状态正常",
+          version: "v1.4.2 → v1.5.0",
+          logLine: "已注册 · 8 条匹配",
+          storage: "IndexedDB · chrome.storage",
+        },
+      },
+    },
+  },
   docs: {
     title: "用户文档",
     description:
@@ -986,6 +1104,11 @@ export const zh: Translation = {
         description:
           "Lumo Userscripts 在本地保存什么、脚本如何运行，以及它从不收集什么。",
       },
+    },
+    posters: {
+      title: "海报 — Lumo",
+      description:
+        "为 Lumo 与 Lumo Userscripts 制作的十张 1280 × 800 海报，全部由产品自己的界面组件渲染。",
     },
     notFound: {
       title: "页面不存在 — Lumo",
